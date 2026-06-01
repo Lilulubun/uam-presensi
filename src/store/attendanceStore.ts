@@ -13,6 +13,33 @@ export const useAttendanceStore = create<AttendanceState>()(
     (set, get) => ({
       attendances: [],
 
+      recordFirstTeacherAttendance: async (
+        sessionId: string,
+        userId: string,
+        location: Coordinates
+      ): Promise<ValidationResult> => {
+        const state = get();
+        const now = new Date();
+        
+        const newAttendance: Attendance = {
+          id: crypto.randomUUID(),
+          sessionId,
+          userId,
+          scanInTime: now,
+          scanInLocation: location,
+          isLate: false, // First teacher is never late
+          lateMinutes: 0,
+        };
+
+        set({ attendances: [...state.attendances, newAttendance] });
+
+        return {
+          valid: true,
+          message: 'Presensi pengajar pertama berhasil dicatat',
+          data: newAttendance,
+        };
+      },
+
       checkIn: async (
         sessionId: string,
         userId: string,
@@ -169,6 +196,21 @@ export const useAttendanceStore = create<AttendanceState>()(
           return {
             valid: false,
             message: 'QR code sudah kadaluarsa',
+          };
+        }
+
+        // Validate GPS location
+        const tpa = getTpaById(session.tpaId);
+        const tpaLocation = tpa
+          ? { lat: tpa.location.lat, lng: tpa.location.lng }
+          : { lat: 0, lng: 0 };
+
+        if (
+          !isWithinRadius(location, tpaLocation, APP_CONFIG.GPS_RADIUS_TOLERANCE)
+        ) {
+          return {
+            valid: false,
+            message: `Anda berada di luar radius ${APP_CONFIG.GPS_RADIUS_TOLERANCE}m dari TPA`,
           };
         }
 

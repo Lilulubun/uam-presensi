@@ -21,7 +21,7 @@ export default function ProtectedRoute({
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Redirect to appropriate dashboard
     const redirectPath =
-      user.role === 'pengajar' ? '/teacher/dashboard' : '/admin/dashboard';
+      user.role === 'pengajar' ? '/pengajar/dashboard' : '/admin/dashboard';
     return <Navigate to={redirectPath} replace />;
   }
 

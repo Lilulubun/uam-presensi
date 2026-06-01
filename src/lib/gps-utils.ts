@@ -44,8 +44,10 @@ export function isWithinRadius(
   radiusMeters: number
 ): boolean {
   if (GPS_DEBUG_MODE) {
+    console.warn('⚠️ GPS_DEBUG_MODE is ACTIVE: Bypassing GPS validation!');
     return true; // Bypass GPS validation in debug mode
   }
+
 
   const distance = calculateDistance(userLocation, targetLocation);
   return distance <= radiusMeters;

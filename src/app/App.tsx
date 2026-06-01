@@ -4,11 +4,11 @@ import { useAuthStore } from '../store/authStore';
 import { useSeedData } from './hooks/useSeedData';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from '../pages/LoginPage';
-import TeacherDashboard from '../pages/teacher/TeacherDashboard';
-import ScanQRPage from '../pages/teacher/ScanQRPage';
-import ActiveSessionPage from '../pages/teacher/ActiveSessionPage';
-import AttendanceConfirmation from '../pages/teacher/AttendanceConfirmation';
-import AttendanceHistoryPage from '../pages/teacher/AttendanceHistoryPage';
+import DashboardPengajar from '../pages/pengajar/DashboardPengajar';
+import ScanPage from '../pages/pengajar/ScanPage';
+import SessionActivePage from '../pages/pengajar/SessionActivePage';
+import KonfirmasiPresensi from '../pages/pengajar/KonfirmasiPresensi';
+import RiwayatPage from '../pages/pengajar/RiwayatPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import TPADetailPage from '../pages/admin/TPADetailPage';
 import ReportsPage from '../pages/admin/ReportsPage';
@@ -28,7 +28,7 @@ export default function App() {
           path="/login"
           element={
             isAuthenticated ? (
-              <Navigate to={user?.role === 'pengajar' ? '/teacher/dashboard' : '/admin/dashboard'} replace />
+              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/admin/dashboard'} replace />
             ) : (
               <LoginPage />
             )
@@ -40,7 +40,7 @@ export default function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate to={user?.role === 'pengajar' ? '/teacher/dashboard' : '/admin/dashboard'} replace />
+              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/admin/dashboard'} replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -48,11 +48,11 @@ export default function App() {
         />
 
         {/* Teacher routes */}
-        <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><TeacherDashboard /></ProtectedRoute>} />
-        <Route path="/teacher/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ScanQRPage /></ProtectedRoute>} />
-        <Route path="/teacher/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><ActiveSessionPage /></ProtectedRoute>} />
-        <Route path="/teacher/confirmation" element={<ProtectedRoute allowedRoles={['pengajar']}><AttendanceConfirmation /></ProtectedRoute>} />
-        <Route path="/teacher/history" element={<ProtectedRoute allowedRoles={['pengajar']}><AttendanceHistoryPage /></ProtectedRoute>} />
+        <Route path="/pengajar/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><DashboardPengajar /></ProtectedRoute>} />
+        <Route path="/pengajar/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ScanPage /></ProtectedRoute>} />
+        <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><SessionActivePage /></ProtectedRoute>} />
+        <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><KonfirmasiPresensi /></ProtectedRoute>} />
+        <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><RiwayatPage /></ProtectedRoute>} />
 
         {/* Admin routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><AdminDashboard /></ProtectedRoute>} />

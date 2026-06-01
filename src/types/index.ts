@@ -76,7 +76,7 @@ export interface AuthState {
 export interface SessionState {
   sessions: Session[];
   activeSession: Session | null;
-  openSession: (tpaId: string, userId: string) => Promise<ValidationResult>;
+  openSession: (tpaId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
   closeSession: (sessionId: string) => Promise<ValidationResult>;
   refreshQRToken: (sessionId: string, type: 'in' | 'out') => void;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
@@ -84,6 +84,7 @@ export interface SessionState {
 
 export interface AttendanceState {
   attendances: Attendance[];
+  recordFirstTeacherAttendance: (sessionId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
   checkIn: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
   checkOut: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
   getAttendanceBySession: (sessionId: string) => Attendance[];

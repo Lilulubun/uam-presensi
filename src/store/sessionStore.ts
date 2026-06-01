@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { SessionState, Session, ValidationResult } from '../types';
 import { generateDynamicToken, isTokenExpired } from '../lib/qr-utils';
+import { useAttendanceStore } from './attendanceStore';
 
 export const useSessionStore = create<SessionState>()(
   persist(
@@ -11,50 +12,68 @@ export const useSessionStore = create<SessionState>()(
 
       openSession: async (
         tpaId: string,
-        userId: string
+        userId: string,
+        location: any // Use any temporarily or Coordinates from types
       ): Promise<ValidationResult> => {
         const state = get();
 
-        // Validate: check if TPA already has active session
-        const existingSession = state.sessions.find(
-          (s) => s.tpaId === tpaId && s.isActive
-        );
-
-        if (existingSession) {
+        // Local lock to mitigate race conditions
+        const lockKey = `session_lock_${tpaId}`;
+        if (localStorage.getItem(lockKey)) {
           return {
             valid: false,
-            message: 'TPA ini sudah memiliki sesi aktif',
-            data: existingSession,
+            message: 'Sistem sedang memproses sesi. Silakan coba lagi dalam beberapa detik.',
           };
         }
+        localStorage.setItem(lockKey, 'true');
 
-        // KNOWN LIMITATION: Race condition possible with localStorage
-        // PRODUCTION: Use Supabase RPC with database lock:
-        // const { data, error } = await supabase.rpc('open_session', { tpa_id, user_id })
+        try {
+          // Validate: check if TPA already has active session
+          const existingSession = state.sessions.find(
+            (s) => s.tpaId === tpaId && s.isActive
+          );
 
-        const now = new Date();
-        const qrToken = generateDynamicToken(crypto.randomUUID(), 'in');
+          if (existingSession) {
+            return {
+              valid: false,
+              message: 'TPA ini sudah memiliki sesi aktif',
+              data: existingSession,
+            };
+          }
 
-        const newSession: Session = {
-          id: crypto.randomUUID(),
-          tpaId,
-          firstTeacherId: userId,
-          dateOpened: now,
-          isActive: true,
-          qrDynamicInToken: qrToken.token,
-          qrDynamicInExpiry: new Date(qrToken.expiry),
-        };
+          const now = new Date();
+          const qrToken = generateDynamicToken(crypto.randomUUID(), 'in');
 
-        set({
-          sessions: [...state.sessions, newSession],
-          activeSession: newSession,
-        });
+          const newSession: Session = {
+            id: crypto.randomUUID(),
+            tpaId,
+            firstTeacherId: userId,
+            dateOpened: now,
+            isActive: true,
+            qrDynamicInToken: qrToken.token,
+            qrDynamicInExpiry: new Date(qrToken.expiry),
+          };
 
-        return {
-          valid: true,
-          message: 'Sesi berhasil dibuka',
-          data: newSession,
-        };
+          set({
+            sessions: [...state.sessions, newSession],
+            activeSession: newSession,
+          });
+
+          // Auto-record first teacher attendance
+          await useAttendanceStore.getState().recordFirstTeacherAttendance(
+            newSession.id,
+            userId,
+            location
+          );
+
+          return {
+            valid: true,
+            message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
+            data: newSession,
+          };
+        } finally {
+          localStorage.removeItem(lockKey);
+        }
       },
 
       closeSession: async (sessionId: string): Promise<ValidationResult> => {

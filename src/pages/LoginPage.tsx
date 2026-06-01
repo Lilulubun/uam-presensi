@@ -26,7 +26,7 @@ export default function LoginPage() {
 
         // Redirect based on role
         if (user?.role === 'pengajar') {
-          navigate('/teacher/dashboard');
+          navigate('/pengajar/dashboard');
         } else {
           navigate('/admin/dashboard');
         }
