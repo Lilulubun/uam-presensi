@@ -4,6 +4,7 @@ import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
 import { useSessionStore } from '../store/sessionStore';
 import { useAttendanceStore } from '../store/attendanceStore';
+import { useTPAStore } from '../store/tpaStore';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -21,6 +22,7 @@ import PengaturanPage from '../pages/pengurus/PengaturanPage';
 export default function App() {
   useEffect(() => {
     useAuthStore.getState().init();
+    useTPAStore.getState().init();
     useSessionStore.getState().init();
     useAttendanceStore.getState().init();
   }, []);
