@@ -76,7 +76,7 @@ export default function ScanPage() {
         const location = await getCurrentLocation();
 
         if (token.type === 'in') {
-          const result = await checkIn(token.sessionId, user!.id, token.token, location);
+          const result = await checkIn(token.sessionId, token.token, location);
           if (result.valid) {
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
               state: { success: true, type: 'in', message: result.message, data: result.data },
@@ -85,7 +85,7 @@ export default function ScanPage() {
             toast.error(result.message);
           }
         } else {
-          const result = await checkOut(token.sessionId, user!.id, token.token, location);
+          const result = await checkOut(token.sessionId, token.token, location);
           if (result.valid) {
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
               state: { success: true, type: 'out', message: result.message, data: result.data },

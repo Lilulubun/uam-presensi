@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
 import { useSessionStore } from '../store/sessionStore';
+import { useAttendanceStore } from '../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -21,6 +22,7 @@ export default function App() {
   useEffect(() => {
     useAuthStore.getState().init();
     useSessionStore.getState().init();
+    useAttendanceStore.getState().init();
   }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))

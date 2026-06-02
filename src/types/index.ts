@@ -95,9 +95,10 @@ export interface SessionState {
 
 export interface AttendanceState {
   attendances: Attendance[];
-  recordFirstTeacherAttendance: (sessionId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
-  checkIn: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
-  checkOut: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
+  loading: boolean;
+  init: () => Promise<void>;
+  checkIn: (sessionId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
+  checkOut: (sessionId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
   getAttendanceBySession: (sessionId: string) => Attendance[];
   getAttendanceByUser: (userId: string) => Attendance[];
 }
