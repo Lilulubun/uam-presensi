@@ -1,3 +1,6 @@
+// PROTOTYPE / DEMO ONLY — used by supabase/seed.ts and tests.
+// Remove or gate behind VITE_DEMO_MODE=true for any real deployment.
+
 import type { User } from '../types';
 
 // TODO(phase-3.5): replace MOCK_USERS with a real useUsers() store backed
