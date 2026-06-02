@@ -18,11 +18,10 @@ vi.mock('../../lib/supabase', () => ({
 }));
 
 import { useTPAStore } from '../tpaStore';
-import type { TPA } from '../../types';
 
-const tpas: TPA[] = [
-  { id: 'tpa-001', name: 'TPA Al-Fath', staticQRCode: 'TPA-001', location: { lat: -7.68, lng: 110.41, radius: 100 } },
-  { id: 'tpa-002', name: 'TPA Adz-Dzikro', staticQRCode: 'TPA-002', location: { lat: -7.74, lng: 110.41, radius: 100 } },
+const tpas: any[] = [
+  { id: 'tpa-001', name: 'TPA Al-Fath', static_qr_code: 'TPA-001', location: { lat: -7.68, lng: 110.41, radius: 100 } },
+  { id: 'tpa-002', name: 'TPA Adz-Dzikro', static_qr_code: 'TPA-002', location: { lat: -7.74, lng: 110.41, radius: 100 } },
 ];
 
 describe('useTPAStore (Supabase-backed)', () => {

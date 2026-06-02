@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { AttendanceState, Attendance, Coordinates, ValidationResult, CheckInResult } from '../types';
 import { supabase } from '../lib/supabase';
 import { logEvent } from '../lib/log-event';
+import { toCamelCase, toCamelCaseArray } from '../lib/transform';
 
 function errorResult(message: string, sessionId?: string): ValidationResult {
   if (sessionId) {
@@ -25,7 +26,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
       .select('*')
       .order('scan_in_time', { ascending: false });
     if (!error && data) {
-      set({ attendances: data as Attendance[], loading: false });
+      set({ attendances: toCamelCaseArray<Attendance>(data), loading: false });
     } else {
       set({ loading: false });
     }
@@ -44,7 +45,9 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     if (error || !data) {
       return errorResult(error?.message ?? 'Gagal melakukan presensi masuk', sessionId);
     }
-    const { attendance, reason } = data as CheckInResult;
+    const raw = data as any;
+    const attendance = toCamelCase<Attendance>(raw.attendance);
+    const reason: CheckInResult['reason'] = raw.reason ?? null;
     if (reason !== 'FIRST_TEACHER_AUTO') {
       set((state) => ({
         attendances: [...state.attendances.filter((a) => a.id !== attendance.id), attendance],
@@ -73,7 +76,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     if (error || !data) {
       return errorResult(error?.message ?? 'Gagal melakukan presensi keluar');
     }
-    const attendance = data as Attendance;
+    const attendance = toCamelCase<Attendance>(data);
     set((state) => ({
       attendances: state.attendances.map((a) => (a.id === attendance.id ? attendance : a)),
     }));

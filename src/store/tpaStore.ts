@@ -18,7 +18,13 @@ export const useTPAStore = create<TPAState>((set, get) => ({
     set({ loading: true });
     const { data, error } = await supabase.from('tpas').select('*');
     if (!error && data) {
-      set({ tpas: data as TPA[], loading: false });
+      const mapped = data.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        location: row.location,
+        staticQRCode: row.static_qr_code,
+      })) as TPA[];
+      set({ tpas: mapped, loading: false });
     } else {
       set({ loading: false });
     }
