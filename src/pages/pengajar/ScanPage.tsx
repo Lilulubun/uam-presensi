@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
 import { QRScanner } from '../../app/components/qr/QRScanner';
+import PermissionPrompt from '../../app/components/gps/PermissionPrompt';
 import { GPSDebugPanel } from '../../app/components/gps/GPSDebugPanel';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useAuthStore } from '../../store/authStore';
@@ -11,7 +12,7 @@ import { useAttendanceStore } from '../../store/attendanceStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { getCurrentLocation } from '../../lib/gps-utils';
 import { decodeQRData, isValidStaticQRCode } from '../../lib/qr-utils';
-import { getTpaByQRCode } from '../../lib/mock-data';
+import { getTpaByStaticQR } from '../../store/tpaStore';
 
 interface ActiveSessionInfo {
   tpaName: string;
@@ -41,7 +42,7 @@ export default function ScanPage() {
       try {
         // Static QR: TPA-001 format
         if (isValidStaticQRCode(text)) {
-          const tpa = getTpaByQRCode(text);
+          const tpa = getTpaByStaticQR(text);
           if (!tpa) {
             toast.error('TPA tidak ditemukan');
             return;
@@ -55,7 +56,7 @@ export default function ScanPage() {
           }
 
           const location = await getCurrentLocation();
-          const result = await openSession(tpa.id, user!.id, location);
+          const result = await openSession(tpa.id, location);
 
           if (result.valid) {
             toast.success(`Sesi dibuka di ${tpa.name}! Anda pengajar pertama.`);
@@ -76,16 +77,17 @@ export default function ScanPage() {
         const location = await getCurrentLocation();
 
         if (token.type === 'in') {
-          const result = await checkIn(token.sessionId, user!.id, token.token, location);
+          const result = await checkIn(token.sessionId, token.token, location);
           if (result.valid) {
+            const reason = (result.data as { reason?: string | null })?.reason ?? null;
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
-              state: { success: true, type: 'in', message: result.message, data: result.data },
+              state: { success: true, type: 'in', message: result.message, reason, data: result.data },
             }));
           } else {
             toast.error(result.message);
           }
         } else {
-          const result = await checkOut(token.sessionId, user!.id, token.token, location);
+          const result = await checkOut(token.sessionId, token.token, location);
           if (result.valid) {
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
               state: { success: true, type: 'out', message: result.message, data: result.data },
@@ -119,10 +121,11 @@ export default function ScanPage() {
       </header>
 
       <main className="flex-1 flex flex-col items-center gap-5 p-4 pt-6">
-        {/* Scanner */}
-        <div className={`w-full flex flex-col items-center gap-4 transition-opacity ${processing ? 'opacity-50' : 'opacity-100'}`}>
-          <QRScanner onScan={handleScan} onError={handleCameraError} />
-          {processing ? (
+        {/* Scanner — gated behind GPS permission prompt */}
+        <PermissionPrompt>
+          <div className={`w-full flex flex-col items-center gap-4 transition-opacity ${processing ? 'opacity-50' : 'opacity-100'}`}>
+            <QRScanner onScan={handleScan} onError={handleCameraError} />
+            {processing ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
               Memproses...
@@ -133,6 +136,7 @@ export default function ScanPage() {
             </p>
           )}
         </div>
+        </PermissionPrompt>
 
         {/* GPS Location Status card */}
         <div className="w-full max-w-sm bg-card rounded-xl shadow-sm p-4">

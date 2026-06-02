@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer } from 'lucide-react';
 import QRCode from 'qrcode';
 import { Button } from '../../app/components/ui/button';
-import { MOCK_TPAS } from '../../lib/mock-data';
+import { useTPAStore } from '../../store/tpaStore';
 import type { TPA } from '../../types';
 
 interface TPAWithQR extends TPA {
@@ -12,13 +12,16 @@ interface TPAWithQR extends TPA {
 
 export default function PengaturanPage() {
   const navigate = useNavigate();
+  const tpas = useTPAStore((s) => s.tpas);
   const [tpasWithQR, setTpasWithQR] = useState<TPAWithQR[]>(
-    MOCK_TPAS.map((t) => ({ ...t, qrDataUrl: null }))
+    tpas.map((t) => ({ ...t, qrDataUrl: null }))
   );
 
   useEffect(() => {
+    if (tpas.length === 0) return;
+    setTpasWithQR(tpas.map((t) => ({ ...t, qrDataUrl: null })));
     Promise.all(
-      MOCK_TPAS.map(async (tpa) => {
+      tpas.map(async (tpa) => {
         const qrDataUrl = await QRCode.toDataURL(tpa.staticQRCode, {
           width: 300,
           margin: 2,
@@ -27,39 +30,42 @@ export default function PengaturanPage() {
         return { ...tpa, qrDataUrl };
       })
     ).then(setTpasWithQR);
-  }, []);
+  }, [tpas]);
 
   const handlePrintAll = () => window.print();
 
   const handlePrintOne = (tpa: TPAWithQR) => {
     if (!tpa.qrDataUrl) return;
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${tpa.name}</title>
-          <style>
-            body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-            .card { text-align: center; padding: 40px; border: 2px solid #e5e7eb; border-radius: 12px; max-width: 360px; }
-            h1 { font-size: 22px; margin: 0 0 8px; }
-            p { color: #6b7280; margin: 0 0 20px; font-size: 14px; }
-            img { display: block; margin: 0 auto; }
-            .footer { margin-top: 20px; font-size: 12px; color: #9ca3af; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>${tpa.name}</h1>
-            <p>Scan untuk membuka sesi mengajar</p>
-            <img src="${tpa.qrDataUrl}" width="240" height="240" />
-            <div class="footer">UII Ayo Mengajar · ID: ${tpa.staticQRCode}</div>
-          </div>
-          <script>window.onload = () => { window.print(); window.close(); }</script>
-        </body>
-      </html>`;
     const win = window.open('', '_blank');
-    win?.document.write(html);
-    win?.document.close();
+    if (!win) return;
+    const doc = win.document;
+    doc.write('<!DOCTYPE html><html><head>');
+    doc.write(`<title>${tpa.staticQRCode}</title>`);
+    doc.write('<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}.card{text-align:center;padding:40px;border:2px solid #e5e7eb;border-radius:12px;max-width:360px}h1{font-size:22px;margin:0 0 8px}p{color:#6b7280;margin:0 0 20px;font-size:14px}img{display:block;margin:0 auto}.footer{margin-top:20px;font-size:12px;color:#9ca3af}</style></head><body>');
+    const card = doc.createElement('div');
+    card.className = 'card';
+    const h1 = doc.createElement('h1');
+    h1.textContent = tpa.name;
+    card.appendChild(h1);
+    const p = doc.createElement('p');
+    p.textContent = 'Scan untuk membuka sesi mengajar';
+    card.appendChild(p);
+    const img = doc.createElement('img');
+    img.src = tpa.qrDataUrl;
+    img.width = 240;
+    img.height = 240;
+    card.appendChild(img);
+    const footer = doc.createElement('div');
+    footer.className = 'footer';
+    footer.textContent = `UII Ayo Mengajar \u00b7 ID: ${tpa.staticQRCode}`;
+    card.appendChild(footer);
+    doc.body.appendChild(card);
+    const script = doc.createElement('script');
+    script.textContent = 'window.onload=function(){window.print();window.close()}';
+    doc.body.appendChild(script);
+    doc.close();
+    win.print();
+    win.close();
   };
 
   return (

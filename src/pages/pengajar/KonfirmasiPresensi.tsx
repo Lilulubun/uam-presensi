@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
 import { formatTime } from '../../lib/date-utils';
 
@@ -7,6 +7,7 @@ interface ConfirmationState {
   success: boolean;
   type: 'in' | 'out';
   message: string;
+  reason?: string | null;
   data?: {
     scanInTime?: Date;
     scanOutTime?: Date;
@@ -25,15 +26,20 @@ export default function KonfirmasiPresensi() {
     return null;
   }
 
-  const { success, type, message, data } = state;
+  const { success, type, message, reason, data } = state;
   const typeLabel = type === 'in' ? 'Masuk' : 'Keluar';
   const time = type === 'in' ? data?.scanInTime : data?.scanOutTime;
+  const isFirstTeacherAuto = reason === 'FIRST_TEACHER_AUTO';
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm flex flex-col items-center gap-6 text-center">
         {/* Icon */}
-        {success ? (
+        {isFirstTeacherAuto ? (
+          <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
+            <AlertCircle className="w-10 h-10 text-blue-600" />
+          </div>
+        ) : success ? (
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
             <CheckCircle2 className="w-10 h-10 text-green-600" />
           </div>
@@ -46,13 +52,17 @@ export default function KonfirmasiPresensi() {
         {/* Title */}
         <div>
           <h1 className="text-xl font-bold">
-            {success ? `Presensi ${typeLabel} Berhasil!` : 'Presensi Gagal'}
+            {isFirstTeacherAuto
+              ? `Presensi ${typeLabel} Tercatat`
+              : success
+                ? `Presensi ${typeLabel} Berhasil!`
+                : 'Presensi Gagal'}
           </h1>
-          <p className="text-muted-foreground mt-1">{message}</p>
+          <p className="text-muted-foreground mt-1">{message}{isFirstTeacherAuto ? '. Scan diabaikan.' : ''}</p>
         </div>
 
         {/* Details */}
-        {success && data && (
+        {!isFirstTeacherAuto && success && data && (
           <div className="w-full bg-card rounded-xl p-4 shadow-sm text-left space-y-2">
             {time && (
               <div className="flex justify-between text-sm">
@@ -76,7 +86,7 @@ export default function KonfirmasiPresensi() {
           <Button className="w-full" onClick={() => navigate('/pengajar/dashboard')}>
             Kembali ke Dashboard
           </Button>
-          {!success && (
+          {!success && !isFirstTeacherAuto && (
             <Button variant="outline" className="w-full" onClick={() => navigate('/pengajar/scan')}>
               Coba Lagi
             </Button>

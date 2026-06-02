@@ -1,184 +1,118 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { SessionState, Session, ValidationResult } from '../types';
-import { generateDynamicToken } from '../lib/qr-utils';
-import { useAttendanceStore } from './attendanceStore';
+import type { SessionState, Session, ValidationResult, Coordinates } from '../types';
+import { supabase } from '../lib/supabase';
+import { logEvent } from '../lib/log-event';
 
-export const useSessionStore = create<SessionState>()(
-  persist(
-    (set, get) => ({
-      sessions: [],
-      activeSession: null,
+const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
 
-      openSession: async (
-        tpaId: string,
-        userId: string,
-        location: any // Use any temporarily or Coordinates from types
-      ): Promise<ValidationResult> => {
-        const state = get();
+function mapRpcError(error: { message: string } | null): ValidationResult {
+  if (!error) return { valid: false, message: 'Kesalahan tidak diketahui' };
+  return { valid: false, message: error.message };
+}
 
-        // Local lock to mitigate race conditions
-        const lockKey = `session_lock_${tpaId}`;
-        if (localStorage.getItem(lockKey)) {
-          return {
-            valid: false,
-            message: 'Sistem sedang memproses sesi. Silakan coba lagi dalam beberapa detik.',
-          };
-        }
-        localStorage.setItem(lockKey, 'true');
+export const useSessionStore = create<SessionState>((set, get) => ({
+  sessions: [] as Session[],
+  activeSession: null,
+  loading: false,
 
-        try {
-          // Validate: check if TPA already has active session
-          const existingSession = state.sessions.find(
-            (s) => s.tpaId === tpaId && s.isActive
-          );
-
-          if (existingSession) {
-            return {
-              valid: false,
-              message: 'TPA ini sudah memiliki sesi aktif',
-              data: existingSession,
-            };
-          }
-
-          const now = new Date();
-          const sessionId = crypto.randomUUID();
-          const qrToken = generateDynamicToken(sessionId, 'in');
-
-          const newSession: Session = {
-            id: sessionId,
-            tpaId,
-            firstTeacherId: userId,
-            dateOpened: now,
-            isActive: true,
-            qrDynamicInToken: qrToken.token,
-            qrDynamicInExpiry: new Date(qrToken.expiry),
-          };
-
-          set({
-            sessions: [...state.sessions, newSession],
-            activeSession: newSession,
-          });
-
-          // Auto-record first teacher attendance
-          await useAttendanceStore.getState().recordFirstTeacherAttendance(
-            newSession.id,
-            userId,
-            location
-          );
-
-          return {
-            valid: true,
-            message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
-            data: newSession,
-          };
-        } finally {
-          localStorage.removeItem(lockKey);
-        }
-      },
-
-      closeSession: async (sessionId: string): Promise<ValidationResult> => {
-        const state = get();
-        const sessionIndex = state.sessions.findIndex(
-          (s) => s.id === sessionId
-        );
-
-        if (sessionIndex === -1) {
-          return {
-            valid: false,
-            message: 'Sesi tidak ditemukan',
-          };
-        }
-
-        const session = state.sessions[sessionIndex];
-
-        if (!session.isActive) {
-          return {
-            valid: false,
-            message: 'Sesi sudah ditutup',
-          };
-        }
-
-        // PRODUCTION: Supabase RPC
-        // const { error } = await supabase.rpc('close_session', { session_id })
-
-        const now = new Date();
-        const qrToken = generateDynamicToken(sessionId, 'out');
-
-        const updatedSession: Session = {
-          ...session,
-          isActive: false,
-          dateClosed: now,
-          qrDynamicOutToken: qrToken.token,
-          qrDynamicOutExpiry: new Date(qrToken.expiry),
-        };
-
-        const newSessions = [...state.sessions];
-        newSessions[sessionIndex] = updatedSession;
-
-        set({
-          sessions: newSessions,
-          activeSession: null,
-        });
-
-        return {
-          valid: true,
-          message: 'Sesi berhasil ditutup',
-          data: updatedSession,
-        };
-      },
-
-      refreshQRToken: (sessionId: string, type: 'in' | 'out') => {
-        const state = get();
-        const sessionIndex = state.sessions.findIndex(
-          (s) => s.id === sessionId
-        );
-
-        if (sessionIndex === -1) return;
-
-        const session = state.sessions[sessionIndex];
-        // Only refresh QR-in for active sessions; QR-out refreshes for closed sessions
-        if (type === 'in' && !session.isActive) return;
-        if (type === 'out' && session.isActive) return;
-
-        const qrToken = generateDynamicToken(sessionId, type);
-
-        const updatedSession: Session = {
-          ...session,
-          ...(type === 'in'
-            ? {
-                qrDynamicInToken: qrToken.token,
-                qrDynamicInExpiry: new Date(qrToken.expiry),
-              }
-            : {
-                qrDynamicOutToken: qrToken.token,
-                qrDynamicOutExpiry: new Date(qrToken.expiry),
-              }),
-        };
-
-        const newSessions = [...state.sessions];
-        newSessions[sessionIndex] = updatedSession;
-
-        set({ sessions: newSessions });
-
-        // Update activeSession if it's the current one
-        if (state.activeSession?.id === sessionId) {
-          set({ activeSession: updatedSession });
-        }
-      },
-
-      getActiveSessionByTPA: (tpaId: string): Session | null => {
-        return (
-          get().sessions.find((s) => s.tpaId === tpaId && s.isActive) || null
-        );
-      },
-    }),
-    {
-      name: 'uam-sessions',
-      partialize: (state) => ({
-        sessions: state.sessions,
-        activeSession: state.activeSession,
-      }),
+  init: async () => {
+    set({ loading: true });
+    const { data: authData } = await supabase.auth.getUser();
+    const userId = authData?.user?.id;
+    if (!userId) { set({ loading: false }); return; }
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('is_active', true)
+      .eq('first_teacher_id', userId)
+      .maybeSingle();
+    if (data && !error) {
+      set({ sessions: [data as Session], activeSession: data as Session, loading: false });
+    } else {
+      set({ loading: false });
     }
-  )
-);
+  },
+
+  openSession: async (tpaId: string, location: Coordinates): Promise<ValidationResult> => {
+    const { data, error } = await supabase.rpc('open_session', {
+      p_tpa_id: tpaId,
+      p_location: { lat: location.lat, lng: location.lng },
+    });
+    if (error || !data) {
+      if (error?.message?.toLowerCase().includes('not authenticated')) {
+        return { valid: false, message: RPC_NOT_AUTHENTICATED_MSG };
+      }
+      return mapRpcError(error);
+    }
+    const session = data as Session;
+    set((state) => ({
+      sessions: [...state.sessions.filter((s) => s.id !== session.id), session],
+      activeSession: session,
+    }));
+    logEvent('session_opened', session.id);
+    return {
+      valid: true,
+      message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
+      data: session,
+    };
+  },
+
+  closeSession: async (sessionId: string): Promise<ValidationResult> => {
+    const { data, error } = await supabase.rpc('close_session', { p_session_id: sessionId });
+    if (error || !data) return mapRpcError(error);
+    const updated = data as Session;
+    set((state) => ({
+      sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
+      activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
+    }));
+    logEvent('session_closed', sessionId);
+    return { valid: true, message: 'Sesi berhasil ditutup', data: updated };
+  },
+
+  forceCloseSession: async (sessionId: string): Promise<ValidationResult> => {
+    const { data, error } = await supabase.rpc('admin_force_close', { p_session_id: sessionId });
+    if (error || !data) return mapRpcError(error);
+    const updated = data as Session;
+    set((state) => ({
+      sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
+      activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
+    }));
+    return { valid: true, message: 'Sesi berhasil ditutup oleh admin', data: updated };
+  },
+
+  refreshQRToken: async (sessionId: string, type: 'in' | 'out'): Promise<ValidationResult> => {
+    const session = get().sessions.find((s) => s.id === sessionId);
+    if (!session) return { valid: false, message: 'Sesi tidak ditemukan' };
+
+    const expiry = type === 'in' ? session.qrDynamicInExpiry : session.qrDynamicOutExpiry;
+    if (expiry && new Date(expiry).getTime() > Date.now()) {
+      return { valid: true, message: 'Token masih berlaku', data: session };
+    }
+
+    const { data, error } = await supabase.rpc('rotate_qr_token', {
+      p_session_id: sessionId,
+      p_direction: type,
+    });
+    if (error || !data) return mapRpcError(error);
+
+    const { token, expiry: newExpiry } = data as { token: string; expiry: string };
+    set((state) => ({
+      sessions: state.sessions.map((s) => {
+        if (s.id !== sessionId) return s;
+        return type === 'in'
+          ? { ...s, qrDynamicInToken: token, qrDynamicInExpiry: new Date(newExpiry) }
+          : { ...s, qrDynamicOutToken: token, qrDynamicOutExpiry: new Date(newExpiry) };
+      }),
+      activeSession: state.activeSession?.id === sessionId
+        ? (type === 'in'
+            ? { ...state.activeSession, qrDynamicInToken: token, qrDynamicInExpiry: new Date(newExpiry) }
+            : { ...state.activeSession, qrDynamicOutToken: token, qrDynamicOutExpiry: new Date(newExpiry) })
+        : state.activeSession,
+    }));
+    return { valid: true, message: 'Token dirotasi', data: { token, expiry: newExpiry } };
+  },
+
+  getActiveSessionByTPA: (tpaId: string): Session | null => {
+    return get().sessions.find((s) => s.tpaId === tpaId && s.isActive) ?? null;
+  },
+}));

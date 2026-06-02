@@ -1,2 +1,48 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+dist
+dist-ssr
+build
+out
+.vite
+
+# Test / coverage
+coverage
+.nyc_output
+*.lcov
+
+# Editor / OS
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*.tsbuildinfo
+
+# Vercel
 .vercel
+
+# Worktrees (nested git checkouts)
 .worktrees
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Misc
+.eslintcache
+.parcel-cache

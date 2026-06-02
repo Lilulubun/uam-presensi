@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
-import { useSeedData } from './hooks/useSeedData';
+import { useSessionStore } from '../store/sessionStore';
+import { useAttendanceStore } from '../store/attendanceStore';
+import { useTPAStore } from '../store/tpaStore';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -13,11 +16,17 @@ import KonfirmasiPresensi from '../pages/pengajar/KonfirmasiPresensi';
 import RiwayatPage from '../pages/pengajar/RiwayatPage';
 import DashboardPengurus from '../pages/pengurus/DashboardPengurus';
 import TPADetailPage from '../pages/pengurus/TPADetailPage';
+import DetailPengajar from '../pages/pengurus/DetailPengajar';
 import LaporanPage from '../pages/pengurus/LaporanPage';
 import PengaturanPage from '../pages/pengurus/PengaturanPage';
 
 export default function App() {
-  useSeedData();
+  useEffect(() => {
+    useAuthStore.getState().init();
+    useTPAStore.getState().init();
+    useSessionStore.getState().init();
+    useAttendanceStore.getState().init();
+  }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
   );
@@ -61,6 +70,7 @@ export default function App() {
         {/* Admin routes */}
         <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DashboardPengurus /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><TPADetailPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/pengajar/:userId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DetailPengajar /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
 

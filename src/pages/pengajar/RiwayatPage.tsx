@@ -4,8 +4,9 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
-import { getTpaById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
+import { isEarlyExit } from '../../lib/attendance-utils';
 
 export default function RiwayatPage() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export default function RiwayatPage() {
             <ul className="divide-y">
               {attendances.map((attendance) => {
                 const session = sessions.find((s) => s.id === attendance.sessionId);
-                const earlyExit = attendance.scanInTime && !attendance.scanOutTime && session && !session.isActive;
+                const earlyExit = isEarlyExit(attendance, session);
 
                 return (
                   <li key={attendance.id} className="px-4 py-3 flex items-center gap-3">

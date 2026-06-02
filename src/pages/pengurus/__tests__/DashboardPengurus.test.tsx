@@ -5,6 +5,7 @@ import type { Session, Attendance } from '../../../types'
 
 let mockSessions: Session[] = []
 let mockAttendances: Attendance[] = []
+let mockTpas: import('../../../types').TPA[] = []
 const mockLogout = vi.fn()
 const mockNavigate = vi.fn()
 
@@ -33,6 +34,17 @@ vi.mock('../../../store/attendanceStore', () => ({
   },
 }))
 
+vi.mock('../../../store/tpaStore', () => ({
+  useTPAStore: (selector?: any) => {
+    const state = { tpas: mockTpas }
+    return selector ? selector(state) : state
+  },
+}))
+
+vi.mock('../../../app/hooks/useRealtimeSessions', () => ({
+  useRealtimeSessions: () => {},
+}))
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
   return { ...actual, useNavigate: () => mockNavigate }
@@ -53,6 +65,19 @@ describe('DashboardPengurus', () => {
     vi.clearAllMocks()
     mockSessions = []
     mockAttendances = []
+    mockTpas = [
+      { id: 'tpa-001', name: 'TPA Al-Fath', staticQRCode: 'TPA-001', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-002', name: 'TPA Adz-Dzikro', staticQRCode: 'TPA-002', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-003', name: 'TPA Al-Iman', staticQRCode: 'TPA-003', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-004', name: 'TPA Az-Zahra', staticQRCode: 'TPA-004', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-005', name: 'TPA Ananda', staticQRCode: 'TPA-005', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-006', name: 'TPA Al-Muhtadin', staticQRCode: 'TPA-006', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-007', name: 'TPA Sholihin', staticQRCode: 'TPA-007', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-008', name: 'TPA Al-Hidayah Besirejo', staticQRCode: 'TPA-008', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-009', name: 'TPA Al-Hidayah Tanjungsari', staticQRCode: 'TPA-009', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-010', name: 'TPA Ulil Albab', staticQRCode: 'TPA-010', location: { lat: 0, lng: 0, radius: 100 } },
+      { id: 'tpa-011', name: "TPA Al-Jami'", staticQRCode: 'TPA-011', location: { lat: 0, lng: 0, radius: 100 } },
+    ]
   })
 
   it('renders the header with monitoring title', () => {
@@ -115,12 +140,9 @@ describe('DashboardPengurus', () => {
 
   it('shows "Belum ada data presensi" when no attendance data', () => {
     renderComponent()
-    screen.queryByText('Belum ada data presensi')
-    // With MOCK_USERS, teacherStats always has entries (one per teacher),
-    // so the empty state only shows when there are zero pengajar in the system
-    // The table rows render per teacher even with 0 attendances
-    expect(screen.getByText('Budi Santoso')).toBeInTheDocument()
-    expect(screen.getByText('Siti Nurhaliza')).toBeInTheDocument()
+    // Dashboard now derives teacher rows from attendance records (not MOCK_USERS),
+    // so empty attendances = empty teacher table = empty state visible.
+    expect(screen.getByText('Belum ada data presensi')).toBeInTheDocument()
   })
 
   it('shows TPA click navigates to TPA detail page', () => {
@@ -196,7 +218,8 @@ describe('DashboardPengurus', () => {
       { id: 'session-1', tpaId: 'tpa-001', isActive: false, dateOpened: new Date(), firstTeacherId: 'user-001' } as Session,
     ]
     renderComponent()
-    expect(screen.getByText('Budi Santoso')).toBeInTheDocument()
+    // Dashboard derives teacher names from attendance userId until a useUsers() hook is wired (Phase 3.5)
+    expect(screen.getByText('user-001')).toBeInTheDocument();
   })
 
   it('shows 100% compliance for teacher with perfect attendance', () => {

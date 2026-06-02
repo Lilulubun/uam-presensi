@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import {
@@ -17,7 +17,8 @@ import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { MOCK_TPAS, MOCK_USERS } from '../../lib/mock-data';
+import { useTPAStore } from '../../store/tpaStore';
+import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay } from '../../lib/date-utils';
 
 export default function DashboardPengurus() {
@@ -26,13 +27,9 @@ export default function DashboardPengurus() {
   const logout = useAuthStore((s) => s.logout);
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const tpas = useTPAStore((s) => s.tpas);
 
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-
-  useEffect(() => {
-    const interval = setInterval(() => setLastUpdated(new Date()), 10000);
-    return () => clearInterval(interval);
-  }, []);
+  useRealtimeSessions();
 
   const today = new Date();
 
@@ -87,8 +84,17 @@ export default function DashboardPengurus() {
   }, [attendances]);
 
   const teacherStats = useMemo(() => {
-    const teachers = MOCK_USERS.filter((u) => u.role === 'pengajar');
-    return teachers.map((teacher) => {
+    // Teachers are derived from attendance userIds (RLS allows pengurus to read all attendances);
+    // we also need user names + nim, so fetch from public.users via supabase when needed.
+    // For now, derive from attendance records (userId is the FK). Names show as userId until
+    // we wire a useUsers() hook (post-MVP).
+    const byUser = new Map<string, { id: string; name: string; nim?: string }>();
+    for (const a of attendances) {
+      if (!byUser.has(a.userId)) {
+        byUser.set(a.userId, { id: a.userId, name: a.userId.slice(0, 8) });
+      }
+    }
+    return Array.from(byUser.values()).map((teacher) => {
       const myAttendances = attendances.filter((a) => a.userId === teacher.id && a.scanInTime);
       const onTime = myAttendances.filter((a) => !a.isLate).length;
       const late = myAttendances.filter((a) => a.isLate).length;
@@ -111,7 +117,7 @@ export default function DashboardPengurus() {
             <h1 className="font-bold text-lg">UAM Monitoring</h1>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <RefreshCw className="w-3 h-3" />
-              Diperbarui {formatTime(lastUpdated)}
+              Live (Realtime)
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -195,10 +201,10 @@ export default function DashboardPengurus() {
 
         <div>
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Status TPA — {MOCK_TPAS.length} Lokasi
+            Status TPA — {tpas.length} Lokasi
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {MOCK_TPAS.map((tpa) => {
+            {tpas.map((tpa) => {
               const { activeSession, presentCount } = getTPAStats(tpa.id);
               return (
                 <button
@@ -259,7 +265,7 @@ export default function DashboardPengurus() {
               </thead>
               <tbody className="divide-y">
                 {teacherStats.map(({ teacher, total, onTime, late, rate }) => (
-                  <tr key={teacher.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={teacher.id} className="hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold shrink-0">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MapPin, ChevronUp, ChevronDown } from 'lucide-react';
 import { GPS_DEBUG_MODE } from '../../../config';
 import { setDebugLocation } from '../../../lib/gps-utils';
-import { MOCK_TPAS } from '../../../lib/mock-data';
+import { useTPAStore } from '../../../store/tpaStore';
 
 interface GPSDebugPanelProps {
   onLocationChange?: () => void;
@@ -11,6 +11,7 @@ interface GPSDebugPanelProps {
 const OFF_SITE = { label: 'Di Luar Radius (default)', lat: -7.7536, lng: 110.3756 };
 
 export function GPSDebugPanel({ onLocationChange }: GPSDebugPanelProps) {
+  const tpas = useTPAStore((s) => s.tpas);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string>('__off__');
 
@@ -22,7 +23,7 @@ export function GPSDebugPanel({ onLocationChange }: GPSDebugPanelProps) {
     if (id === '__off__') {
       setDebugLocation({ lat: OFF_SITE.lat, lng: OFF_SITE.lng });
     } else {
-      const tpa = MOCK_TPAS.find((t) => t.id === id);
+      const tpa = tpas.find((t) => t.id === id);
       if (tpa) {
         setDebugLocation({ lat: tpa.location.lat, lng: tpa.location.lng });
       }
@@ -35,7 +36,7 @@ export function GPSDebugPanel({ onLocationChange }: GPSDebugPanelProps) {
   const currentLabel =
     selectedId === '__off__'
       ? OFF_SITE.label
-      : (MOCK_TPAS.find((t) => t.id === selectedId)?.name ?? '—');
+      : (tpas.find((t) => t.id === selectedId)?.name ?? '—');
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm">
@@ -61,7 +62,7 @@ export function GPSDebugPanel({ onLocationChange }: GPSDebugPanelProps) {
                 {OFF_SITE.label}
               </button>
             </li>
-            {MOCK_TPAS.map((tpa) => (
+            {tpas.map((tpa) => (
               <li key={tpa.id}>
                 <button
                   onClick={() => handleSelect(tpa.id)}

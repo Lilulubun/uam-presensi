@@ -1,16 +1,38 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
+import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { getTpaById, getUserById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
+import { getUserById } from '../../lib/mock-data';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
-import type { Attendance } from '../../types';
+import { isEarlyExit } from '../../lib/attendance-utils';
+import { logEvent } from '../../lib/log-event';
+import { Button } from '../../app/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '../../app/components/ui/alert-dialog';
+import type { Attendance, Session } from '../../types';
 
 export default function TPADetailPage() {
   const { tpaId } = useParams<{ tpaId: string }>();
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const forceCloseSession = useSessionStore((s) => s.forceCloseSession);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [forceClosing, setForceClosing] = useState(false);
 
   const tpa = getTpaById(tpaId ?? '');
 
@@ -33,6 +55,26 @@ export default function TPADetailPage() {
 
   const activeSession = tpaSessions.find((s) => s.isActive);
   const today = new Date();
+  const isPengurus = user?.role === 'pengurus';
+
+  const handleForceClose = async () => {
+    if (!activeSession) return;
+    setForceClosing(true);
+    try {
+      const result = await forceCloseSession(activeSession.id);
+      if (result.valid) {
+        toast.success('Sesi berhasil ditutup');
+        logEvent('admin_force_close', activeSession.id);
+        setDialogOpen(false);
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Gagal menutup sesi');
+    } finally {
+      setForceClosing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,7 +98,30 @@ export default function TPADetailPage() {
             <p className="text-xs text-green-700">
               Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
             </p>
-            <SessionAttendees sessionId={activeSession.id} attendances={attendances} isActive />
+            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
+
+            {isPengurus && (
+              <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="mt-3" disabled={forceClosing}>
+                    <LogOut className="w-4 h-4 mr-1" />
+                    {forceClosing ? 'Menutup...' : 'Tutup Sesi (Admin)'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tindakan ini akan menutup paksa sesi yang sedang berlangsung. QR presensi keluar akan diaktifkan.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleForceClose}>Tutup</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         )}
 
@@ -77,7 +142,7 @@ export default function TPADetailPage() {
               const presentCount = sessionAttendances.filter((a) => a.scanInTime).length;
               const lateCount = sessionAttendances.filter((a) => a.isLate).length;
               const earlyExitCount = sessionAttendances.filter(
-                (a) => a.scanInTime && !a.scanOutTime && !session.isActive
+                (a) => isEarlyExit(a, session)
               ).length;
               const firstTeacher = getUserById(session.firstTeacherId);
               const isToday = isSameDay(new Date(session.dateOpened), today);
@@ -121,7 +186,7 @@ export default function TPADetailPage() {
                     )}
                   </div>
 
-                  <SessionAttendees sessionId={session.id} attendances={attendances} isActive={session.isActive} />
+                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
                 </div>
               );
             })}
@@ -135,12 +200,13 @@ export default function TPADetailPage() {
 function SessionAttendees({
   sessionId,
   attendances,
-  isActive,
+  session,
 }: {
   sessionId: string;
   attendances: Attendance[];
-  isActive: boolean;
+  session: Session;
 }) {
+  const navigate = useNavigate();
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
   if (sessionAttendances.length === 0) {
@@ -151,7 +217,7 @@ function SessionAttendees({
     <ul className="divide-y">
       {sessionAttendances.map((a) => {
         const teacher = getUserById(a.userId);
-        const earlyExit = a.scanInTime && !a.scanOutTime && !isActive;
+        const earlyExit = isEarlyExit(a, session);
 
         return (
           <li key={a.id} className="px-4 py-2.5 flex items-center gap-3">
@@ -159,7 +225,14 @@ function SessionAttendees({
               {teacher?.name?.charAt(0) ?? '?'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{teacher?.name ?? a.userId}</p>
+              <p className="text-sm font-medium truncate">
+                <button
+                  className="hover:underline text-left"
+                  onClick={() => navigate(`/pengurus/pengajar/${a.userId}`)}
+                >
+                  {teacher?.name ?? a.userId}
+                </button>
+              </p>
               <div className="flex gap-2 text-xs text-muted-foreground">
                 {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                 {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}

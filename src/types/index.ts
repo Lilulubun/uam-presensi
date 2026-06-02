@@ -65,28 +65,41 @@ export interface ValidationResult {
   data?: any;
 }
 
+// check_in RPC composite return type (Task 1.7 / R2)
+export type CheckInReason = 'FIRST_TEACHER_AUTO' | null;
+export interface CheckInResult {
+  attendance: Attendance;
+  reason: CheckInReason;
+}
+
 // Store States
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
+  init: () => Promise<void>;
   login: (email: string, password: string) => Promise<ValidationResult>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 export interface SessionState {
   sessions: Session[];
   activeSession: Session | null;
-  openSession: (tpaId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
+  loading: boolean;
+  init: () => Promise<void>;
+  openSession: (tpaId: string, location: Coordinates) => Promise<ValidationResult>;
   closeSession: (sessionId: string) => Promise<ValidationResult>;
-  refreshQRToken: (sessionId: string, type: 'in' | 'out') => void;
+  forceCloseSession: (sessionId: string) => Promise<ValidationResult>;
+  refreshQRToken: (sessionId: string, type: 'in' | 'out') => Promise<ValidationResult>;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
 }
 
 export interface AttendanceState {
   attendances: Attendance[];
-  recordFirstTeacherAttendance: (sessionId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
-  checkIn: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
-  checkOut: (sessionId: string, userId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
+  loading: boolean;
+  init: () => Promise<void>;
+  checkIn: (sessionId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
+  checkOut: (sessionId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
   getAttendanceBySession: (sessionId: string) => Attendance[];
   getAttendanceByUser: (userId: string) => Attendance[];
 }
