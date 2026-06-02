@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { resolve } from 'node:path';
+
+loadEnv({ path: resolve(process.cwd(), '.env.local') });
 
 const url = process.env.VITE_SUPABASE_URL;
 const secretKey = process.env.SUPABASE_SECRET_KEY;
