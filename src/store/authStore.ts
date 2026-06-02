@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { AuthState, User, ValidationResult } from '../types';
 import { supabase } from '../lib/supabase';
+import { toCamelCase } from '../lib/transform';
 
 const INDONESIAN_AUTH_ERROR = 'Email atau password salah';
 
@@ -11,7 +12,7 @@ async function fetchProfile(userId: string): Promise<User | null> {
     .eq('id', userId)
     .single();
   if (error || !data) return null;
-  return data as User;
+  return toCamelCase<User>(data);
 }
 
 export const useAuthStore = create<AuthState>((set) => ({

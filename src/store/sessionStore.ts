@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { SessionState, Session, ValidationResult, Coordinates } from '../types';
 import { supabase } from '../lib/supabase';
 import { logEvent } from '../lib/log-event';
+import { toCamelCase } from '../lib/transform';
 
 const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
 
@@ -27,7 +28,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       .eq('first_teacher_id', userId)
       .maybeSingle();
     if (data && !error) {
-      set({ sessions: [data as Session], activeSession: data as Session, loading: false });
+      const s = toCamelCase<Session>(data);
+      set({ sessions: [s], activeSession: s, loading: false });
     } else {
       set({ loading: false });
     }
@@ -44,7 +46,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       }
       return mapRpcError(error);
     }
-    const session = data as Session;
+    const session = toCamelCase<Session>(data);
     set((state) => ({
       sessions: [...state.sessions.filter((s) => s.id !== session.id), session],
       activeSession: session,
@@ -60,7 +62,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   closeSession: async (sessionId: string): Promise<ValidationResult> => {
     const { data, error } = await supabase.rpc('close_session', { p_session_id: sessionId });
     if (error || !data) return mapRpcError(error);
-    const updated = data as Session;
+    const updated = toCamelCase<Session>(data);
     set((state) => ({
       sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
@@ -72,7 +74,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   forceCloseSession: async (sessionId: string): Promise<ValidationResult> => {
     const { data, error } = await supabase.rpc('admin_force_close', { p_session_id: sessionId });
     if (error || !data) return mapRpcError(error);
-    const updated = data as Session;
+    const updated = toCamelCase<Session>(data);
     set((state) => ({
       sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
