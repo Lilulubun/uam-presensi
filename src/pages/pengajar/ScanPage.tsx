@@ -55,7 +55,7 @@ export default function ScanPage() {
           }
 
           const location = await getCurrentLocation();
-          const result = await openSession(tpa.id, user!.id, location);
+          const result = await openSession(tpa.id, location);
 
           if (result.valid) {
             toast.success(`Sesi dibuka di ${tpa.name}! Anda pengajar pertama.`);

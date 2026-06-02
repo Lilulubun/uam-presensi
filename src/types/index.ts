@@ -85,9 +85,11 @@ export interface AuthState {
 export interface SessionState {
   sessions: Session[];
   activeSession: Session | null;
-  openSession: (tpaId: string, userId: string, location: Coordinates) => Promise<ValidationResult>;
+  loading: boolean;
+  init: () => Promise<void>;
+  openSession: (tpaId: string, location: Coordinates) => Promise<ValidationResult>;
   closeSession: (sessionId: string) => Promise<ValidationResult>;
-  refreshQRToken: (sessionId: string, type: 'in' | 'out') => void;
+  refreshQRToken: (sessionId: string, type: 'in' | 'out') => Promise<ValidationResult>;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
 }
 
