@@ -6,7 +6,7 @@ import { ENABLE_MOCK_AUTH } from '../config';
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
 

@@ -3,16 +3,17 @@ import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
 import { useSeedData } from './hooks/useSeedData';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from '../pages/LoginPage';
 import DashboardPengajar from '../pages/pengajar/DashboardPengajar';
 import ScanPage from '../pages/pengajar/ScanPage';
 import SessionActivePage from '../pages/pengajar/SessionActivePage';
 import KonfirmasiPresensi from '../pages/pengajar/KonfirmasiPresensi';
 import RiwayatPage from '../pages/pengajar/RiwayatPage';
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import TPADetailPage from '../pages/admin/TPADetailPage';
-import ReportsPage from '../pages/admin/ReportsPage';
-import SetupPage from '../pages/admin/SetupPage';
+import DashboardPengurus from '../pages/pengurus/DashboardPengurus';
+import TPADetailPage from '../pages/pengurus/TPADetailPage';
+import LaporanPage from '../pages/pengurus/LaporanPage';
+import PengaturanPage from '../pages/pengurus/PengaturanPage';
 
 export default function App() {
   useSeedData();
@@ -28,7 +29,7 @@ export default function App() {
           path="/login"
           element={
             isAuthenticated ? (
-              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/admin/dashboard'} replace />
+              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
             ) : (
               <LoginPage />
             )
@@ -40,7 +41,7 @@ export default function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/admin/dashboard'} replace />
+              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -48,17 +49,17 @@ export default function App() {
         />
 
         {/* Teacher routes */}
-        <Route path="/pengajar/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><DashboardPengajar /></ProtectedRoute>} />
-        <Route path="/pengajar/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ScanPage /></ProtectedRoute>} />
-        <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><SessionActivePage /></ProtectedRoute>} />
-        <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><KonfirmasiPresensi /></ProtectedRoute>} />
-        <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><RiwayatPage /></ProtectedRoute>} />
+        <Route path="/pengajar/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><DashboardPengajar /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><ScanPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><SessionActivePage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><KonfirmasiPresensi /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><RiwayatPage /></ErrorBoundary></ProtectedRoute>} />
 
         {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><TPADetailPage /></ProtectedRoute>} />
-        <Route path="/admin/reports" element={<ProtectedRoute allowedRoles={['pengurus']}><ReportsPage /></ProtectedRoute>} />
-        <Route path="/admin/setup" element={<ProtectedRoute allowedRoles={['pengurus']}><SetupPage /></ProtectedRoute>} />
+        <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DashboardPengurus /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><TPADetailPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

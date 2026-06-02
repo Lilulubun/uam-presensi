@@ -10,7 +10,7 @@ export const APP_CONFIG = {
 export const ENABLE_MOCK_AUTH = true;
 
 // GPS Debug Mode
-export const GPS_DEBUG_MODE = false; // Set to false in production to enforce GPS validation
+export const GPS_DEBUG_MODE = true; // TODO: set false for production
 export const GPS_MOCK_COORDS = {
   lat: -7.7536,
   lng: 110.3756,

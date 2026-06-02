@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import type { User, Session, Attendance } from '../../../types'
+import type { Session, Attendance } from '../../../types'
 
 // Shared mutable state for mocks
 let mockAttendances: Attendance[] = []
@@ -147,5 +147,55 @@ describe('DashboardPengajar', () => {
       logoutButton.parentElement.click()
       expect(mockLogout).toHaveBeenCalled()
     }
+  })
+
+  it('shows checked-out status when scanOutTime is present', () => {
+    mockAttendances = [
+      {
+        id: 'att-1', sessionId: 'session-1', userId: 'user-001',
+        scanInTime: new Date(), scanOutTime: new Date(),
+        isLate: false, lateMinutes: 0,
+      } as Attendance,
+    ]
+    renderComponent()
+    expect(screen.getByText('Presensi Selesai')).toBeInTheDocument()
+  })
+
+  it('shows scan-out time when present', () => {
+    const now = new Date()
+    mockAttendances = [
+      {
+        id: 'att-1', sessionId: 'session-1', userId: 'user-001',
+        scanInTime: now, scanOutTime: now,
+        isLate: false, lateMinutes: 0,
+      } as Attendance,
+    ]
+    renderComponent()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    expect(screen.getByText(new RegExp(`Keluar pukul ${hours}:${minutes}`))).toBeInTheDocument()
+  })
+
+  it('does not show scan-out time when scanOutTime is absent', () => {
+    mockAttendances = [
+      {
+        id: 'att-1', sessionId: 'session-1', userId: 'user-001',
+        scanInTime: new Date(), scanOutTime: undefined,
+        isLate: false, lateMinutes: 0,
+      } as Attendance,
+    ]
+    renderComponent()
+    expect(screen.queryByText(/Keluar pukul/)).not.toBeInTheDocument()
+  })
+
+  it('does not show late badge when isLate is false', () => {
+    mockAttendances = [
+      {
+        id: 'att-1', sessionId: 'session-1', userId: 'user-001',
+        scanInTime: new Date(), isLate: false, lateMinutes: 0,
+      } as Attendance,
+    ]
+    renderComponent()
+    expect(screen.queryByText(/terlambat/i)).not.toBeInTheDocument()
   })
 })

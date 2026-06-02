@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { SessionState, Session, ValidationResult } from '../types';
-import { generateDynamicToken, isTokenExpired } from '../lib/qr-utils';
+import { generateDynamicToken } from '../lib/qr-utils';
 import { useAttendanceStore } from './attendanceStore';
 
 export const useSessionStore = create<SessionState>()(
@@ -42,10 +42,11 @@ export const useSessionStore = create<SessionState>()(
           }
 
           const now = new Date();
-          const qrToken = generateDynamicToken(crypto.randomUUID(), 'in');
+          const sessionId = crypto.randomUUID();
+          const qrToken = generateDynamicToken(sessionId, 'in');
 
           const newSession: Session = {
-            id: crypto.randomUUID(),
+            id: sessionId,
             tpaId,
             firstTeacherId: userId,
             dateOpened: now,

@@ -28,7 +28,7 @@ export default function LoginPage() {
         if (user?.role === 'pengajar') {
           navigate('/pengajar/dashboard');
         } else {
-          navigate('/admin/dashboard');
+          navigate('/pengurus/dashboard');
         }
       } else {
         toast.error(result.message || 'Login gagal');

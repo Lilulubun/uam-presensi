@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useQRScanner } from '../../hooks/useQRScanner';
-import { Loader2, Camera, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 interface QRScannerProps {
   onScan: (text: string) => void;
@@ -12,7 +12,6 @@ const SCANNER_ELEMENT_ID = 'html5-qrcode-element';
 
 export function QRScanner({ onScan, onError, disabled = false }: QRScannerProps) {
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
 
   const handleError = (msg: string) => {
     setCameraError(msg);
