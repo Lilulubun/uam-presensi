@@ -3,6 +3,7 @@ import { ArrowLeft, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../lib/mock-data';
 import { formatDate, formatTime } from '../../lib/date-utils';
 
@@ -10,10 +11,12 @@ export default function RiwayatPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const sessions = useSessionStore((s) => s.sessions);
-  const attendances = useAttendanceStore((s) =>
-    s.attendances
-      .filter((a) => a.userId === user?.id && a.scanInTime)
-      .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())
+  const attendances = useAttendanceStore(
+    useShallow((s) =>
+      s.attendances
+        .filter((a) => a.userId === user?.id && a.scanInTime)
+        .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())
+    )
   );
 
   const getTPAName = (sessionId: string) => {
