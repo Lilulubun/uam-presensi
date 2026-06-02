@@ -78,8 +78,9 @@ export default function ScanPage() {
         if (token.type === 'in') {
           const result = await checkIn(token.sessionId, token.token, location);
           if (result.valid) {
+            const reason = (result.data as { reason?: string | null })?.reason ?? null;
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
-              state: { success: true, type: 'in', message: result.message, data: result.data },
+              state: { success: true, type: 'in', message: result.message, reason, data: result.data },
             }));
           } else {
             toast.error(result.message);
