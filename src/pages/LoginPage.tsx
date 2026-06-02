@@ -93,8 +93,8 @@ export default function LoginPage() {
           <div className="mt-6 p-4 bg-muted rounded-md text-sm">
             <p className="font-semibold mb-2">Demo Credentials:</p>
             <div className="space-y-1 text-muted-foreground">
-              <p>Pengajar: budi@uii.ac.id / password</p>
-              <p>Pengurus: pengurus@uii.ac.id / admin</p>
+              <p>Pengajar: budi@uii.ac.id / ulilalbab</p>
+              <p>Pengurus: admin@uam.id / admindppai</p>
             </div>
           </div>
         </div>

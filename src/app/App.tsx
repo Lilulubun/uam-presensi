@@ -1,7 +1,7 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
-import { useSeedData } from './hooks/useSeedData';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -17,7 +17,9 @@ import LaporanPage from '../pages/pengurus/LaporanPage';
 import PengaturanPage from '../pages/pengurus/PengaturanPage';
 
 export default function App() {
-  useSeedData();
+  useEffect(() => {
+    useAuthStore.getState().init();
+  }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
   );

@@ -76,8 +76,10 @@ export interface CheckInResult {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
+  init: () => Promise<void>;
   login: (email: string, password: string) => Promise<ValidationResult>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 export interface SessionState {
