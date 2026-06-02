@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { SessionState, Session, ValidationResult, Coordinates } from '../types';
 import { supabase } from '../lib/supabase';
+import { logEvent } from '../lib/log-event';
 
 const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
 
@@ -48,6 +49,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       sessions: [...state.sessions.filter((s) => s.id !== session.id), session],
       activeSession: session,
     }));
+    logEvent('session_opened', session.id);
     return {
       valid: true,
       message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
@@ -63,6 +65,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
     }));
+    logEvent('session_closed', sessionId);
     return { valid: true, message: 'Sesi berhasil ditutup', data: updated };
   },
 

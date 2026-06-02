@@ -1,8 +1,16 @@
 import { create } from 'zustand';
 import type { AttendanceState, Attendance, Coordinates, ValidationResult, CheckInResult } from '../types';
 import { supabase } from '../lib/supabase';
+import { logEvent } from '../lib/log-event';
 
-function errorResult(message: string): ValidationResult {
+function errorResult(message: string, sessionId?: string): ValidationResult {
+  if (sessionId) {
+    if (/radius/i.test(message)) {
+      logEvent('scan_in_gps_denied', sessionId, { error: message });
+    } else if (/tidak valid|kadaluarsa/i.test(message)) {
+      logEvent('qr_expired', sessionId, { error: message });
+    }
+  }
   return { valid: false, message };
 }
 
@@ -34,13 +42,14 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
       p_location: { lat: location.lat, lng: location.lng },
     });
     if (error || !data) {
-      return errorResult(error?.message ?? 'Gagal melakukan presensi masuk');
+      return errorResult(error?.message ?? 'Gagal melakukan presensi masuk', sessionId);
     }
     const { attendance, reason } = data as CheckInResult;
     if (reason !== 'FIRST_TEACHER_AUTO') {
       set((state) => ({
         attendances: [...state.attendances.filter((a) => a.id !== attendance.id), attendance],
       }));
+      logEvent('scan_in_success', sessionId);
     }
     return {
       valid: true,

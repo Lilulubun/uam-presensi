@@ -9,6 +9,7 @@ import { getTpaById } from '../../store/tpaStore';
 import { getUserById } from '../../lib/mock-data';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
+import { logEvent } from '../../lib/log-event';
 import { Button } from '../../app/components/ui/button';
 import {
   AlertDialog,
@@ -63,6 +64,7 @@ export default function TPADetailPage() {
       const result = await forceCloseSession(activeSession.id);
       if (result.valid) {
         toast.success('Sesi berhasil ditutup');
+        logEvent('admin_force_close', activeSession.id);
         setDialogOpen(false);
       } else {
         toast.error(result.message);
