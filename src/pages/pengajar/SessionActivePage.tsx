@@ -7,6 +7,7 @@ import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { useShallow } from 'zustand/react/shallow';
 import { getTpaById, getUserById } from '../../lib/mock-data';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 
@@ -16,8 +17,8 @@ export default function SessionActivePage() {
   const user = useAuthStore((s) => s.user);
   const closeSession = useSessionStore((s) => s.closeSession);
   const session = useSessionStore((s) => s.sessions.find((x) => x.id === sessionId));
-  const attendances = useAttendanceStore((s) =>
-    s.attendances.filter((a) => a.sessionId === sessionId)
+  const attendances = useAttendanceStore(
+    useShallow((s) => s.attendances.filter((a) => a.sessionId === sessionId))
   );
   const [closing, setClosing] = useState(false);
 

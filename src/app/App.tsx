@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { useAuthStore } from '../store/authStore';
 import { useSeedData } from './hooks/useSeedData';
+import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from '../pages/LoginPage';
@@ -17,7 +18,9 @@ import PengaturanPage from '../pages/pengurus/PengaturanPage';
 
 export default function App() {
   useSeedData();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore(
+    useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
+  );
 
   return (
     <BrowserRouter>

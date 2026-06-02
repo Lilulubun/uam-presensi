@@ -59,7 +59,7 @@ export default function ScanPage() {
 
           if (result.valid) {
             toast.success(`Sesi dibuka di ${tpa.name}! Anda pengajar pertama.`);
-            navigate(`/pengajar/session/${result.data.id}`);
+            queueMicrotask(() => navigate(`/pengajar/session/${result.data.id}`));
           } else {
             toast.error(result.message);
           }
@@ -78,18 +78,18 @@ export default function ScanPage() {
         if (token.type === 'in') {
           const result = await checkIn(token.sessionId, user!.id, token.token, location);
           if (result.valid) {
-            navigate('/pengajar/konfirmasi', {
+            queueMicrotask(() => navigate('/pengajar/konfirmasi', {
               state: { success: true, type: 'in', message: result.message, data: result.data },
-            });
+            }));
           } else {
             toast.error(result.message);
           }
         } else {
           const result = await checkOut(token.sessionId, user!.id, token.token, location);
           if (result.valid) {
-            navigate('/pengajar/konfirmasi', {
+            queueMicrotask(() => navigate('/pengajar/konfirmasi', {
               state: { success: true, type: 'out', message: result.message, data: result.data },
-            });
+            }));
           } else {
             toast.error(result.message);
           }
