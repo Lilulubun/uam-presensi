@@ -65,6 +65,13 @@ export interface ValidationResult {
   data?: any;
 }
 
+// check_in RPC composite return type (Task 1.7 / R2)
+export type CheckInReason = 'FIRST_TEACHER_AUTO' | null;
+export interface CheckInResult {
+  attendance: Attendance;
+  reason: CheckInReason;
+}
+
 // Store States
 export interface AuthState {
   user: User | null;
