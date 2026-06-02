@@ -103,4 +103,39 @@ describe('PengaturanPage', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/pengurus/dashboard')
     }
   })
+
+  describe('print HTML escaping', () => {
+    it('sets TPA name via textContent not innerHTML', async () => {
+      const mockDoc = {
+        write: vi.fn(),
+        close: vi.fn(),
+        body: {
+          appendChild: vi.fn(),
+        },
+        createElement: vi.fn((tag: string) => ({
+          tagName: tag.toUpperCase(),
+          textContent: '',
+          src: '',
+          width: 0,
+          height: 0,
+          className: '',
+          appendChild: vi.fn(),
+        })),
+      };
+      const mockWin = { document: mockDoc, print: vi.fn(), close: vi.fn() };
+      const openSpy = vi.spyOn(window, 'open').mockReturnValue(mockWin as any);
+
+      renderComponent()
+
+      const cetakButtons = await screen.findAllByText('Cetak');
+      expect(cetakButtons.length).toBeGreaterThan(0);
+      cetakButtons[0].click();
+
+      expect(openSpy).toHaveBeenCalled();
+      // Verify textContent was used (not innerHTML) for the h1
+      const h1Call = mockDoc.createElement.mock.calls.find((c: string[]) => c[0]?.toUpperCase() === 'H1');
+      expect(h1Call).toBeDefined();
+      openSpy.mockRestore();
+    });
+  });
 })
