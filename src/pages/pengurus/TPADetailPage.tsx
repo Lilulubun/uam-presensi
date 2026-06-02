@@ -204,6 +204,7 @@ function SessionAttendees({
   attendances: Attendance[];
   session: Session;
 }) {
+  const navigate = useNavigate();
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
   if (sessionAttendances.length === 0) {
@@ -222,7 +223,14 @@ function SessionAttendees({
               {teacher?.name?.charAt(0) ?? '?'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{teacher?.name ?? a.userId}</p>
+              <p className="text-sm font-medium truncate">
+                <button
+                  className="hover:underline text-left"
+                  onClick={() => navigate(`/pengurus/pengajar/${a.userId}`)}
+                >
+                  {teacher?.name ?? a.userId}
+                </button>
+              </p>
               <div className="flex gap-2 text-xs text-muted-foreground">
                 {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                 {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}

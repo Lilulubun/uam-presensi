@@ -16,6 +16,7 @@ import KonfirmasiPresensi from '../pages/pengajar/KonfirmasiPresensi';
 import RiwayatPage from '../pages/pengajar/RiwayatPage';
 import DashboardPengurus from '../pages/pengurus/DashboardPengurus';
 import TPADetailPage from '../pages/pengurus/TPADetailPage';
+import DetailPengajar from '../pages/pengurus/DetailPengajar';
 import LaporanPage from '../pages/pengurus/LaporanPage';
 import PengaturanPage from '../pages/pengurus/PengaturanPage';
 
@@ -69,6 +70,7 @@ export default function App() {
         {/* Admin routes */}
         <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DashboardPengurus /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><TPADetailPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/pengajar/:userId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DetailPengajar /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
 

@@ -265,7 +265,7 @@ export default function DashboardPengurus() {
               </thead>
               <tbody className="divide-y">
                 {teacherStats.map(({ teacher, total, onTime, late, rate }) => (
-                  <tr key={teacher.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={teacher.id} className="hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold shrink-0">
