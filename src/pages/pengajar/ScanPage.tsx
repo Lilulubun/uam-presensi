@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
 import { QRScanner } from '../../app/components/qr/QRScanner';
+import PermissionPrompt from '../../app/components/gps/PermissionPrompt';
 import { GPSDebugPanel } from '../../app/components/gps/GPSDebugPanel';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useAuthStore } from '../../store/authStore';
@@ -120,10 +121,11 @@ export default function ScanPage() {
       </header>
 
       <main className="flex-1 flex flex-col items-center gap-5 p-4 pt-6">
-        {/* Scanner */}
-        <div className={`w-full flex flex-col items-center gap-4 transition-opacity ${processing ? 'opacity-50' : 'opacity-100'}`}>
-          <QRScanner onScan={handleScan} onError={handleCameraError} />
-          {processing ? (
+        {/* Scanner — gated behind GPS permission prompt */}
+        <PermissionPrompt>
+          <div className={`w-full flex flex-col items-center gap-4 transition-opacity ${processing ? 'opacity-50' : 'opacity-100'}`}>
+            <QRScanner onScan={handleScan} onError={handleCameraError} />
+            {processing ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
               Memproses...
@@ -134,6 +136,7 @@ export default function ScanPage() {
             </p>
           )}
         </div>
+        </PermissionPrompt>
 
         {/* GPS Location Status card */}
         <div className="w-full max-w-sm bg-card rounded-xl shadow-sm p-4">
