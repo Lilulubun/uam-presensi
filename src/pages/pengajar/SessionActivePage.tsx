@@ -4,6 +4,17 @@ import { toast } from 'sonner';
 import { ArrowLeft, Users, Clock, CheckCircle2, LogOut } from 'lucide-react';
 import { QRDisplay } from '../../app/components/qr/QRDisplay';
 import { Button } from '../../app/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '../../app/components/ui/alert-dialog';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
@@ -22,6 +33,7 @@ export default function SessionActivePage() {
     useShallow((s) => s.attendances.filter((a) => a.sessionId === sessionId))
   );
   const [closing, setClosing] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   if (!session) {
     return (
@@ -166,15 +178,26 @@ export default function SessionActivePage() {
 
         {/* Close session button — only for first teacher while session is active */}
         {isFirstTeacher && session.isActive && (
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={handleCloseSession}
-            disabled={closing}
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            {closing ? 'Menutup Sesi...' : 'Tutup Sesi'}
-          </Button>
+          <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full" disabled={closing}>
+                <LogOut className="w-4 h-4 mr-2" />
+                {closing ? 'Menutup Sesi...' : 'Tutup Sesi'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  QR presensi keluar akan diaktifkan dan sesi tidak dapat dibuka kembali.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleCloseSession}>Tutup</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
 
         {!session.isActive && (
