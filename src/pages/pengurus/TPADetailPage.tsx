@@ -8,6 +8,7 @@ import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { getUserById } from '../../lib/mock-data';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
+import { isEarlyExit } from '../../lib/attendance-utils';
 import { Button } from '../../app/components/ui/button';
 import {
   AlertDialog,
@@ -20,7 +21,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '../../app/components/ui/alert-dialog';
-import type { Attendance } from '../../types';
+import type { Attendance, Session } from '../../types';
 
 export default function TPADetailPage() {
   const { tpaId } = useParams<{ tpaId: string }>();
@@ -95,7 +96,7 @@ export default function TPADetailPage() {
             <p className="text-xs text-green-700">
               Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
             </p>
-            <SessionAttendees sessionId={activeSession.id} attendances={attendances} isActive />
+            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
 
             {isPengurus && (
               <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -139,7 +140,7 @@ export default function TPADetailPage() {
               const presentCount = sessionAttendances.filter((a) => a.scanInTime).length;
               const lateCount = sessionAttendances.filter((a) => a.isLate).length;
               const earlyExitCount = sessionAttendances.filter(
-                (a) => a.scanInTime && !a.scanOutTime && !session.isActive
+                (a) => isEarlyExit(a, session)
               ).length;
               const firstTeacher = getUserById(session.firstTeacherId);
               const isToday = isSameDay(new Date(session.dateOpened), today);
@@ -183,7 +184,7 @@ export default function TPADetailPage() {
                     )}
                   </div>
 
-                  <SessionAttendees sessionId={session.id} attendances={attendances} isActive={session.isActive} />
+                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
                 </div>
               );
             })}
@@ -197,11 +198,11 @@ export default function TPADetailPage() {
 function SessionAttendees({
   sessionId,
   attendances,
-  isActive,
+  session,
 }: {
   sessionId: string;
   attendances: Attendance[];
-  isActive: boolean;
+  session: Session;
 }) {
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
@@ -213,7 +214,7 @@ function SessionAttendees({
     <ul className="divide-y">
       {sessionAttendances.map((a) => {
         const teacher = getUserById(a.userId);
-        const earlyExit = a.scanInTime && !a.scanOutTime && !isActive;
+        const earlyExit = isEarlyExit(a, session);
 
         return (
           <li key={a.id} className="px-4 py-2.5 flex items-center gap-3">

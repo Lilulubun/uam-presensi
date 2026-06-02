@@ -10,6 +10,7 @@ import { MOCK_USERS, getUserById } from '../../lib/mock-data';
 import { getTpaById } from '../../store/tpaStore';
 import { format } from 'date-fns';
 import { formatDate, formatTime } from '../../lib/date-utils';
+import { isEarlyExit } from '../../lib/attendance-utils';
 
 interface ReportRow {
   Tanggal: string;
@@ -52,7 +53,7 @@ function buildRows(
       const session = sessions.find((s) => s.id === a.sessionId)!;
       const tpa = getTpaById(session.tpaId);
       const teacher = getUserById(a.userId);
-      const earlyExit = !!(a.scanInTime && !a.scanOutTime && !session.isActive);
+      const earlyExit = isEarlyExit(a, session);
 
       return {
         Tanggal: a.scanInTime ? formatDate(new Date(a.scanInTime)) : '-',
