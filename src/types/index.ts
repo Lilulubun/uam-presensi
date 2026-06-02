@@ -89,6 +89,7 @@ export interface SessionState {
   init: () => Promise<void>;
   openSession: (tpaId: string, location: Coordinates) => Promise<ValidationResult>;
   closeSession: (sessionId: string) => Promise<ValidationResult>;
+  forceCloseSession: (sessionId: string) => Promise<ValidationResult>;
   refreshQRToken: (sessionId: string, type: 'in' | 'out') => Promise<ValidationResult>;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
 }

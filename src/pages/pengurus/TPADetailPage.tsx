@@ -1,17 +1,36 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
+import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { getUserById } from '../../lib/mock-data';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
+import { Button } from '../../app/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '../../app/components/ui/alert-dialog';
 import type { Attendance } from '../../types';
 
 export default function TPADetailPage() {
   const { tpaId } = useParams<{ tpaId: string }>();
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const forceCloseSession = useSessionStore((s) => s.forceCloseSession);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [forceClosing, setForceClosing] = useState(false);
 
   const tpa = getTpaById(tpaId ?? '');
 
@@ -34,6 +53,25 @@ export default function TPADetailPage() {
 
   const activeSession = tpaSessions.find((s) => s.isActive);
   const today = new Date();
+  const isPengurus = user?.role === 'pengurus';
+
+  const handleForceClose = async () => {
+    if (!activeSession) return;
+    setForceClosing(true);
+    try {
+      const result = await forceCloseSession(activeSession.id);
+      if (result.valid) {
+        toast.success('Sesi berhasil ditutup');
+        setDialogOpen(false);
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Gagal menutup sesi');
+    } finally {
+      setForceClosing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,6 +96,29 @@ export default function TPADetailPage() {
               Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
             </p>
             <SessionAttendees sessionId={activeSession.id} attendances={attendances} isActive />
+
+            {isPengurus && (
+              <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="mt-3" disabled={forceClosing}>
+                    <LogOut className="w-4 h-4 mr-1" />
+                    {forceClosing ? 'Menutup...' : 'Tutup Sesi (Admin)'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tindakan ini akan menutup paksa sesi yang sedang berlangsung. QR presensi keluar akan diaktifkan.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleForceClose}>Tutup</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         )}
 

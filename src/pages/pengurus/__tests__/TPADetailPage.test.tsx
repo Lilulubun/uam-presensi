@@ -1,22 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import type { Session, Attendance } from '../../../types'
 
 let mockSessions: Session[] = []
 let mockAttendances: Attendance[] = []
+let mockUser: { id: string; name: string; email: string; role: 'pengurus' | 'pengajar' } = { id: 'user-admin', name: 'Rahma Dewi', email: 'pengurus@uii.ac.id', role: 'pengurus' }
 const mockNavigate = vi.fn()
+const mockForceCloseSession = vi.fn()
 
 vi.mock('../../../store/authStore', () => ({
   useAuthStore: (selector?: any) => {
-    const state = { user: { id: 'user-admin', name: 'Rahma Dewi', email: 'pengurus@uii.ac.id', role: 'pengurus' as const } }
+    const state = { user: mockUser }
     return selector ? selector(state) : state
   },
 }))
 
 vi.mock('../../../store/sessionStore', () => ({
   useSessionStore: (selector?: any) => {
-    const state = { sessions: mockSessions }
+    const state = { sessions: mockSessions, forceCloseSession: mockForceCloseSession }
     return selector ? selector(state) : state
   },
 }))
@@ -75,6 +77,7 @@ describe('TPADetailPage', () => {
     vi.clearAllMocks()
     mockSessions = []
     mockAttendances = []
+    mockUser = { id: 'user-admin', name: 'Rahma Dewi', email: 'pengurus@uii.ac.id', role: 'pengurus' as const }
     lastAttendancesRef = null
     lastSelectorResult = []
   })
@@ -142,5 +145,66 @@ describe('TPADetailPage', () => {
     expect(backButton).toBeInTheDocument()
     backButton.click()
     expect(mockNavigate).toHaveBeenCalledWith('/pengurus/dashboard')
+  })
+
+  describe('Admin force-close', () => {
+    it('shows "Tutup Sesi (Admin)" button for pengurus when active session exists', () => {
+      mockSessions = [
+        {
+          id: 'session-1', tpaId: 'tpa-001',
+          dateOpened: new Date(), firstTeacherId: 'user-001',
+          isActive: true,
+        } as Session,
+      ]
+      renderWithRoute()
+      expect(screen.getByRole('button', { name: /Tutup Sesi.*Admin/ })).toBeInTheDocument()
+    })
+
+    it('does not show admin close button for non-pengurus users', () => {
+      mockUser = { ...mockUser, role: 'pengajar' }
+      mockSessions = [
+        {
+          id: 'session-1', tpaId: 'tpa-001',
+          dateOpened: new Date(), firstTeacherId: 'user-001',
+          isActive: true,
+        } as Session,
+      ]
+      renderWithRoute()
+      expect(screen.queryByRole('button', { name: /Tutup Sesi.*Admin/ })).not.toBeInTheDocument()
+    })
+
+    it('opens confirmation dialog when admin close button is clicked', () => {
+      mockSessions = [
+        {
+          id: 'session-1', tpaId: 'tpa-001',
+          dateOpened: new Date(), firstTeacherId: 'user-001',
+          isActive: true,
+        } as Session,
+      ]
+      renderWithRoute()
+      fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi.*Admin/ }))
+      expect(screen.getByText('Tutup sesi?')).toBeInTheDocument()
+    })
+
+    it('calls forceCloseSession when confirmed', () => {
+      mockForceCloseSession.mockResolvedValue({ valid: true, message: 'Sesi berhasil ditutup' })
+      mockSessions = [
+        {
+          id: 'session-1', tpaId: 'tpa-001',
+          dateOpened: new Date(), firstTeacherId: 'user-001',
+          isActive: true,
+        } as Session,
+      ]
+      renderWithRoute()
+      fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi.*Admin/ }))
+      const confirmButton = screen.getByRole('button', { name: /^Tutup$/ })
+      fireEvent.click(confirmButton)
+      expect(mockForceCloseSession).toHaveBeenCalledWith('session-1')
+    })
+
+    it('does not show admin close button when no active session', () => {
+      renderWithRoute()
+      expect(screen.queryByRole('button', { name: /Tutup Sesi.*Admin/ })).not.toBeInTheDocument()
+    })
   })
 })

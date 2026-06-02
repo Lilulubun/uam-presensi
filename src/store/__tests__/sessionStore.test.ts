@@ -130,6 +130,30 @@ describe('useSessionStore (Supabase-backed)', () => {
     });
   });
 
+  describe('forceCloseSession()', () => {
+    beforeEach(() => {
+      useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });
+    });
+
+    it('calls admin_force_close RPC and clears activeSession on success', async () => {
+      const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
+      mockRpc.mockResolvedValue({ data: closed, error: null });
+      const result = await useSessionStore.getState().forceCloseSession(fakeSession.id);
+      expect(mockRpc).toHaveBeenCalledWith('admin_force_close', { p_session_id: fakeSession.id });
+      expect(result.valid).toBe(true);
+      expect(result.message).toBe('Sesi berhasil ditutup oleh admin');
+      expect(useSessionStore.getState().activeSession).toBeNull();
+    });
+
+    it('surfaces server error when not authorized (non-pengurus)', async () => {
+      mockRpc.mockResolvedValue({ data: null, error: { message: 'forbidden' } });
+      const result = await useSessionStore.getState().forceCloseSession(fakeSession.id);
+      expect(result.valid).toBe(false);
+      expect(result.message).toBe('forbidden');
+      expect(useSessionStore.getState().activeSession).not.toBeNull();
+    });
+  });
+
   describe('refreshQRToken()', () => {
     beforeEach(() => {
       useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });

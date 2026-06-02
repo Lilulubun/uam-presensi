@@ -66,6 +66,17 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     return { valid: true, message: 'Sesi berhasil ditutup', data: updated };
   },
 
+  forceCloseSession: async (sessionId: string): Promise<ValidationResult> => {
+    const { data, error } = await supabase.rpc('admin_force_close', { p_session_id: sessionId });
+    if (error || !data) return mapRpcError(error);
+    const updated = data as Session;
+    set((state) => ({
+      sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
+      activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
+    }));
+    return { valid: true, message: 'Sesi berhasil ditutup oleh admin', data: updated };
+  },
+
   refreshQRToken: async (sessionId: string, type: 'in' | 'out'): Promise<ValidationResult> => {
     const session = get().sessions.find((s) => s.id === sessionId);
     if (!session) return { valid: false, message: 'Sesi tidak ditemukan' };
