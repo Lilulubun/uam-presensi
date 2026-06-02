@@ -34,7 +34,8 @@ async function main() {
     const found = existingByEmail.get(u.email);
     if (found) {
       userId = found.id;
-      console.log(`exists: ${u.email} (${userId})`);
+      await supabase.auth.admin.updateUserById(userId, { password: u.password });
+      console.log(`exists: ${u.email} (${userId}) — password updated`);
     } else {
       const { data, error } = await supabase.auth.admin.createUser({
         email: u.email,
