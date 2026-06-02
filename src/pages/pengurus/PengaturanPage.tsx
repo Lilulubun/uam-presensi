@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer } from 'lucide-react';
 import QRCode from 'qrcode';
 import { Button } from '../../app/components/ui/button';
-import { MOCK_TPAS } from '../../lib/mock-data';
+import { useTPAStore } from '../../store/tpaStore';
 import type { TPA } from '../../types';
 
 interface TPAWithQR extends TPA {
@@ -12,13 +12,16 @@ interface TPAWithQR extends TPA {
 
 export default function PengaturanPage() {
   const navigate = useNavigate();
+  const tpas = useTPAStore((s) => s.tpas);
   const [tpasWithQR, setTpasWithQR] = useState<TPAWithQR[]>(
-    MOCK_TPAS.map((t) => ({ ...t, qrDataUrl: null }))
+    tpas.map((t) => ({ ...t, qrDataUrl: null }))
   );
 
   useEffect(() => {
+    if (tpas.length === 0) return;
+    setTpasWithQR(tpas.map((t) => ({ ...t, qrDataUrl: null })));
     Promise.all(
-      MOCK_TPAS.map(async (tpa) => {
+      tpas.map(async (tpa) => {
         const qrDataUrl = await QRCode.toDataURL(tpa.staticQRCode, {
           width: 300,
           margin: 2,
@@ -27,7 +30,7 @@ export default function PengaturanPage() {
         return { ...tpa, qrDataUrl };
       })
     ).then(setTpasWithQR);
-  }, []);
+  }, [tpas]);
 
   const handlePrintAll = () => window.print();
 

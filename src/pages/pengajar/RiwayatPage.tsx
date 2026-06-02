@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
-import { getTpaById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
 
 export default function RiwayatPage() {

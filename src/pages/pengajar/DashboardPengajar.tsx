@@ -7,7 +7,7 @@ import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { getTpaById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 
 export default function DashboardPengajar() {

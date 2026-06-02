@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Coordinates } from '../../types';
 import { getCurrentLocation, findNearestTPA } from '../../lib/gps-utils';
-import { MOCK_TPAS } from '../../lib/mock-data';
+import { useTPAStore } from '../../store/tpaStore';
 
 type LocationState =
   | { status: 'idle' }
@@ -16,6 +16,7 @@ interface NearestTPA {
 }
 
 export function useWatchLocation(autoFetch = true) {
+  const tpas = useTPAStore((s) => s.tpas);
   const [locationState, setLocationState] = useState<LocationState>({ status: 'idle' });
   const [nearestTPA, setNearestTPA] = useState<NearestTPA | null>(null);
 
@@ -25,9 +26,9 @@ export function useWatchLocation(autoFetch = true) {
       const coords = await getCurrentLocation();
       setLocationState({ status: 'ready', coords });
 
-      const nearest = findNearestTPA(coords, MOCK_TPAS);
+      const nearest = findNearestTPA(coords, tpas);
       if (nearest) {
-        const tpa = MOCK_TPAS.find((t) => t.id === nearest.tpaId);
+        const tpa = tpas.find((t) => t.id === nearest.tpaId);
         setNearestTPA({
           name: tpa?.name ?? '',
           distance: nearest.distance,
@@ -39,7 +40,7 @@ export function useWatchLocation(autoFetch = true) {
       setLocationState({ status: 'error', message });
       setNearestTPA(null);
     }
-  }, []);
+  }, [tpas]);
 
   useEffect(() => {
     if (autoFetch) {

@@ -48,24 +48,24 @@ describe('useTPAStore (Supabase-backed)', () => {
     });
   });
 
-  describe('getTPAById()', () => {
+  describe('getTpaById()', () => {
     it('returns the matching TPA from cache', async () => {
       mockTpasSelect.mockResolvedValue({ data: tpas, error: null });
       await useTPAStore.getState().init();
-      const got = useTPAStore.getState().getTPAById('tpa-002');
+      const got = useTPAStore.getState().getTpaById('tpa-002');
       expect(got?.name).toBe('TPA Adz-Dzikro');
     });
 
     it('returns undefined when not found', () => {
-      expect(useTPAStore.getState().getTPAById('nope')).toBeUndefined();
+      expect(useTPAStore.getState().getTpaById('nope')).toBeUndefined();
     });
   });
 
-  describe('getTPAByStaticQR()', () => {
+  describe('getTpaByStaticQR()', () => {
     it('returns the matching TPA by static QR code', async () => {
       mockTpasSelect.mockResolvedValue({ data: tpas, error: null });
       await useTPAStore.getState().init();
-      const got = useTPAStore.getState().getTPAByStaticQR('TPA-001');
+      const got = useTPAStore.getState().getTpaByStaticQR('TPA-001');
       expect(got?.id).toBe('tpa-001');
     });
   });

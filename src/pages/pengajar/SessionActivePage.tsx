@@ -8,7 +8,8 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
-import { getTpaById, getUserById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
+import { getUserById } from '../../lib/mock-data';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 
 export default function SessionActivePage() {

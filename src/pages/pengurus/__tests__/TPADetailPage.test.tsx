@@ -43,6 +43,21 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate }
 })
 
+vi.mock('../../../store/tpaStore', () => {
+  const tpas = [
+    { id: 'tpa-001', name: 'TPA Al-Fath', staticQRCode: 'TPA-001', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-002', name: 'TPA Adz-Dzikro', staticQRCode: 'TPA-002', location: { lat: 0, lng: 0, radius: 100 } },
+  ];
+  return {
+    useTPAStore: (selector?: any) => {
+      const state = { tpas, getTpaById: (id: string) => tpas.find((t) => t.id === id) };
+      return selector ? selector(state) : state;
+    },
+    getTpaById: (id: string) => tpas.find((t) => t.id === id),
+    getTpaByStaticQR: (qr: string) => tpas.find((t) => t.staticQRCode === qr),
+  };
+})
+
 import TPADetailPage from '../TPADetailPage'
 
 function renderWithRoute(tpaId: string = 'tpa-001') {

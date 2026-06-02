@@ -6,8 +6,8 @@ interface TPAState {
   tpas: TPA[];
   loading: boolean;
   init: () => Promise<void>;
-  getTPAById: (id: string) => TPA | undefined;
-  getTPAByStaticQR: (qrCode: string) => TPA | undefined;
+  getTpaById: (id: string) => TPA | undefined;
+  getTpaByStaticQR: (qrCode: string) => TPA | undefined;
 }
 
 export const useTPAStore = create<TPAState>((set, get) => ({
@@ -24,8 +24,14 @@ export const useTPAStore = create<TPAState>((set, get) => ({
     }
   },
 
-  getTPAById: (id: string) => get().tpas.find((t) => t.id === id),
+  getTpaById: (id: string) => get().tpas.find((t) => t.id === id),
 
-  getTPAByStaticQR: (qrCode: string) =>
+  getTpaByStaticQR: (qrCode: string) =>
     get().tpas.find((t) => t.staticQRCode === qrCode),
 }));
+
+export const getTpaById = (id: string): TPA | undefined =>
+  useTPAStore.getState().tpas.find((t) => t.id === id);
+
+export const getTpaByStaticQR = (qrCode: string): TPA | undefined =>
+  useTPAStore.getState().tpas.find((t) => t.staticQRCode === qrCode);

@@ -2,7 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { getTpaById, getUserById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
+import { getUserById } from '../../lib/mock-data';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import type { Attendance } from '../../types';
 

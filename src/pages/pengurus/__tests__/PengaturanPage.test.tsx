@@ -22,6 +22,30 @@ vi.mock('qrcode', () => ({
   },
 }))
 
+vi.mock('../../../store/tpaStore', () => {
+  const tpas = [
+    { id: 'tpa-001', name: 'TPA Al-Fath', staticQRCode: 'TPA-001', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-002', name: 'TPA Adz-Dzikro', staticQRCode: 'TPA-002', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-003', name: 'TPA Al-Iman', staticQRCode: 'TPA-003', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-004', name: 'TPA Az-Zahra', staticQRCode: 'TPA-004', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-005', name: 'TPA Ananda', staticQRCode: 'TPA-005', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-006', name: 'TPA Al-Muhtadin', staticQRCode: 'TPA-006', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-007', name: 'TPA Sholihin', staticQRCode: 'TPA-007', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-008', name: 'TPA Al-Hidayah Besirejo', staticQRCode: 'TPA-008', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-009', name: 'TPA Al-Hidayah Tanjungsari', staticQRCode: 'TPA-009', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-010', name: 'TPA Ulil Albab', staticQRCode: 'TPA-010', location: { lat: 0, lng: 0, radius: 100 } },
+    { id: 'tpa-011', name: "TPA Al-Jami'", staticQRCode: 'TPA-011', location: { lat: 0, lng: 0, radius: 100 } },
+  ];
+  return {
+    useTPAStore: (selector?: any) => {
+      const state = { tpas, getTpaById: (id: string) => tpas.find((t) => t.id === id) };
+      return selector ? selector(state) : state;
+    },
+    getTpaById: (id: string) => tpas.find((t) => t.id === id),
+    getTpaByStaticQR: (qr: string) => tpas.find((t) => t.staticQRCode === qr),
+  };
+})
+
 import PengaturanPage from '../PengaturanPage'
 
 function renderComponent() {

@@ -5,7 +5,9 @@ import * as XLSX from 'xlsx';
 import { Button } from '../../app/components/ui/button';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { MOCK_TPAS, MOCK_USERS, getTpaById, getUserById } from '../../lib/mock-data';
+import { useTPAStore } from '../../store/tpaStore';
+import { MOCK_USERS, getUserById } from '../../lib/mock-data';
+import { getTpaById } from '../../store/tpaStore';
 import { format } from 'date-fns';
 import { formatDate, formatTime } from '../../lib/date-utils';
 
@@ -81,6 +83,7 @@ export default function LaporanPage() {
   const navigate = useNavigate();
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const tpas = useTPAStore((s) => s.tpas);
 
   const now = new Date();
   const today = format(now, 'yyyy-MM-dd');
@@ -165,7 +168,7 @@ export default function LaporanPage() {
                 className="text-sm border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
               >
                 <option value="">Semua TPA</option>
-                {MOCK_TPAS.map((t) => (
+                {tpas.map((t) => (
                   <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
