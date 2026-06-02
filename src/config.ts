@@ -9,8 +9,8 @@ export const APP_CONFIG = {
 // Mock Authentication
 export const ENABLE_MOCK_AUTH = true;
 
-// GPS Debug Mode
-export const GPS_DEBUG_MODE = true; // TODO: set false for production
+// GPS Debug Mode — env-gated, default off
+export const GPS_DEBUG_MODE = import.meta.env.VITE_GPS_DEBUG === 'true';
 export const GPS_MOCK_COORDS = {
   lat: -7.7536,
   lng: 110.3756,
