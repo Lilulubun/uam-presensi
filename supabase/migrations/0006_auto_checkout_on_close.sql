@@ -13,6 +13,7 @@ as $$
 declare
   v_user uuid := auth.uid();
   v_session public.sessions;
+  v_tpa public.tpas;
   v_token text := encode(extensions.gen_random_bytes(16), 'hex');
   v_expiry timestamptz := now() + interval '20 seconds';
 begin
@@ -22,6 +23,13 @@ begin
     raise exception 'Hanya Pengajar Pertama yang dapat menutup sesi';
   end if;
   if not v_session.is_active then raise exception 'Sesi sudah ditutup'; end if;
+
+  if p_location is not null then
+    select * into v_tpa from public.tpas where id = v_session.tpa_id;
+    if public.haversine_m(p_location, v_tpa.location) > (v_tpa.location->>'radius')::float then
+      raise exception 'Anda berada di luar radius TPA';
+    end if;
+  end if;
 
   update public.sessions
   set is_active = false,

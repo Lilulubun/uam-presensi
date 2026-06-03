@@ -9,7 +9,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
-import { getCurrentLocation } from '../../lib/gps-utils';
+import { getCurrentLocation, calculateDistance } from '../../lib/gps-utils';
 import { decodeQRData, isValidStaticQRCode } from '../../lib/qr-utils';
 import { getTpaByStaticQR } from '../../store/tpaStore';
 
@@ -55,6 +55,13 @@ export default function ScanPage() {
           }
 
           const location = await getCurrentLocation();
+
+          const distance = calculateDistance(location, tpa.location);
+          if (distance > tpa.location.radius) {
+            toast.error(`Anda berada di luar radius ${tpa.name}`);
+            return;
+          }
+
           const result = await openSession(tpa.id, location);
 
           if (result.valid) {
