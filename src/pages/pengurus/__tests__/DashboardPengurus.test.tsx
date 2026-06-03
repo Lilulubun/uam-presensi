@@ -218,8 +218,7 @@ describe('DashboardPengurus', () => {
       { id: 'session-1', tpaId: 'tpa-001', isActive: false, dateOpened: new Date(), firstTeacherId: 'user-001' } as Session,
     ]
     renderComponent()
-    // Dashboard derives teacher names from attendance userId until a useUsers() hook is wired (Phase 3.5)
-    expect(screen.getByText('user-001')).toBeInTheDocument();
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
   })
 
   it('shows 100% compliance for teacher with perfect attendance', () => {

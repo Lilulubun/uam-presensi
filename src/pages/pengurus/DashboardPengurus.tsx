@@ -18,6 +18,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useTPAStore } from '../../store/tpaStore';
+import { getUserById } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay } from '../../lib/date-utils';
 
@@ -84,14 +85,15 @@ export default function DashboardPengurus() {
   }, [attendances]);
 
   const teacherStats = useMemo(() => {
-    // Teachers are derived from attendance userIds (RLS allows pengurus to read all attendances);
-    // we also need user names + nim, so fetch from public.users via supabase when needed.
-    // For now, derive from attendance records (userId is the FK). Names show as userId until
-    // we wire a useUsers() hook (post-MVP).
     const byUser = new Map<string, { id: string; name: string; nim?: string }>();
     for (const a of attendances) {
       if (!byUser.has(a.userId)) {
-        byUser.set(a.userId, { id: a.userId, name: a.userId.slice(0, 8) });
+        const user = getUserById(a.userId);
+        byUser.set(a.userId, {
+          id: a.userId,
+          name: user?.name ?? 'Unknown',
+          nim: user?.nim,
+        });
       }
     }
     return Array.from(byUser.values()).map((teacher) => {

@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-const { mockRpc, mockSessionsSelect, mockGetUser, resetMocks } = vi.hoisted(() => {
+let sessionsData: any = [];
+
+const { mockRpc, mockGetUser, resetMocks } = vi.hoisted(() => {
   const mockRpc = vi.fn();
-  const mockSessionsSelect = vi.fn();
   const mockGetUser = vi.fn().mockResolvedValue({ data: { user: { id: 'user-uuid-1' } }, error: null });
   const resetMocks = () => {
     mockRpc.mockReset();
-    mockSessionsSelect.mockReset();
     mockGetUser.mockReset();
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-uuid-1' } }, error: null });
+    sessionsData = [];
   };
-  return { mockRpc, mockSessionsSelect, mockGetUser, resetMocks };
+  return { mockRpc, mockGetUser, resetMocks };
 });
 
 vi.mock('../../lib/supabase', () => ({
@@ -21,10 +22,8 @@ vi.mock('../../lib/supabase', () => ({
       if (table === 'sessions') {
         return {
           select: () => ({
-            eq: () => ({
-              eq: () => ({
-                maybeSingle: mockSessionsSelect,
-              }),
+            order: () => ({
+              then: (resolve: (v: any) => void) => resolve({ data: sessionsData, error: null }),
             }),
           }),
         };
@@ -73,7 +72,7 @@ describe('useSessionStore (Supabase-backed)', () => {
 
   describe('init()', () => {
     it('populates activeSession when the user has an open session', async () => {
-      mockSessionsSelect.mockResolvedValue({ data: fakeSession, error: null });
+      sessionsData = [fakeSession];
       await useSessionStore.getState().init();
       const { activeSession } = useSessionStore.getState();
       expect(activeSession?.id).toBe('session-uuid-1');
@@ -81,7 +80,7 @@ describe('useSessionStore (Supabase-backed)', () => {
     });
 
     it('leaves activeSession null when no open session', async () => {
-      mockSessionsSelect.mockResolvedValue({ data: null, error: null });
+      sessionsData = [];
       await useSessionStore.getState().init();
       expect(useSessionStore.getState().activeSession).toBeNull();
     });

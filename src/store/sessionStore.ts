@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { SessionState, Session, ValidationResult, Coordinates } from '../types';
 import { supabase } from '../lib/supabase';
 import { logEvent } from '../lib/log-event';
-import { toCamelCase } from '../lib/transform';
+import { toCamelCase, toCamelCaseArray } from '../lib/transform';
 import { useAttendanceStore } from './attendanceStore';
 
 const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
@@ -25,12 +25,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const { data, error } = await supabase
       .from('sessions')
       .select('*')
-      .eq('is_active', true)
-      .eq('first_teacher_id', userId)
-      .maybeSingle();
+      .order('date_opened', { ascending: false });
     if (data && !error) {
-      const s = toCamelCase<Session>(data);
-      set({ sessions: [s], activeSession: s, loading: false });
+      const sessions = toCamelCaseArray<Session>(data);
+      const activeSession = sessions.find((s) => s.isActive && s.firstTeacherId === userId) ?? null;
+      set({ sessions, activeSession, loading: false });
     } else {
       set({ loading: false });
     }
