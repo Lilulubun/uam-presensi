@@ -10,7 +10,7 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { getCurrentLocation, calculateDistance } from '../../lib/gps-utils';
-import { decodeQRData, isValidStaticQRCode } from '../../lib/qr-utils';
+import { decodeQRData } from '../../lib/qr-utils';
 import { getTpaByStaticQR } from '../../store/tpaStore';
 
 interface ActiveSessionInfo {
@@ -39,14 +39,9 @@ export default function ScanPage() {
       setProcessing(true);
 
       try {
-        // Static QR: TPA-001 format
-        if (isValidStaticQRCode(text)) {
-          const tpa = getTpaByStaticQR(text);
-          if (!tpa) {
-            toast.error('TPA tidak ditemukan');
-            return;
-          }
-
+        // Static QR: try lookup by TPA's static QR code
+        const tpa = getTpaByStaticQR(text);
+        if (tpa) {
           const existingSession = getActiveSessionByTPA(tpa.id);
 
           if (existingSession) {
