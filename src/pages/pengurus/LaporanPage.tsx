@@ -24,18 +24,60 @@ interface ReportRow {
   'Pulang Awal': string;
 }
 
+function sortRows(rows: ReportRow[], column: string | null, direction: 'asc' | 'desc' | null): ReportRow[] {
+  if (!column || !direction) {
+    return rows.sort((a, b) => b.Tanggal.localeCompare(a.Tanggal));
+  }
+
+  return rows.sort((a, b) => {
+    let cmp: number;
+    switch (column) {
+      case 'Tanggal':
+        cmp = a.Tanggal.localeCompare(b.Tanggal);
+        break;
+      case 'TPA':
+        cmp = a.TPA.localeCompare(b.TPA);
+        break;
+      case 'Pengajar':
+        cmp = a.Pengajar.localeCompare(b.Pengajar);
+        break;
+      case 'Jam Masuk':
+        cmp = a['Jam Masuk'].localeCompare(b['Jam Masuk']);
+        break;
+      case 'Jam Keluar':
+        cmp = a['Jam Keluar'].localeCompare(b['Jam Keluar']);
+        break;
+      case 'Status': {
+        const order = (s: string) => {
+          if (s.startsWith('Pulang Awal')) return 2;
+          if (s.startsWith('Terlambat')) return 1;
+          return 0;
+        };
+        cmp = order(a.Status) - order(b.Status);
+        if (cmp === 0) cmp = a.Status.localeCompare(b.Status);
+        break;
+      }
+      default:
+        cmp = 0;
+    }
+    return direction === 'asc' ? cmp : -cmp;
+  });
+}
+
 function buildRows(
   attendances: ReturnType<typeof useAttendanceStore.getState>['attendances'],
   sessions: ReturnType<typeof useSessionStore.getState>['sessions'],
   dateFrom: string,
   dateTo: string,
   tpaFilter: string,
-  teacherFilter: string
+  teacherFilter: string,
+  sortColumn: string | null,
+  sortDirection: 'asc' | 'desc' | null
 ): ReportRow[] {
   const from = dateFrom ? new Date(dateFrom) : null;
   const to = dateTo ? new Date(dateTo + 'T23:59:59') : null;
 
-  return attendances
+  const mapped = attendances
     .filter((a) => {
       if (!a.scanInTime) return false;
       const session = sessions.find((s) => s.id === a.sessionId);
@@ -66,8 +108,9 @@ function buildRows(
         'Terlambat (menit)': a.lateMinutes ?? 0,
         'Pulang Awal': earlyExit ? 'Ya' : 'Tidak',
       };
-    })
-    .sort((a, b) => b.Tanggal.localeCompare(a.Tanggal));
+    });
+
+  return sortRows(mapped, sortColumn, sortDirection);
 }
 
 function downloadBlob(content: string, filename: string, mime: string) {
@@ -94,10 +137,24 @@ export default function LaporanPage() {
   const [dateTo, setDateTo] = useState(today);
   const [tpaFilter, setTpaFilter] = useState('');
   const [teacherFilter, setTeacherFilter] = useState('');
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
+
+  function handleSort(column: string) {
+    if (sortColumn !== column) {
+      setSortColumn(column);
+      setSortDirection('asc');
+    } else if (sortDirection === 'asc') {
+      setSortDirection('desc');
+    } else {
+      setSortColumn(null);
+      setSortDirection(null);
+    }
+  }
 
   const rows = useMemo(
-    () => buildRows(attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter),
-    [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter]
+    () => buildRows(attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection),
+    [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection]
   );
 
   const teachers = useUsersStore(
@@ -245,12 +302,18 @@ export default function LaporanPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Tanggal</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">TPA</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Pengajar</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Masuk</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Keluar</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Status</th>
+                    {(['Tanggal', 'TPA', 'Pengajar', 'Jam Masuk', 'Jam Keluar', 'Status'] as const).map((col) => (
+                      <th
+                        key={col}
+                        className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap cursor-pointer select-none hover:text-foreground transition-colors"
+                        onClick={() => handleSort(col)}
+                      >
+                        {col === 'Jam Masuk' ? 'Masuk' : col === 'Jam Keluar' ? 'Keluar' : col}
+                        {sortColumn === col && (
+                          <span className="ml-1">{sortDirection === 'asc' ? '\u25B2' : '\u25BC'}</span>
+                        )}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y">
