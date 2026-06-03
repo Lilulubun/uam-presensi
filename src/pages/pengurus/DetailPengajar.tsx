@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { getUserById } from '../../lib/mock-data';
+import { getUserById } from '../../store/userStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 

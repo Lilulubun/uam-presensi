@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { useSessionStore } from '../store/sessionStore';
 import { useAttendanceStore } from '../store/attendanceStore';
 import { useTPAStore } from '../store/tpaStore';
+import { useUsersStore } from '../store/userStore';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -26,6 +27,7 @@ export default function App() {
     useTPAStore.getState().init();
     useSessionStore.getState().init();
     useAttendanceStore.getState().init();
+    useUsersStore.getState().init();
   }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))

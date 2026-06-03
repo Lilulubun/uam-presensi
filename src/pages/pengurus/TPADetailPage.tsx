@@ -6,7 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
-import { getUserById } from '../../lib/mock-data';
+import { getUserById } from '../../store/userStore';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 import { logEvent } from '../../lib/log-event';

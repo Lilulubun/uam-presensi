@@ -21,7 +21,7 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
-import { getUserById } from '../../lib/mock-data';
+import { getUserById } from '../../store/userStore';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 
 export default function SessionActivePage() {

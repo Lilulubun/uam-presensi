@@ -5,9 +5,8 @@ import * as XLSX from 'xlsx';
 import { Button } from '../../app/components/ui/button';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { useTPAStore } from '../../store/tpaStore';
-import { MOCK_USERS, getUserById } from '../../lib/mock-data';
-import { getTpaById } from '../../store/tpaStore';
+import { useTPAStore, getTpaById } from '../../store/tpaStore';
+import { getUserById, useUsersStore } from '../../store/userStore';
 import { format } from 'date-fns';
 import { formatDate, formatTime } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
@@ -100,7 +99,7 @@ export default function LaporanPage() {
     [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter]
   );
 
-  const teachers = MOCK_USERS.filter((u) => u.role === 'pengajar');
+  const teachers = useUsersStore((s) => s.users.filter((u) => u.role === 'pengajar'));
 
   const exportCSV = () => {
     if (rows.length === 0) return;

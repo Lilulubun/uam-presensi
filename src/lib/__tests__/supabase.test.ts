@@ -12,13 +12,17 @@ describe('supabase client', () => {
   it('throws when VITE_SUPABASE_URL is missing', async () => {
     vi.stubEnv('VITE_SUPABASE_URL', '');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key');
-    await expect(import('../supabase')).rejects.toThrow('Supabase env not configured');
+    vi.stubEnv('VITE_DEMO_MODE', 'false');
+    const mod = await import('../supabase');
+    expect(() => mod.supabase.from).toThrow('Supabase env not configured');
   });
 
   it('throws when VITE_SUPABASE_ANON_KEY is missing', async () => {
     vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', '');
-    await expect(import('../supabase')).rejects.toThrow('Supabase env not configured');
+    vi.stubEnv('VITE_DEMO_MODE', 'false');
+    const mod = await import('../supabase');
+    expect(() => mod.supabase.from).toThrow('Supabase env not configured');
   });
 
   it('exports a non-null client when env vars are set', async () => {

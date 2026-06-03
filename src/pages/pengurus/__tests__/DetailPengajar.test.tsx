@@ -36,7 +36,7 @@ vi.mock('../../../store/attendanceStore', () => ({
   },
 }))
 
-vi.mock('../../../lib/mock-data', () => ({
+vi.mock('../../../store/userStore', () => ({
   getUserById: (id: string) => {
     const users: Record<string, any> = {
       'user-001': { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },

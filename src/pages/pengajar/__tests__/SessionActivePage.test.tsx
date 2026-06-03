@@ -45,8 +45,12 @@ vi.mock('../../../store/tpaStore', () => ({
   getTpaById: () => ({ id: 'tpa-001', name: 'TPA Al-Fath' }),
 }))
 
-vi.mock('../../../lib/mock-data', () => ({
+vi.mock('../../../store/userStore', () => ({
   getUserById: () => ({ id: 'user-001', name: 'Budi Santoso' }),
+  useUsersStore: (selector?: any) => {
+    const state = { users: [{ id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar' }], loading: false }
+    return selector ? selector(state) : state
+  },
 }))
 
 vi.mock('../../../lib/date-utils', () => ({
