@@ -43,6 +43,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# AI tool config (generated)
+.claude
+.opencode
+
+# Imported design assets
+src/imports/
+
 # Misc
 .eslintcache
 .parcel-cache

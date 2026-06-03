@@ -82,9 +82,4 @@ export async function generateQRCodeImage(token: QRToken): Promise<string> {
   }
 }
 
-/**
- * Validate static QR code format (TPA-XXX)
- */
-export function isValidStaticQRCode(qrCode: string): boolean {
-  return /^TPA-\d{3}$/.test(qrCode);
-}
+

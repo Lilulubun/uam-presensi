@@ -8,7 +8,7 @@ interface UserState {
   init: () => Promise<void>;
 }
 
-export const useUsersStore = create<UserState>((set, get) => ({
+export const useUsersStore = create<UserState>((set) => ({
   users: [] as User[],
   loading: false,
 

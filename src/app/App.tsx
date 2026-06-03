@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from './components/ui/sonner';
+import { Toaster } from 'sonner';
 import { useAuthStore } from '../store/authStore';
 import { useSessionStore } from '../store/sessionStore';
 import { useAttendanceStore } from '../store/attendanceStore';
