@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, FileSpreadsheet, FileJson } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '../../app/components/ui/button';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
@@ -99,7 +100,9 @@ export default function LaporanPage() {
     [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter]
   );
 
-  const teachers = useUsersStore((s) => s.users.filter((u) => u.role === 'pengajar'));
+  const teachers = useUsersStore(
+    useShallow((s) => s.users.filter((u) => u.role === 'pengajar'))
+  );
 
   const exportCSV = () => {
     if (rows.length === 0) return;
