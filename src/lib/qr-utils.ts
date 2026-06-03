@@ -2,11 +2,7 @@ import QRCode from 'qrcode';
 import type { QRToken } from '../types';
 import { APP_CONFIG } from '../config';
 
-/**
- * Generate a dynamic QR token for check-in or check-out
- * PROTOTYPE: Uses crypto.randomUUID() - predictable
- * PRODUCTION: Use server-side JWT with signature
- */
+/** Generate a dynamic QR token for check-in or check-out */
 export function generateDynamicToken(
   sessionId: string,
   type: 'in' | 'out'
@@ -33,8 +29,6 @@ export function isTokenExpired(expiry: number): boolean {
  * Encode QR token data to string for QR code generation
  */
 export function encodeQRData(token: QRToken): string {
-  // PROTOTYPE: Simple JSON encoding
-  // PRODUCTION: Use signed JWT
   return JSON.stringify({
     t: token.token,
     s: token.sessionId,

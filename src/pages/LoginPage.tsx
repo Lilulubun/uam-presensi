@@ -88,16 +88,6 @@ export default function LoginPage() {
               {loading ? 'Memuat...' : 'Masuk'}
             </Button>
           </form>
-
-          {import.meta.env.VITE_DEMO_MODE === 'true' && (
-            <div className="mt-6 p-4 bg-muted rounded-md text-sm">
-              <p className="font-semibold mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-muted-foreground">
-                <p>Pengajar: budi@uii.ac.id / ulilalbab</p>
-                <p>Pengurus: admin@uam.id / admindppai</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

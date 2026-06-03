@@ -1,16 +1,4 @@
 import type { Coordinates } from '../types';
-import { GPS_DEBUG_MODE, GPS_MOCK_COORDS } from '../config';
-
-// Runtime-overridable mock location for debug/testing
-let _debugLocation: Coordinates = GPS_MOCK_COORDS;
-
-export function setDebugLocation(coords: Coordinates): void {
-  _debugLocation = coords;
-}
-
-export function getDebugLocation(): Coordinates {
-  return _debugLocation;
-}
 
 /**
  * Calculate distance between two GPS coordinates using Haversine formula
@@ -43,12 +31,6 @@ export function isWithinRadius(
   targetLocation: Coordinates,
   radiusMeters: number
 ): boolean {
-  if (GPS_DEBUG_MODE) {
-    console.warn('⚠️ GPS_DEBUG_MODE is ACTIVE: Bypassing GPS validation!');
-    return true; // Bypass GPS validation in debug mode
-  }
-
-
   const distance = calculateDistance(userLocation, targetLocation);
   return distance <= radiusMeters;
 }
@@ -57,10 +39,6 @@ export function isWithinRadius(
  * Get current GPS location from browser (or mock in debug mode)
  */
 export function getCurrentLocation(): Promise<Coordinates> {
-  if (GPS_DEBUG_MODE) {
-    return Promise.resolve({ ..._debugLocation });
-  }
-
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation tidak didukung oleh browser Anda'));

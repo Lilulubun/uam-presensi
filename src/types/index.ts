@@ -16,7 +16,6 @@ export interface User {
   name: string;
   role: 'pengajar' | 'pengurus';
   nim?: string;
-  password?: string; // For mock auth only
 }
 
 export interface Session {

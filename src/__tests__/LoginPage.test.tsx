@@ -62,7 +62,7 @@ describe('LoginPage', () => {
       expect(screen.queryByText('Demo Credentials:')).not.toBeInTheDocument();
     });
 
-    it('is shown when VITE_DEMO_MODE is "true"', async () => {
+    it('is never shown — banner removed for production', async () => {
       vi.stubEnv('VITE_DEMO_MODE', 'true');
       const { default: LoginPage } = await import('../pages/LoginPage');
       render(
@@ -70,7 +70,7 @@ describe('LoginPage', () => {
           <LoginPage />
         </MemoryRouter>
       );
-      expect(screen.getByText('Demo Credentials:')).toBeInTheDocument();
+      expect(screen.queryByText('Demo Credentials:')).not.toBeInTheDocument();
     });
   });
 });

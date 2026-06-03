@@ -22,11 +22,14 @@ console.log('Test 1: anonymous select on tpas (RLS allows authenticated read)');
   }
 }
 
+const TEST_PASSWORD = process.env.TEST_PASSWORD ?? '';
+if (!TEST_PASSWORD) throw new Error('TEST_PASSWORD env var required');
+
 console.log('\nTest 2: sign in as budi@uii.ac.id');
 {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: 'budi@uii.ac.id',
-    password: 'ulilalbab',
+    password: TEST_PASSWORD,
   });
   if (error) {
     console.log('  SIGN-IN FAILED:', error.message);

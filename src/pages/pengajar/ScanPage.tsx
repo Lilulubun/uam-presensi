@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
 import { QRScanner } from '../../app/components/qr/QRScanner';
 import PermissionPrompt from '../../app/components/gps/PermissionPrompt';
-import { GPSDebugPanel } from '../../app/components/gps/GPSDebugPanel';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
@@ -179,9 +178,6 @@ export default function ScanPage() {
           </div>
         )}
       </main>
-
-      {/* GPS Debug Panel — floating at bottom, only in debug mode */}
-      <GPSDebugPanel onLocationChange={refetchLocation} />
     </div>
   );
 }

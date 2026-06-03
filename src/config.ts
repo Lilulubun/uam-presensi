@@ -6,15 +6,8 @@ export const APP_CONFIG = {
   SESSION_TIMEOUT_HOURS: 12, // Auto-mark as stale after 12 hours
 } as const;
 
-// Mock Authentication
-export const ENABLE_MOCK_AUTH = true;
-
 // GPS Debug Mode — env-gated, default off
 export const GPS_DEBUG_MODE = import.meta.env.VITE_GPS_DEBUG === 'true';
-export const GPS_MOCK_COORDS = {
-  lat: -7.7536,
-  lng: 110.3756,
-}; // Default mock location (Condongcatur area)
 
 // Export Formats
 export const EXPORT_FORMATS = ['csv', 'excel', 'json'] as const;

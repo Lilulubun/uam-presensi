@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
-import { GPSDebugPanel } from '../../app/components/gps/GPSDebugPanel';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { useAuthStore } from '../../store/authStore';
@@ -69,11 +68,6 @@ export default function DashboardPengajar() {
       </header>
 
       <main className="max-w-lg mx-auto p-4 pb-24 flex flex-col gap-4">
-        {/* Debug banner */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 text-xs text-yellow-800 text-center">
-          Mode Prototype — Data tersimpan di localStorage
-        </div>
-
         {/* Today's status card */}
         <div className="bg-card rounded-xl p-5 shadow-sm">
           <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Status Hari Ini</p>
@@ -173,9 +167,6 @@ export default function DashboardPengajar() {
           </button>
         )}
       </main>
-
-      {/* GPS Debug Panel — floating, only visible when GPS_DEBUG_MODE=true */}
-      <GPSDebugPanel />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import { Loader2, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 import type { Coordinates } from '../../../types';
 import { formatDistance } from '../../../lib/gps-utils';
-import { GPS_DEBUG_MODE } from '../../../config';
 
 type LocationState =
   | { status: 'idle' }
@@ -47,7 +46,7 @@ export function LocationStatus({ locationState, nearestTPA, compact = false }: L
     return (
       <div className={`flex items-center gap-2 text-green-600 ${compact ? 'text-xs' : 'text-sm'}`}>
         <CheckCircle2 className={compact ? 'w-3 h-3' : 'w-4 h-4'} />
-        <span>Lokasi tersedia{GPS_DEBUG_MODE ? ' (Simulasi)' : ''}</span>
+        <span>Lokasi tersedia</span>
       </div>
     );
   }
@@ -66,7 +65,6 @@ export function LocationStatus({ locationState, nearestTPA, compact = false }: L
           {withinRadius
             ? `Dalam radius ${name}`
             : `Di luar radius TPA terdekat`}
-          {GPS_DEBUG_MODE && <span className="ml-1 text-yellow-600">(Simulasi)</span>}
         </p>
         <p className="text-muted-foreground mt-0.5">
           {name} · {formatDistance(distance)}
