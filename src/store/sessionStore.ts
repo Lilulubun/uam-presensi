@@ -3,6 +3,7 @@ import type { SessionState, Session, ValidationResult, Coordinates } from '../ty
 import { supabase } from '../lib/supabase';
 import { logEvent } from '../lib/log-event';
 import { toCamelCase } from '../lib/transform';
+import { useAttendanceStore } from './attendanceStore';
 
 const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
 
@@ -52,6 +53,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       activeSession: session,
     }));
     logEvent('session_opened', session.id);
+    useAttendanceStore.getState().init();
     return {
       valid: true,
       message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
@@ -59,8 +61,12 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     };
   },
 
-  closeSession: async (sessionId: string): Promise<ValidationResult> => {
-    const { data, error } = await supabase.rpc('close_session', { p_session_id: sessionId });
+  closeSession: async (sessionId: string, location?: Coordinates): Promise<ValidationResult> => {
+    const rpcParams: Record<string, unknown> = { p_session_id: sessionId };
+    if (location) {
+      rpcParams.p_location = { lat: location.lat, lng: location.lng };
+    }
+    const { data, error } = await supabase.rpc('close_session', rpcParams);
     if (error || !data) return mapRpcError(error);
     const updated = toCamelCase<Session>(data);
     set((state) => ({
@@ -68,6 +74,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
     }));
     logEvent('session_closed', sessionId);
+    useAttendanceStore.getState().init();
     return { valid: true, message: 'Sesi berhasil ditutup', data: updated };
   },
 

@@ -29,6 +29,15 @@ vi.mock('../../lib/supabase', () => ({
           }),
         };
       }
+      if (table === 'attendances') {
+        return {
+          select: () => ({
+            order: () => ({
+              then: (resolve: any) => resolve({ data: [], error: null }),
+            }),
+          }),
+        };
+      }
       return { select: vi.fn() };
     },
   },
@@ -119,6 +128,17 @@ describe('useSessionStore (Supabase-backed)', () => {
       expect(mockRpc).toHaveBeenCalledWith('close_session', { p_session_id: fakeSession.id });
       expect(result.valid).toBe(true);
       expect(useSessionStore.getState().activeSession).toBeNull();
+    });
+
+    it('passes p_location when location is provided', async () => {
+      const closed = { ...fakeSession, isActive: false, dateClosed: new Date(), qrDynamicOutToken: 'token-out-xyz', qrDynamicOutExpiry: new Date() };
+      mockRpc.mockResolvedValue({ data: closed, error: null });
+      const location = { lat: -7.68, lng: 110.41 };
+      await useSessionStore.getState().closeSession(fakeSession.id, location);
+      expect(mockRpc).toHaveBeenCalledWith('close_session', {
+        p_session_id: fakeSession.id,
+        p_location: { lat: -7.68, lng: 110.41 },
+      });
     });
 
     it('surfaces first-teacher-only error from the server', async () => {

@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowLeft, Users, Clock, CheckCircle2, LogOut } from 'lucide-react';
+import { getCurrentLocation } from '../../lib/gps-utils';
 import { QRDisplay } from '../../app/components/qr/QRDisplay';
 import { Button } from '../../app/components/ui/button';
 import {
@@ -55,9 +56,15 @@ export default function SessionActivePage() {
     if (!sessionId) return;
     setClosing(true);
     try {
-      const result = await closeSession(sessionId);
+      let location;
+      try {
+        location = await getCurrentLocation();
+      } catch {
+        // close without location if GPS unavailable
+      }
+      const result = await closeSession(sessionId, location);
       if (result.valid) {
-        toast.success('Sesi berhasil ditutup! Tampilkan QR presensi keluar.');
+        toast.success('Sesi berhasil ditutup! QR presensi keluar aktif.');
       } else {
         toast.error(result.message);
       }

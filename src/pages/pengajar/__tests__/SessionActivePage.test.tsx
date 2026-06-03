@@ -58,6 +58,10 @@ vi.mock('../../../app/hooks/useDynamicQR', () => ({
   useDynamicQR: () => ({ qrDataUrl: 'data:image/png;base64,mock', secondsLeft: 20 }),
 }))
 
+vi.mock('../../../lib/gps-utils', () => ({
+  getCurrentLocation: () => Promise.resolve({ lat: -7.68, lng: 110.41 }),
+}))
+
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
@@ -113,7 +117,9 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
     fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi/ }))
     const confirmButton = screen.getByRole('button', { name: /^Tutup$/ })
     fireEvent.click(confirmButton)
-    expect(mockCloseSession).toHaveBeenCalledWith('session-1')
+    await vi.waitFor(() => {
+      expect(mockCloseSession).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 })
+    })
   })
 
   it('does not call closeSession when cancelled', () => {
