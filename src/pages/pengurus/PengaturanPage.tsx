@@ -83,7 +83,7 @@ export default function PengaturanPage() {
 
       <main className="max-w-5xl mx-auto p-4">
         <p className="text-sm text-muted-foreground mb-4 print:hidden">
-          Cetak dan tempelkan QR code ini di pintu masuk masing-masing TPA. QR ini tidak berubah.
+          Cetak dan tempelkan QR ini di pintu masuk masing-masing TPA. QR ini bersifat permanen — tidak perlu diperbarui.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">

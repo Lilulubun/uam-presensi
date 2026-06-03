@@ -87,7 +87,7 @@ describe('LaporanPage', () => {
 
   it('shows empty state when no data', () => {
     renderComponent()
-    expect(screen.getByText('Tidak ada data untuk filter yang dipilih')).toBeInTheDocument()
+    expect(screen.getByText(/Tidak ada data untuk filter yang dipilih/)).toBeInTheDocument()
   })
 
   it('shows record count when data is present', () => {
@@ -103,8 +103,7 @@ describe('LaporanPage', () => {
       { id: 'session-1', tpaId: 'tpa-001', isActive: false, dateOpened: scanDate, firstTeacherId: 'user-001' } as Session,
     ]
     renderComponent()
-    const recordText = screen.getAllByText(/record/)
-    expect(recordText.length).toBeGreaterThan(0)
+    expect(screen.getByText(/data/)).toBeInTheDocument()
     expect(screen.getByText('01/06/2026')).toBeInTheDocument()
     expect(screen.getByText('Tepat Waktu')).toBeInTheDocument()
   })
@@ -148,7 +147,7 @@ describe('LaporanPage', () => {
       { id: 'session-1', tpaId: 'tpa-001', isActive: false, dateOpened: today, firstTeacherId: 'user-001' } as Session,
     ]
     renderComponent()
-    expect(screen.getByText(/record/)).toBeInTheDocument()
+    expect(screen.getByText(/data/)).toBeInTheDocument()
   })
 
   it('shows multiple records in table', () => {

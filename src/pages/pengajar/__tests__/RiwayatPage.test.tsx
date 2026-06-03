@@ -87,7 +87,7 @@ describe('RiwayatPage', () => {
       { id: 'session-2', tpaId: 'tpa-002', isActive: true, dateOpened: new Date(), firstTeacherId: 'user-002' } as Session,
     ]
     renderComponent()
-    expect(screen.getByText('Total')).toBeInTheDocument()
+    expect(screen.getByText('Total Presensi')).toBeInTheDocument()
     expect(screen.getByText('Tepat Waktu')).toBeInTheDocument()
     expect(screen.getByText('Terlambat')).toBeInTheDocument()
   })

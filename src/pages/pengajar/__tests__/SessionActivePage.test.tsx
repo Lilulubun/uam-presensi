@@ -112,14 +112,14 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
   it('shows confirmation description in the dialog', () => {
     renderComponent()
     fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi/ }))
-    expect(screen.getByText(/QR presensi keluar akan diaktifkan/)).toBeInTheDocument()
+    expect(screen.getByText(/QR presensi keluar akan aktif/)).toBeInTheDocument()
   })
 
   it('calls closeSession when confirmed', async () => {
     mockCloseSession.mockResolvedValueOnce({ valid: true, message: 'Sesi berhasil ditutup' })
     renderComponent()
     fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi/ }))
-    const confirmButton = screen.getByRole('button', { name: /^Tutup$/ })
+    const confirmButton = screen.getByRole('button', { name: /^Tutup Sesi$/ })
     fireEvent.click(confirmButton)
     await vi.waitFor(() => {
       expect(mockCloseSession).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 })

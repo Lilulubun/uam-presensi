@@ -196,12 +196,12 @@ export default function SessionActivePage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  QR presensi keluar akan diaktifkan dan sesi tidak dapat dibuka kembali.
+                  QR presensi keluar akan aktif. Sesi yang ditutup tidak bisa dibuka kembali.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleCloseSession}>Tutup</AlertDialogAction>
+                <AlertDialogAction onClick={handleCloseSession}>Tutup Sesi</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

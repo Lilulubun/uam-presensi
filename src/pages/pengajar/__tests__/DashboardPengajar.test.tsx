@@ -73,7 +73,7 @@ describe('DashboardPengajar', () => {
 
   it('shows "Belum Presensi" when no attendance for today', () => {
     renderComponent()
-    expect(screen.getByText('Belum Presensi')).toBeInTheDocument()
+    expect(screen.getByText('Belum melakukan presensi')).toBeInTheDocument()
   })
 
   it('shows scan QR button that navigates to scan page', () => {
@@ -120,7 +120,7 @@ describe('DashboardPengajar', () => {
     const now = new Date()
     const hours = String(now.getHours()).padStart(2, '0')
     const minutes = String(now.getMinutes()).padStart(2, '0')
-    expect(screen.getByText(new RegExp(`Masuk pukul ${hours}:${minutes}`))).toBeInTheDocument()
+    expect(screen.getAllByText(new RegExp(`Masuk ${hours}:${minutes}`)).length).toBeGreaterThan(0)
   })
 
   it('shows late badge when late', () => {
@@ -158,7 +158,7 @@ describe('DashboardPengajar', () => {
       } as Attendance,
     ]
     renderComponent()
-    expect(screen.getByText('Presensi Selesai')).toBeInTheDocument()
+    expect(screen.getByText('Presensi selesai')).toBeInTheDocument()
   })
 
   it('shows scan-out time when present', () => {

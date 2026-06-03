@@ -45,7 +45,7 @@ export default function RiwayatPage() {
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-card rounded-xl p-3 shadow-sm text-center">
               <p className="text-xl font-bold">{attendances.length}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Total</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Total Presensi</p>
             </div>
             <div className="bg-card rounded-xl p-3 shadow-sm text-center">
               <p className="text-xl font-bold text-green-600">{onTime}</p>

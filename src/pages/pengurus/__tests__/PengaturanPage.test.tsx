@@ -68,7 +68,7 @@ describe('PengaturanPage', () => {
 
   it('shows instruction text', () => {
     renderComponent()
-    expect(screen.getByText(/Cetak dan tempelkan QR code ini/)).toBeInTheDocument()
+    expect(screen.getByText(/Cetak dan tempelkan QR ini/)).toBeInTheDocument()
   })
 
   it('shows "Cetak Semua" button', () => {

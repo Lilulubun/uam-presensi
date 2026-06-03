@@ -82,7 +82,7 @@ describe('DashboardPengurus', () => {
 
   it('renders the header with monitoring title', () => {
     renderComponent()
-    expect(screen.getByText('UAM Monitoring')).toBeInTheDocument()
+    expect(screen.getByText('Monitoring Presensi')).toBeInTheDocument()
   })
 
   it('shows greeting with admin user name', () => {

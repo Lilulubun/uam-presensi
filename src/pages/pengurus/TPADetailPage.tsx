@@ -117,7 +117,7 @@ export default function TPADetailPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleForceClose}>Tutup</AlertDialogAction>
+                    <AlertDialogAction onClick={handleForceClose}>Tutup Sesi</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

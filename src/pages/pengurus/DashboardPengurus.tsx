@@ -116,10 +116,10 @@ export default function DashboardPengurus() {
       <header className="bg-card border-b px-4 py-3 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
           <div>
-            <h1 className="font-bold text-lg">UAM Monitoring</h1>
+            <h1 className="font-bold text-lg">Monitoring Presensi</h1>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <RefreshCw className="w-3 h-3" />
-              Live (Realtime)
+              Langsung (Realtime)
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -328,7 +328,7 @@ export default function DashboardPengurus() {
             </div>
             <div>
               <p className="text-sm font-semibold">Laporan</p>
-              <p className="text-xs text-muted-foreground">Export CSV/Excel</p>
+              <p className="text-xs text-muted-foreground">CSV / Excel</p>
             </div>
           </button>
           <button

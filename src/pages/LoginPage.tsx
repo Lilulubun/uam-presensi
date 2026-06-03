@@ -34,7 +34,7 @@ export default function LoginPage() {
         toast.error(result.message || 'Login gagal');
       }
     } catch (error) {
-      toast.error('Terjadi kesalahan saat login');
+      toast.error('Terjadi kesalahan. Periksa koneksi Anda dan coba lagi.');
     } finally {
       setLoading(false);
     }
@@ -46,9 +46,9 @@ export default function LoginPage() {
         <div className="bg-card rounded-lg shadow-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Sistem Presensi UAM</h1>
+            <h1 className="text-3xl font-bold mb-2">Presensi UAM</h1>
             <p className="text-muted-foreground">
-              UII Ayo Mengajar - Monitoring Presensi TPA
+              UII Ayo Mengajar — Monitoring Presensi TPA
             </p>
           </div>
 
@@ -85,7 +85,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Memuat...' : 'Masuk'}
+              {loading ? 'Memproses...' : 'Masuk'}
             </Button>
           </form>
         </div>

@@ -195,7 +195,7 @@ export default function LaporanPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex gap-4 text-sm">
             <span className="text-muted-foreground">
-              <span className="font-semibold text-foreground">{rows.length}</span> record
+              <span className="font-semibold text-foreground">{rows.length}</span> data
             </span>
             {lateCount > 0 && (
               <span className="text-orange-500">{lateCount} terlambat</span>
@@ -237,7 +237,7 @@ export default function LaporanPage() {
 
         {rows.length === 0 ? (
           <div className="bg-card rounded-xl shadow-sm py-16 text-center text-sm text-muted-foreground">
-            Tidak ada data untuk filter yang dipilih
+            Tidak ada data untuk filter yang dipilih. Coba ubah rentang tanggal atau filter lainnya.
           </div>
         ) : (
           <div className="bg-card rounded-xl shadow-sm overflow-hidden">

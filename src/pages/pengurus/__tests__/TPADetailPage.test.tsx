@@ -197,7 +197,7 @@ describe('TPADetailPage', () => {
       ]
       renderWithRoute()
       fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi.*Admin/ }))
-      const confirmButton = screen.getByRole('button', { name: /^Tutup$/ })
+      const confirmButton = screen.getByRole('button', { name: /^Tutup Sesi$/ })
       fireEvent.click(confirmButton)
       expect(mockForceCloseSession).toHaveBeenCalledWith('session-1')
     })

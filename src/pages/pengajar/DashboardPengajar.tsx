@@ -39,15 +39,15 @@ export default function DashboardPengajar() {
 
   const getStatusInfo = () => {
     if (!todayRecord) {
-      return { label: 'Belum Presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
+      return { label: 'Belum melakukan presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
     }
     if (todayRecord.scanInTime && !todayRecord.scanOutTime) {
-      return { label: `Masuk pukul ${formatTime(todayRecord.scanInTime)}`, color: 'text-primary', icon: <Clock className="w-5 h-5 text-primary" /> };
+      return { label: `Masuk ${formatTime(todayRecord.scanInTime)}`, color: 'text-primary', icon: <Clock className="w-5 h-5 text-primary" /> };
     }
     if (todayRecord.scanInTime && todayRecord.scanOutTime) {
-      return { label: 'Presensi Selesai', color: 'text-green-600', icon: <CheckCircle2 className="w-5 h-5 text-green-600" /> };
+      return { label: 'Presensi selesai', color: 'text-green-600', icon: <CheckCircle2 className="w-5 h-5 text-green-600" /> };
     }
-    return { label: 'Belum Presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
+    return { label: 'Belum melakukan presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
   };
 
   const statusInfo = getStatusInfo();
@@ -58,7 +58,7 @@ export default function DashboardPengajar() {
       <header className="bg-card border-b px-4 py-4">
         <div className="max-w-lg mx-auto flex justify-between items-center">
           <div>
-            <h1 className="font-bold text-lg">UAM Presensi</h1>
+            <h1 className="font-bold text-lg">Presensi UAM</h1>
             <p className="text-sm text-muted-foreground">Halo, {user?.name}</p>
           </div>
           <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">

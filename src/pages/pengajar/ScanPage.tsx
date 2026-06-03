@@ -71,7 +71,7 @@ export default function ScanPage() {
         // Dynamic QR: JSON-encoded token
         const token = decodeQRData(text);
         if (!token) {
-          toast.error('QR code tidak valid');
+          toast.error('QR code tidak dikenal. Pastikan Anda memindai QR TPA atau QR sesi yang aktif.');
           return;
         }
 
@@ -133,7 +133,7 @@ export default function ScanPage() {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center max-w-xs">
-              Arahkan kamera ke QR code statis TPA atau QR presensi pengajar pertama
+              Arahkan kamera ke QR TPA (statis) untuk membuka sesi, atau QR sesi aktif dari pengajar pertama untuk presensi masuk/keluar
             </p>
           )}
         </div>
@@ -149,7 +149,7 @@ export default function ScanPage() {
               <button
                 onClick={refetchLocation}
                 className="text-muted-foreground hover:text-foreground p-1 rounded"
-                title="Refresh lokasi"
+                        title="Perbarui lokasi"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
               </button>
@@ -164,7 +164,7 @@ export default function ScanPage() {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
               <div className="mt-0.5 shrink-0 text-blue-600">ℹ</div>
               <div>
-                <p className="font-semibold text-blue-900 text-sm">Sesi Aktif Ditemukan</p>
+                <p className="font-semibold text-blue-900 text-sm">Sudah Ada Sesi Aktif</p>
                 <p className="text-sm text-blue-700 mt-1">
                   <strong>{activeSessionInfo.tpaName}</strong> sudah memiliki sesi. Scan QR presensi masuk dari
                   layar pengajar pertama di atas.
