@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useAuthStore } from '../store/authStore';
@@ -23,12 +23,17 @@ import PengaturanPage from '../pages/pengurus/PengaturanPage';
 import KelolaPengajarPage from '../pages/pengurus/kelola-pengajar';
 
 export default function App() {
+  const [storesReady, setStoresReady] = useState(false);
+
   useEffect(() => {
-    useAuthStore.getState().init();
-    useTPAStore.getState().init();
-    useSessionStore.getState().init();
-    useAttendanceStore.getState().init();
-    useUsersStore.getState().init();
+    const safe = <T,>(p: Promise<T>) => p.catch((e) => console.error('store init:', e));
+    Promise.all([
+      safe(useAuthStore.getState().init()),
+      safe(useTPAStore.getState().init()),
+      safe(useSessionStore.getState().init()),
+      safe(useAttendanceStore.getState().init()),
+      safe(useUsersStore.getState().init()),
+    ]).then(() => setStoresReady(true));
   }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
@@ -38,6 +43,11 @@ export default function App() {
     <BrowserRouter>
       <Toaster position="top-center" richColors />
 
+      {!storesReady ? (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <p className="text-muted-foreground">Memuat...</p>
+        </div>
+      ) : (
       <Routes>
         {/* Login */}
         <Route
@@ -81,6 +91,7 @@ export default function App() {
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      )}
     </BrowserRouter>
   );
 }

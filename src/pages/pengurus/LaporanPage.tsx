@@ -102,7 +102,7 @@ function buildRows(
       return {
         Tanggal: a.scanInTime ? formatDate(new Date(a.scanInTime)) : '-',
         TPA: tpa?.name ?? 'Unknown',
-        Pengajar: teacher?.name ?? a.userId,
+        Pengajar: teacher?.name ?? '(pengajar tidak ditemukan)',
         NIM: teacher?.nim ?? '-',
         'Jam Masuk': a.scanInTime ? formatTime(new Date(a.scanInTime)) : '-',
         'Jam Keluar': a.scanOutTime ? formatTime(new Date(a.scanOutTime)) : '-',

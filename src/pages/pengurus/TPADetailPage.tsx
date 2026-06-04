@@ -159,7 +159,7 @@ export default function TPADetailPage() {
                         {session.dateClosed && ` – ${formatTime(new Date(session.dateClosed))}`}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Pengajar pertama: {firstTeacher?.name ?? session.firstTeacherId}
+                        Pengajar pertama: {firstTeacher?.name ?? '(pengajar tidak ditemukan)'}
                       </p>
                     </div>
                     <span
@@ -239,7 +239,7 @@ function SessionAttendees({
                   className="hover:underline text-left"
                   onClick={() => navigate(`/pengurus/pengajar/${a.userId}`)}
                 >
-                  {teacher?.name ?? a.userId}
+                  {teacher?.name ?? '(pengajar tidak ditemukan)'}
                 </button>
               </p>
               <div className="flex gap-2 text-xs text-muted-foreground">

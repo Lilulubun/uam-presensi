@@ -87,27 +87,27 @@ export default function DashboardPengurus() {
   }, [attendances]);
 
   const teacherStats = useMemo(() => {
+    const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+    const recent = attendances.filter(
+      (a) => a.scanInTime && new Date(a.scanInTime).getTime() > cutoff
+    );
     const userMap = new Map(users.map((u) => [u.id, u]));
-    const byUser = new Map<string, { id: string; name: string; nim?: string }>();
-    for (const a of attendances) {
-      if (!byUser.has(a.userId)) {
-        const user = userMap.get(a.userId);
-        byUser.set(a.userId, {
-          id: a.userId,
-          name: user?.name ?? 'Unknown',
-          nim: user?.nim,
-        });
-      }
-    }
-    return Array.from(byUser.values()).map((teacher) => {
-      const myAttendances = attendances.filter((a) => a.userId === teacher.id && a.scanInTime);
-      const onTime = myAttendances.filter((a) => !a.isLate).length;
-      const late = myAttendances.filter((a) => a.isLate).length;
-      const total = myAttendances.length;
-      const rate = total > 0 ? Math.round((onTime / total) * 100) : 0;
-      const status = computeInactiveAlert(attendances, teacher.id, 14);
-      return { teacher, total, onTime, late, rate, status };
-    }).sort((a, b) => b.total - a.total);
+    const userIds = [...new Set(recent.map((a) => a.userId))];
+    return userIds
+      .map((id) => {
+        const u = userMap.get(id);
+        const myAttendances = recent.filter((a) => a.userId === id && a.scanInTime);
+        const onTime = myAttendances.filter((a) => !a.isLate).length;
+        const late = myAttendances.filter((a) => a.isLate).length;
+        const total = myAttendances.length;
+        const rate = total > 0 ? Math.round((onTime / total) * 100) : 0;
+        const status = computeInactiveAlert(attendances, id, 14);
+        return {
+          teacher: { id, name: u?.name ?? '(tidak dikenal)', nim: u?.nim },
+          total, onTime, late, rate, status,
+        };
+      })
+      .sort((a, b) => b.total - a.total);
   }, [attendances, users]);
 
   const handleLogout = () => {

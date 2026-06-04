@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { useUsersStore } from '../../store/userStore';
 
 const CHANNEL_NAME = 'uam-changes';
 
@@ -14,6 +15,7 @@ export function useRealtimeSessions(): void {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'attendances' }, () => {
         useAttendanceStore.getState().init();
+        useUsersStore.getState().init();
       })
       .subscribe();
 

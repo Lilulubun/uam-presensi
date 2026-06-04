@@ -157,7 +157,7 @@ export default function SessionActivePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {teacher?.name ?? attendance.userId}
+                        {teacher?.name ?? '(pengajar tidak ditemukan)'}
                         {attendance.userId === session.firstTeacherId && (
                           <span className="ml-1.5 text-xs text-primary">(Pertama)</span>
                         )}
