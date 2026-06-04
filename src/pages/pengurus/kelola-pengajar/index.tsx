@@ -12,6 +12,7 @@ import { ResetPasswordModal } from './components/ResetPasswordModal';
 export default function KelolaPengajarPage() {
   const navigate = useNavigate();
   const users = useUsersStore((s) => s.users);
+  const loading = useUsersStore((s) => s.loading);
   const initUsers = useUsersStore((s) => s.init);
   const tpas = useTPAStore((s) => s.tpas);
   const loadTPAs = useTPAStore((s) => s.init);
@@ -162,7 +163,14 @@ export default function KelolaPengajarPage() {
                     </td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
+                {loading && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                      Memuat data...
+                    </td>
+                  </tr>
+                )}
+                {!loading && filtered.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
                       {search ? 'Tidak ada pengajar yang cocok' : 'Belum ada pengajar'}

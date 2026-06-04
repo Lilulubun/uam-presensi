@@ -18,7 +18,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useTPAStore } from '../../store/tpaStore';
-import { getUserById } from '../../store/userStore';
+import { getUserById, useUsersStore } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay } from '../../lib/date-utils';
 import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
@@ -30,6 +30,7 @@ export default function DashboardPengurus() {
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
   const tpas = useTPAStore((s) => s.tpas);
+  const users = useUsersStore((s) => s.users);
 
   useRealtimeSessions();
 
@@ -106,7 +107,7 @@ export default function DashboardPengurus() {
       const status = computeInactiveAlert(attendances, teacher.id, 14);
       return { teacher, total, onTime, late, rate, status };
     }).sort((a, b) => b.total - a.total);
-  }, [attendances]);
+  }, [attendances, users]);
 
   const handleLogout = () => {
     logout();

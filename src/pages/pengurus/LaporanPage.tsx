@@ -140,6 +140,11 @@ export default function LaporanPage() {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
 
+  const allUsers = useUsersStore((s) => s.users);
+  const teachers = useUsersStore(
+    useShallow((s) => s.users.filter((u) => u.role === 'pengajar'))
+  );
+
   function handleSort(column: string) {
     if (sortColumn !== column) {
       setSortColumn(column);
@@ -154,11 +159,7 @@ export default function LaporanPage() {
 
   const rows = useMemo(
     () => buildRows(attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection),
-    [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection]
-  );
-
-  const teachers = useUsersStore(
-    useShallow((s) => s.users.filter((u) => u.role === 'pengajar'))
+    [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection, allUsers]
   );
 
   const exportCSV = () => {

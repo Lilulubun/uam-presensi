@@ -21,7 +21,7 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
-import { getUserById } from '../../store/userStore';
+import { getUserById, useUsersStore } from '../../store/userStore';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 
 export default function SessionActivePage() {
@@ -36,6 +36,7 @@ export default function SessionActivePage() {
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  useUsersStore((s) => s.users);
 
   if (!session) {
     return (
