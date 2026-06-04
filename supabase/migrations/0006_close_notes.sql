@@ -5,6 +5,10 @@
 
 alter table public.sessions add column if not exists close_notes text;
 
+-- Drop old single-param overload from 0001_init / 0005 so PostgREST
+-- can resolve calls with only p_session_id against this 3-param version.
+drop function if exists public.close_session(p_session_id uuid);
+
 create or replace function public.close_session(
   p_session_id uuid,
   p_location jsonb default null,
