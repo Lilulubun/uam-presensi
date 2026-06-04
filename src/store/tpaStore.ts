@@ -26,6 +26,7 @@ export const useTPAStore = create<TPAState>((set, get) => ({
       })) as TPA[];
       set({ tpas: mapped, loading: false });
     } else {
+      if (error) console.error('tpaStore.init error:', error);
       set({ loading: false });
     }
   },

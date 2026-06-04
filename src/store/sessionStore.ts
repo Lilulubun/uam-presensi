@@ -31,6 +31,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       const activeSession = sessions.find((s) => s.isActive && s.firstTeacherId === userId) ?? null;
       set({ sessions, activeSession, loading: false });
     } else {
+      if (error) console.error('sessionStore.init error:', error);
       set({ loading: false });
     }
   },

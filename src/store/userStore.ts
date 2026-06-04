@@ -43,6 +43,7 @@ export const useUsersStore = create<UserState>((set) => ({
       })) as User[];
       set({ users: mapped, loading: false });
     } else {
+      if (error) console.error('userStore.init error:', error);
       set({ loading: false });
     }
   },

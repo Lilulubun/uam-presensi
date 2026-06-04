@@ -1,5 +1,6 @@
 -- 0006_close_notes.sql
--- Adds optional close_notes field to sessions and updates close_session RPC.
+-- Merges auto-checkout (from 0006_auto_checkout_on_close) with close_notes.
+-- Adds optional close_notes + p_location auto-checkout + GPS validation.
 -- Idempotent: ALTER TABLE ... IF NOT EXISTS, CREATE OR REPLACE.
 
 alter table public.sessions add column if not exists close_notes text;
@@ -16,6 +17,7 @@ as $$
 declare
   v_user uuid := auth.uid();
   v_session public.sessions;
+  v_tpa public.tpas;
   v_token text := encode(extensions.gen_random_bytes(16), 'hex');
   v_expiry timestamptz := now() + interval '20 seconds';
 begin
@@ -26,6 +28,13 @@ begin
   end if;
   if not v_session.is_active then raise exception 'Sesi sudah ditutup'; end if;
 
+  if p_location is not null then
+    select * into v_tpa from public.tpas where id = v_session.tpa_id;
+    if public.haversine_m(p_location, v_tpa.location) > (v_tpa.location->>'radius')::float then
+      raise exception 'Anda berada di luar radius TPA';
+    end if;
+  end if;
+
   update public.sessions
   set is_active = false,
       date_closed = now(),
@@ -34,6 +43,13 @@ begin
       close_notes = coalesce(p_notes, close_notes)
   where id = p_session_id
   returning * into v_session;
+
+  if p_location is not null then
+    update public.attendances
+    set scan_out_time = now(), scan_out_location = p_location
+    where session_id = p_session_id and user_id = v_user;
+  end if;
+
   return v_session;
 end;
 $$;

@@ -28,6 +28,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     if (!error && data) {
       set({ attendances: toCamelCaseArray<Attendance>(data), loading: false });
     } else {
+      if (error) console.error('attendanceStore.init error:', error);
       set({ loading: false });
     }
   },

@@ -16,13 +16,21 @@ as $$
 declare
   v_user uuid := auth.uid();
   v_session public.sessions;
+  v_tpa public.tpas;
   v_token text := encode(extensions.gen_random_bytes(16), 'hex');
   v_expiry timestamptz := now() + interval '20 seconds';
 begin
   if v_user is null then raise exception 'not authenticated'; end if;
 
+  select * into v_tpa from public.tpas where id = p_tpa_id for update;
+  if not found then raise exception 'TPA tidak ditemukan'; end if;
+
   if exists (select 1 from public.sessions where tpa_id = p_tpa_id and is_active) then
     raise exception 'TPA ini sudah memiliki sesi aktif';
+  end if;
+
+  if public.haversine_m(p_location, v_tpa.location) > (v_tpa.location->>'radius')::float then
+    raise exception 'Anda berada di luar radius TPA';
   end if;
 
   insert into public.sessions (tpa_id, first_teacher_id, qr_dynamic_in_token, qr_dynamic_in_expiry)

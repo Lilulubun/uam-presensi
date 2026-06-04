@@ -29,6 +29,7 @@ export function useDynamicQR(sessionId: string, type: 'in' | 'out') {
 
   // Countdown timer — ticks every second and refreshes token when expired
   const refreshRef = useRef(refreshQRToken);
+  const refreshingRef = useRef(false);
   useEffect(() => {
     refreshRef.current = refreshQRToken;
   }, [refreshQRToken]);
@@ -41,12 +42,15 @@ export function useDynamicQR(sessionId: string, type: 'in' | 'out') {
       const remaining = Math.max(0, Math.ceil((expiryMs - Date.now()) / 1000));
       setSecondsLeft(remaining);
 
-      if (remaining <= 0) {
-        refreshRef.current(sessionId, type);
+      if (remaining <= 0 && !refreshingRef.current) {
+        refreshingRef.current = true;
+        refreshRef.current(sessionId, type).finally(() => {
+          refreshingRef.current = false;
+        });
       }
     };
 
-    tick(); // Run immediately
+    tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, [expiry, sessionId, type]);
