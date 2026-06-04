@@ -20,17 +20,7 @@ export const useUsersStore = create<UserState>((set) => ({
 
   init: async () => {
     set({ loading: true });
-    let data: Record<string, unknown>[] | null = null;
-    let error: unknown = null;
-
-    const rpc = await supabase.rpc('get_all_users');
-    if (!rpc.error && rpc.data) {
-      data = rpc.data as Record<string, unknown>[];
-    } else {
-      const q = await supabase.from('users').select('id, email, name, role, nim, is_active');
-      data = q.data as Record<string, unknown>[] | null;
-      error = q.error;
-    }
+    const { data, error } = await supabase.from('users').select('id, email, name, role, nim, is_active');
 
     if (!error && data) {
       const mapped = data.map((row) => ({
