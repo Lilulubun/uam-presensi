@@ -5,14 +5,10 @@ import { toCamelCase } from '../lib/transform';
 
 const INDONESIAN_AUTH_ERROR = 'Email atau password salah';
 
-async function fetchProfile(userId: string): Promise<User | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
-  if (error || !data) return null;
-  return toCamelCase<User>(data);
+async function fetchProfile(): Promise<User | null> {
+  const { data, error } = await supabase.rpc('get_profile');
+  if (error || !data || data.length === 0) return null;
+  return toCamelCase<User>(data[0]);
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -23,7 +19,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   init: async () => {
     const { data } = await supabase.auth.getSession();
     if (data.session?.user) {
-      const profile = await fetchProfile(data.session.user.id);
+      const profile = await fetchProfile();
       if (profile?.isActive === false) {
         await supabase.auth.signOut();
         set({ user: null, isAuthenticated: false, loading: false });
@@ -40,7 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (error || !data.user) {
       return { valid: false, message: INDONESIAN_AUTH_ERROR };
     }
-    const profile = await fetchProfile(data.user.id);
+    const profile = await fetchProfile();
     if (!profile) {
       await supabase.auth.signOut();
       return { valid: false, message: 'Profil pengguna tidak ditemukan' };
