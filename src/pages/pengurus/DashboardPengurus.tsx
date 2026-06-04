@@ -21,6 +21,7 @@ import { useTPAStore } from '../../store/tpaStore';
 import { getUserById } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay } from '../../lib/date-utils';
+import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
 
 export default function DashboardPengurus() {
   const navigate = useNavigate();
@@ -102,7 +103,8 @@ export default function DashboardPengurus() {
       const late = myAttendances.filter((a) => a.isLate).length;
       const total = myAttendances.length;
       const rate = total > 0 ? Math.round((onTime / total) * 100) : 0;
-      return { teacher, total, onTime, late, rate };
+      const status = computeInactiveAlert(attendances, teacher.id, 14);
+      return { teacher, total, onTime, late, rate, status };
     }).sort((a, b) => b.total - a.total);
   }, [attendances]);
 
@@ -130,6 +132,10 @@ export default function DashboardPengurus() {
             <Button variant="outline" size="sm" onClick={() => navigate('/pengurus/laporan')}>
               <BarChart2 className="w-4 h-4 mr-1.5" />
               <span className="hidden sm:inline">Laporan</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/pengurus/kelola-pengajar')}>
+              <Users className="w-4 h-4 mr-1.5" />
+              <span className="hidden sm:inline">Pengajar</span>
             </Button>
             <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
               <LogOut className="w-4 h-4" />
@@ -262,11 +268,12 @@ export default function DashboardPengurus() {
                   <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Total</th>
                   <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Tepat Waktu</th>
                   <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Terlambat</th>
+                  <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground hidden md:table-cell">Status</th>
                   <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted-foreground">Kepatuhan</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {teacherStats.map(({ teacher, total, onTime, late, rate }) => (
+                {teacherStats.map(({ teacher, total, onTime, late, rate, status }) => (
                   <tr key={teacher.id} className="hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
@@ -291,6 +298,15 @@ export default function DashboardPengurus() {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
+                    <td className="px-4 py-3 text-center hidden md:table-cell">
+                      {status.isInactive ? (
+                        <span className="text-xs text-red-500 font-medium">
+                          {status.daysSince !== null ? `${status.daysSince} hr` : 'Baru'}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-green-600 font-medium">Aktif</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -308,7 +324,7 @@ export default function DashboardPengurus() {
                 ))}
                 {teacherStats.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
                       Belum ada data presensi
                     </td>
                   </tr>

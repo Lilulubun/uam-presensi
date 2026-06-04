@@ -186,6 +186,13 @@ export default function TPADetailPage() {
                     )}
                   </div>
 
+                  {session.closeNotes && (
+                    <div className="px-4 py-2 border-b">
+                      <p className="text-xs text-muted-foreground">Catatan:</p>
+                      <p className="text-sm text-foreground mt-0.5">{session.closeNotes}</p>
+                    </div>
+                  )}
+
                   <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
                 </div>
               );

@@ -24,6 +24,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     const { data } = await supabase.auth.getSession();
     if (data.session?.user) {
       const profile = await fetchProfile(data.session.user.id);
+      if (profile?.isActive === false) {
+        await supabase.auth.signOut();
+        set({ user: null, isAuthenticated: false, loading: false });
+        return;
+      }
       set({ user: profile, isAuthenticated: !!profile, loading: false });
     } else {
       set({ loading: false });
@@ -39,6 +44,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (!profile) {
       await supabase.auth.signOut();
       return { valid: false, message: 'Profil pengguna tidak ditemukan' };
+    }
+    if (profile.isActive === false) {
+      await supabase.auth.signOut();
+      return { valid: false, message: 'Akun Anda telah dinonaktifkan. Hubungi admin.' };
     }
     set({ user: profile, isAuthenticated: true });
     return { valid: true, message: 'Login berhasil', data: profile };

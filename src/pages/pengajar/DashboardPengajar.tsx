@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine } from 'lucide-react';
+import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
@@ -8,6 +8,8 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay } from '../../lib/date-utils';
+import { computeStreak } from '../../lib/computeStreak';
+import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
 
 export default function DashboardPengajar() {
   const navigate = useNavigate();
@@ -26,6 +28,10 @@ export default function DashboardPengajar() {
   });
 
   const todayRecord = todayAttendances[0] ?? null;
+
+  const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
+  const streak = computeStreak(myAttendances);
+  const monthSummary = computeMonthlySummary(myAttendances, today.getFullYear(), today.getMonth() + 1);
 
   const recentAttendances = allAttendances
     .filter((a) => a.userId === user?.id && a.scanInTime)
@@ -86,6 +92,58 @@ export default function DashboardPengajar() {
             </p>
           )}
         </div>
+
+        {/* Streak card */}
+        {streak > 0 && (
+          <div className="bg-card rounded-xl p-4 shadow-sm flex items-center gap-3">
+            <Flame className="w-5 h-5 text-orange-500 shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">
+                🔥 {streak} Hari Berturut-turut
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Terakhir{' '}
+                {myAttendances
+                  .filter((a) => a.scanInTime)
+                  .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())[0]
+                  ?.scanInTime
+                  ? formatDate(
+                      myAttendances
+                        .filter((a) => a.scanInTime)
+                        .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())[0]
+                        .scanInTime!
+                    )
+                  : ''}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Monthly summary card */}
+        {monthSummary.total > 0 && (
+          <div className="bg-card rounded-xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <CalendarDays className="w-4 h-4 text-muted-foreground" />
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Ringkasan Bulan Ini
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-lg font-bold text-primary">{monthSummary.total}</p>
+                <p className="text-xs text-muted-foreground">Hadir</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-green-600">{monthSummary.percentage}%</p>
+                <p className="text-xs text-muted-foreground">Tepat Waktu</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-orange-500">{monthSummary.late}</p>
+                <p className="text-xs text-muted-foreground">Terlambat</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* GPS Location Status */}
         <div className="bg-card rounded-xl px-4 py-3 shadow-sm flex items-center gap-3">

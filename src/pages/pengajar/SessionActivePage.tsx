@@ -35,6 +35,7 @@ export default function SessionActivePage() {
   );
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [notes, setNotes] = useState('');
 
   if (!session) {
     return (
@@ -62,8 +63,9 @@ export default function SessionActivePage() {
       } catch {
         // close without location if GPS unavailable
       }
-      const result = await closeSession(sessionId, location);
+      const result = await closeSession(sessionId, location, notes || undefined);
       if (result.valid) {
+        setNotes('');
         toast.success('Sesi berhasil ditutup! QR presensi keluar aktif.');
       } else {
         toast.error(result.message);
@@ -199,6 +201,16 @@ export default function SessionActivePage() {
                   QR presensi keluar akan aktif. Sesi yang ditutup tidak bisa dibuka kembali.
                 </AlertDialogDescription>
               </AlertDialogHeader>
+              <div className="px-6 py-2">
+                <textarea
+                  placeholder="Catatan hari ini (opsional) — misal: listrik mati, siswa sedikit"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full rounded-lg border border-input bg-background p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                  rows={3}
+                  disabled={closing}
+                />
+              </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Batal</AlertDialogCancel>
                 <AlertDialogAction onClick={handleCloseSession}>Tutup Sesi</AlertDialogAction>

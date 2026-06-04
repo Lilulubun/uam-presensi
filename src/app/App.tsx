@@ -20,6 +20,7 @@ import TPADetailPage from '../pages/pengurus/TPADetailPage';
 import DetailPengajar from '../pages/pengurus/DetailPengajar';
 import LaporanPage from '../pages/pengurus/LaporanPage';
 import PengaturanPage from '../pages/pengurus/PengaturanPage';
+import KelolaPengajarPage from '../pages/pengurus/kelola-pengajar';
 
 export default function App() {
   useEffect(() => {
@@ -75,6 +76,7 @@ export default function App() {
         <Route path="/pengurus/pengajar/:userId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DetailPengajar /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/kelola-pengajar" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><KelolaPengajarPage /></ErrorBoundary></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

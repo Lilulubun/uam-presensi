@@ -60,10 +60,13 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     };
   },
 
-  closeSession: async (sessionId: string, location?: Coordinates): Promise<ValidationResult> => {
+  closeSession: async (sessionId: string, location?: Coordinates, notes?: string): Promise<ValidationResult> => {
     const rpcParams: Record<string, unknown> = { p_session_id: sessionId };
     if (location) {
       rpcParams.p_location = { lat: location.lat, lng: location.lng };
+    }
+    if (notes) {
+      rpcParams.p_notes = notes;
     }
     const { data, error } = await supabase.rpc('close_session', rpcParams);
     if (error || !data) return mapRpcError(error);

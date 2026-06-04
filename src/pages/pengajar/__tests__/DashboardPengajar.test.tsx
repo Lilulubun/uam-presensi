@@ -196,6 +196,6 @@ describe('DashboardPengajar', () => {
       } as Attendance,
     ]
     renderComponent()
-    expect(screen.queryByText(/terlambat/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Terlambat \d+ menit/)).not.toBeInTheDocument()
   })
 })
