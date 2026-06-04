@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
-import { getUserById } from '../../store/userStore';
+import { useUsersStore } from '../../store/userStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 
@@ -11,8 +11,9 @@ export default function DetailPengajar() {
   const navigate = useNavigate();
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const users = useUsersStore((s) => s.users);
 
-  const teacher = getUserById(userId ?? '');
+  const teacher = users.find((u) => u.id === userId);
 
   if (!teacher) {
     return (

@@ -21,7 +21,7 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
-import { getUserById, useUsersStore } from '../../store/userStore';
+import { useUsersStore } from '../../store/userStore';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 
 export default function SessionActivePage() {
@@ -33,10 +33,10 @@ export default function SessionActivePage() {
   const attendances = useAttendanceStore(
     useShallow((s) => s.attendances.filter((a) => a.sessionId === sessionId))
   );
+  const users = useUsersStore((s) => s.users);
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notes, setNotes] = useState('');
-  useUsersStore((s) => s.users);
 
   if (!session) {
     return (
@@ -149,7 +149,7 @@ export default function SessionActivePage() {
             </div>
             <ul className="divide-y">
               {attendances.map((attendance) => {
-                const teacher = getUserById(attendance.userId);
+                const teacher = users.find((u) => u.id === attendance.userId);
                 return (
                   <li key={attendance.id} className="px-4 py-3 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold">

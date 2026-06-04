@@ -18,7 +18,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useTPAStore } from '../../store/tpaStore';
-import { getUserById, useUsersStore } from '../../store/userStore';
+import { useUsersStore } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay } from '../../lib/date-utils';
 import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
@@ -87,10 +87,11 @@ export default function DashboardPengurus() {
   }, [attendances]);
 
   const teacherStats = useMemo(() => {
+    const userMap = new Map(users.map((u) => [u.id, u]));
     const byUser = new Map<string, { id: string; name: string; nim?: string }>();
     for (const a of attendances) {
       if (!byUser.has(a.userId)) {
-        const user = getUserById(a.userId);
+        const user = userMap.get(a.userId);
         byUser.set(a.userId, {
           id: a.userId,
           name: user?.name ?? 'Unknown',

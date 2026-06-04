@@ -7,7 +7,7 @@ import { Button } from '../../app/components/ui/button';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useTPAStore, getTpaById } from '../../store/tpaStore';
-import { getUserById, useUsersStore } from '../../store/userStore';
+import { useUsersStore } from '../../store/userStore';
 import { format } from 'date-fns';
 import { formatDate, formatTime } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
@@ -72,8 +72,10 @@ function buildRows(
   tpaFilter: string,
   teacherFilter: string,
   sortColumn: string | null,
-  sortDirection: 'asc' | 'desc' | null
+  sortDirection: 'asc' | 'desc' | null,
+  users: ReturnType<typeof useUsersStore.getState>['users'],
 ): ReportRow[] {
+  const userMap = new Map(users.map((u) => [u.id, u]));
   const from = dateFrom ? new Date(dateFrom) : null;
   const to = dateTo ? new Date(dateTo + 'T23:59:59') : null;
 
@@ -94,7 +96,7 @@ function buildRows(
     .map((a) => {
       const session = sessions.find((s) => s.id === a.sessionId)!;
       const tpa = getTpaById(session.tpaId);
-      const teacher = getUserById(a.userId);
+      const teacher = userMap.get(a.userId);
       const earlyExit = isEarlyExit(a, session);
 
       return {
@@ -158,7 +160,7 @@ export default function LaporanPage() {
   }
 
   const rows = useMemo(
-    () => buildRows(attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection),
+    () => buildRows(attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection, allUsers),
     [attendances, sessions, dateFrom, dateTo, tpaFilter, teacherFilter, sortColumn, sortDirection, allUsers]
   );
 

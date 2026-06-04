@@ -6,7 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
-import { getUserById, useUsersStore } from '../../store/userStore';
+import { useUsersStore } from '../../store/userStore';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 import { logEvent } from '../../lib/log-event';
@@ -31,9 +31,9 @@ export default function TPADetailPage() {
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
   const forceCloseSession = useSessionStore((s) => s.forceCloseSession);
+  const users = useUsersStore((s) => s.users);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [forceClosing, setForceClosing] = useState(false);
-  useUsersStore((s) => s.users);
 
   const tpa = getTpaById(tpaId ?? '');
 
@@ -145,7 +145,7 @@ export default function TPADetailPage() {
               const earlyExitCount = sessionAttendances.filter(
                 (a) => isEarlyExit(a, session)
               ).length;
-              const firstTeacher = getUserById(session.firstTeacherId);
+              const firstTeacher = users.find((u) => u.id === session.firstTeacherId);
               const isToday = isSameDay(new Date(session.dateOpened), today);
 
               return (
@@ -214,6 +214,7 @@ function SessionAttendees({
   attendances: Attendance[];
   session: Session;
 }) {
+  const users = useUsersStore((s) => s.users);
   const navigate = useNavigate();
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
@@ -224,7 +225,7 @@ function SessionAttendees({
   return (
     <ul className="divide-y">
       {sessionAttendances.map((a) => {
-        const teacher = getUserById(a.userId);
+        const teacher = users.find((u) => u.id === a.userId);
         const earlyExit = isEarlyExit(a, session);
 
         return (
