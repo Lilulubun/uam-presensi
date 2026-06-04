@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
 } from '../../../../app/components/ui/alert-dialog';
 import { getUserById } from '../../../../store/userStore';
-import { sendMagicLink, generateTemporaryPassword } from '../../../../lib/manage-user';
+import { generateTemporaryPassword } from '../../../../lib/manage-user';
 
 interface Props {
   open: boolean;
@@ -22,29 +22,13 @@ interface Props {
 
 export function ResetPasswordModal({ open, userId, onClose }: Props) {
   const user = getUserById(userId);
-  const [loading, setLoading] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [tempPassword, setTempPassword] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const handleMagicLink = async () => {
-    if (!user) return;
-    setLoading('magiclink');
-    try {
-      const result = await sendMagicLink(user.email);
-      if (result.success) {
-        toast.success('Email reset password terkirim');
-        onClose();
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Gagal mengirim email');
-    } finally {
-      setLoading(null);
-    }
-  };
-
   const handleTemporaryPassword = async () => {
     if (!user) return;
-    setLoading('temporary');
+    setLoading(true);
     try {
       const result = await generateTemporaryPassword(user.email);
       if (result.success && result.temporaryPassword) {
@@ -54,7 +38,7 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Gagal membuat password');
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   };
 
@@ -80,32 +64,10 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={handleMagicLink}
-            disabled={!!loading}
-          >
-            {loading === 'magiclink' ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Mengirim...</>
-            ) : (
-              '📧 Kirim Email Reset'
-            )}
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">atau</span>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            className="w-full justify-start"
             onClick={handleTemporaryPassword}
-            disabled={!!loading}
+            disabled={loading}
           >
-            {loading === 'temporary' ? (
+            {loading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Membuat...</>
             ) : (
               '🔑 Buat Password Sementara'

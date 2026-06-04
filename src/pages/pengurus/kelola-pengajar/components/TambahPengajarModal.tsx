@@ -34,15 +34,13 @@ export function TambahPengajarModal({ open, onClose, onSuccess }: Props) {
     }
     setSubmitting(true);
     try {
-      const result = await createUser(email.trim(), name.trim(), nim.trim(), selectedTPAs);
-      if (result.success) {
-        toast.success(`Akun ${name} berhasil dibuat${result.emailSent ? ', email undangan terkirim' : ''}`);
-        setName('');
-        setEmail('');
-        setNim('');
-        setSelectedTPAs([]);
-        onSuccess();
-      }
+      await createUser(email.trim(), name.trim(), nim.trim(), selectedTPAs);
+      toast.success(`Akun ${name} berhasil dibuat`);
+      setName('');
+      setEmail('');
+      setNim('');
+      setSelectedTPAs([]);
+      onSuccess();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Gagal membuat akun');
     } finally {

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -139,6 +139,9 @@ export default function DashboardPengurus() {
               <Users className="w-4 h-4 mr-1.5" />
               <span className="hidden sm:inline">Pengajar</span>
             </Button>
+            <button onClick={() => navigate('/profile')} className="text-muted-foreground hover:text-foreground p-2">
+              <User className="w-4 h-4" />
+            </button>
             <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
               <LogOut className="w-4 h-4" />
             </button>

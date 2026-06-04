@@ -3,14 +3,11 @@ const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-u
 interface CreateResult {
   success: boolean;
   userId: string;
-  emailSent: boolean;
-  error?: string;
 }
 
 interface ResetPwResult {
   success: boolean;
-  method: 'magiclink' | 'temporary';
-  emailSent?: boolean;
+  method: 'temporary';
   temporaryPassword?: string;
   error?: string;
 }
@@ -43,14 +40,6 @@ export async function createUser(
     name,
     nim,
     tpaIds,
-  });
-}
-
-export async function sendMagicLink(email: string): Promise<ResetPwResult> {
-  return callFunction<ResetPwResult>({
-    action: 'reset-pw',
-    email,
-    mode: 'magiclink',
   });
 }
 

@@ -12,6 +12,19 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
 });
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, content-type',
+};
+
+function jsonResponse(data: Record<string, unknown>, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+  });
+}
+
 interface CreatePayload {
   action: 'create';
   email: string;
@@ -23,27 +36,27 @@ interface CreatePayload {
 interface ResetPwPayload {
   action: 'reset-pw';
   email: string;
-  mode: 'magiclink' | 'temporary';
+  mode: 'temporary';
 }
 
 type Payload = CreatePayload | ResetPwPayload;
 
 async function handleCreate(p: CreatePayload): Promise<Response> {
-  // 1. Create auth user (auto-confirm email)
+  const password = `${p.nim}uam`;
+
   const { data: authUser, error: createErr } = await supabase.auth.admin.createUser({
     email: p.email,
-    password: crypto.randomUUID().slice(0, 12),
+    password,
     email_confirm: true,
   });
   if (createErr) {
-      if (createErr.message.includes('already been registered') || createErr.message.includes('already registered')) {
-      return new Response(JSON.stringify({ error: 'Email sudah terdaftar' }), { status: 409 });
+    if (createErr.message.includes('already been registered') || createErr.message.includes('already registered')) {
+      return jsonResponse({ error: 'Email sudah terdaftar' }, 409);
     }
-    return new Response(JSON.stringify({ error: createErr.message }), { status: 500 });
+    return jsonResponse({ error: createErr.message }, 500);
   }
   const userId = authUser.user!.id;
 
-  // 2. Insert profile
   const { error: profileErr } = await supabase.from('users').insert({
     id: userId,
     email: p.email,
@@ -52,40 +65,25 @@ async function handleCreate(p: CreatePayload): Promise<Response> {
     nim: p.nim,
   });
   if (profileErr) {
-    // Rollback auth user
     await supabase.auth.admin.deleteUser(userId);
-    return new Response(JSON.stringify({ error: profileErr.message }), { status: 500 });
+    return jsonResponse({ error: profileErr.message }, 500);
   }
 
-  // 3. Assign TPAs
   if (p.tpaIds.length > 0) {
     const rows = p.tpaIds.map((tpaId) => ({ user_id: userId, tpa_id: tpaId }));
     const { error: tpaErr } = await supabase.from('pengajar_tpa').insert(rows);
     if (tpaErr) {
-      // Non-critical — don't rollback
       console.error('TPA assignment failed:', tpaErr.message);
     }
   }
 
-  // 4. Generate magic link
-  const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-    type: 'magiclink',
-    email: p.email,
+  return jsonResponse({
+    success: true,
+    userId,
   });
-
-  return new Response(
-    JSON.stringify({
-      success: true,
-      userId,
-      emailSent: !linkErr,
-      magicLink: linkData?.properties?.hashed_token ?? null,
-    }),
-    { status: 200 },
-  );
 }
 
 async function handleResetPw(p: ResetPwPayload): Promise<Response> {
-  // Find user by email
   const { data: users, error: lookupErr } = await supabase
     .from('users')
     .select('id, email')
@@ -93,26 +91,11 @@ async function handleResetPw(p: ResetPwPayload): Promise<Response> {
     .limit(1);
 
   if (lookupErr || !users || users.length === 0) {
-    return new Response(JSON.stringify({ error: 'Pengguna tidak ditemukan' }), { status: 404 });
+    return jsonResponse({ error: 'Pengguna tidak ditemukan' }, 404);
   }
 
   const user = users[0];
 
-  if (p.mode === 'magiclink') {
-    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-      type: 'magiclink',
-      email: p.email,
-    });
-    if (linkErr) {
-      return new Response(JSON.stringify({ error: linkErr.message }), { status: 500 });
-    }
-    return new Response(
-      JSON.stringify({ success: true, method: 'magiclink', emailSent: true }),
-      { status: 200 },
-    );
-  }
-
-  // Temporary password: UAM-{nim}-{random 4 digits}
   const { data: profiles } = await supabase
     .from('users')
     .select('nim')
@@ -127,23 +110,24 @@ async function handleResetPw(p: ResetPwPayload): Promise<Response> {
     password: tempPassword,
   });
   if (updateErr) {
-    return new Response(JSON.stringify({ error: updateErr.message }), { status: 500 });
+    return jsonResponse({ error: updateErr.message }, 500);
   }
 
-  return new Response(
-    JSON.stringify({
-      success: true,
-      method: 'temporary',
-      temporaryPassword: tempPassword,
-      userId: user.id,
-    }),
-    { status: 200 },
-  );
+  return jsonResponse({
+    success: true,
+    method: 'temporary',
+    temporaryPassword: tempPassword,
+    userId: user.id,
+  });
 }
 
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   try {
@@ -155,12 +139,12 @@ serve(async (req) => {
       case 'reset-pw':
         return await handleResetPw(payload);
       default:
-        return new Response(JSON.stringify({ error: 'Unknown action' }), { status: 400 });
+        return jsonResponse({ error: 'Unknown action' }, 400);
     }
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : 'Internal error' }),
-      { status: 500 },
+    return jsonResponse(
+      { error: err instanceof Error ? err.message : 'Internal error' },
+      500,
     );
   }
 });

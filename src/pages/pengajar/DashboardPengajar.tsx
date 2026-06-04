@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays } from 'lucide-react';
+import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays, User } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
@@ -68,9 +68,14 @@ export default function DashboardPengajar() {
             <h1 className="font-bold text-lg">Presensi UAM</h1>
             <p className="text-sm text-muted-foreground">Halo, {user?.name}</p>
           </div>
-          <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
-            <LogOut className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={() => navigate('/profile')} className="text-muted-foreground hover:text-foreground p-2">
+              <User className="w-5 h-5" />
+            </button>
+            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </header>
 
