@@ -16,6 +16,7 @@ export default function DashboardPengajar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const activeSession = useSessionStore((s) => s.activeSession);
+  const allSessions = useSessionStore((s) => s.sessions);
   const allAttendances = useAttendanceStore((s) => s.attendances);
   const { locationState, nearestTPA } = useWatchLocation(true);
 
@@ -30,7 +31,7 @@ export default function DashboardPengajar() {
   const todayRecord = todayAttendances[0] ?? null;
 
   const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
-  const streak = computeStreak(myAttendances);
+  const streak = computeStreak(myAttendances, allSessions);
   const monthSummary = computeMonthlySummary(myAttendances, today.getFullYear(), today.getMonth() + 1);
 
   const recentAttendances = allAttendances

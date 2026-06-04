@@ -49,7 +49,7 @@ export default function ScanPage() {
             return;
           }
 
-          const location = await getCurrentLocation();
+          const location = locationState.status === 'ready' ? locationState.coords : await getCurrentLocation();
 
           const distance = calculateDistance(location, tpa.location);
           if (distance > tpa.location.radius) {
@@ -75,7 +75,7 @@ export default function ScanPage() {
           return;
         }
 
-        const location = await getCurrentLocation();
+        const location = locationState.status === 'ready' ? locationState.coords : await getCurrentLocation();
 
         if (token.type === 'in') {
           const result = await checkIn(token.sessionId, token.token, location);
@@ -104,7 +104,7 @@ export default function ScanPage() {
         setProcessing(false);
       }
     },
-    [user, openSession, getActiveSessionByTPA, checkIn, checkOut, navigate]
+    [user, openSession, getActiveSessionByTPA, checkIn, checkOut, navigate, locationState]
   );
 
   const handleCameraError = useCallback((error: string) => {

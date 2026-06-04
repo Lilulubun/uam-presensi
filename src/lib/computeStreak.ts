@@ -1,7 +1,6 @@
-import type { Attendance } from '../types';
-import { toDate } from './toDate';
+import type { Attendance, Session } from '../types';
+import { toDate } from './date-utils';
 
-const MS_PER_DAY = 86_400_000;
 const UTC_7_MS = 7 * 60 * 60 * 1000;
 
 function toJakartaDate(date: Date): string {
@@ -13,27 +12,28 @@ function toJakartaDate(date: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-function parseJakartaDate(str: string): number {
-  return new Date(str + 'T00:00:00+07:00').getTime();
-}
-
-export function computeStreak(attendances: Attendance[]): number {
+export function computeStreak(attendances: Attendance[], sessions: Session[]): number {
   const now = new Date();
 
-  const dates = attendances
-    .map((a) => toDate(a.scanInTime))
-    .filter((d): d is Date => d !== null && d <= now)
-    .map((d) => toJakartaDate(d));
+  const teachingDays = [...new Set(
+    sessions
+      .map((s) => toDate(s.dateOpened))
+      .filter((d): d is Date => d !== null && d <= now)
+      .map((d) => toJakartaDate(d)),
+  )].sort().reverse();
 
-  if (dates.length === 0) return 0;
+  if (teachingDays.length === 0) return 0;
 
-  const unique = [...new Set(dates)].sort().reverse();
+  const attendedDays = new Set(
+    attendances
+      .map((a) => toDate(a.scanInTime))
+      .filter((d): d is Date => d !== null)
+      .map((d) => toJakartaDate(d)),
+  );
 
-  let streak = 1;
-  for (let i = 1; i < unique.length; i++) {
-    const prev = parseJakartaDate(unique[i - 1]);
-    const curr = parseJakartaDate(unique[i]);
-    if (prev - curr === MS_PER_DAY) {
+  let streak = 0;
+  for (const day of teachingDays) {
+    if (attendedDays.has(day)) {
       streak++;
     } else {
       break;

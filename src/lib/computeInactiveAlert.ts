@@ -1,5 +1,5 @@
 import type { Attendance } from '../types';
-import { toDate } from './toDate';
+import { toDate } from './date-utils';
 
 const UTC_7_MS = 7 * 60 * 60 * 1000;
 
