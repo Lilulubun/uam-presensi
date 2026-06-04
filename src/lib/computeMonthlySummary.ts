@@ -1,4 +1,5 @@
 import type { Attendance } from '../types';
+import { toDate } from './toDate';
 
 const UTC_7_MS = 7 * 60 * 60 * 1000;
 
@@ -38,10 +39,11 @@ export function computeMonthlySummary(
   let late = 0;
 
   for (const a of attendances) {
-    if (!a.scanInTime) continue;
-    if (toJakartaMonth(a.scanInTime) !== target) continue;
+    const dt = toDate(a.scanInTime);
+    if (!dt) continue;
+    if (toJakartaMonth(dt) !== target) continue;
 
-    const dateKey = toJakartaDate(a.scanInTime);
+    const dateKey = toJakartaDate(dt);
     if (seen.has(dateKey)) continue;
     seen.add(dateKey);
 

@@ -1,4 +1,5 @@
 import type { Attendance } from '../types';
+import { toDate } from './toDate';
 
 const MS_PER_DAY = 86_400_000;
 const UTC_7_MS = 7 * 60 * 60 * 1000;
@@ -20,8 +21,9 @@ export function computeStreak(attendances: Attendance[]): number {
   const now = new Date();
 
   const dates = attendances
-    .filter((a) => a.scanInTime && a.scanInTime <= now)
-    .map((a) => toJakartaDate(a.scanInTime!));
+    .map((a) => toDate(a.scanInTime))
+    .filter((d): d is Date => d !== null && d <= now)
+    .map((d) => toJakartaDate(d));
 
   if (dates.length === 0) return 0;
 

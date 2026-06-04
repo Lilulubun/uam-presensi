@@ -1,4 +1,5 @@
 import type { Attendance } from '../types';
+import { toDate } from './toDate';
 
 const UTC_7_MS = 7 * 60 * 60 * 1000;
 
@@ -22,7 +23,9 @@ export function computeInactiveAlert(
   }
 
   const maxScanIn = userAttendances.reduce<Date | null>((latest, a) => {
-    if (!latest || (a.scanInTime && a.scanInTime > latest)) return a.scanInTime!;
+    const dt = toDate(a.scanInTime);
+    if (!dt) return latest;
+    if (!latest || dt > latest) return dt;
     return latest;
   }, null);
 
