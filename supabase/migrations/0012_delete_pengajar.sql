@@ -12,10 +12,10 @@ begin
     raise exception 'forbidden';
   end if;
 
+  delete from public.interaction_logs where user_id = p_user_id;
+  delete from public.sessions where first_teacher_id = p_user_id;
   delete from public.used_tokens where user_id = p_user_id;
   delete from public.attendances where user_id = p_user_id;
-  delete from public.interaction_logs where user_id = p_user_id;
-  update public.sessions set first_teacher_id = null where first_teacher_id = p_user_id;
 
   delete from auth.users where id = p_user_id;
 end;
