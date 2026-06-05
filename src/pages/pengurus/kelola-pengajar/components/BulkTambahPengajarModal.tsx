@@ -7,6 +7,7 @@ import {
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogDescription,
   AlertDialogCancel,
   AlertDialogFooter,
 } from '../../../../app/components/ui/alert-dialog';
@@ -87,6 +88,9 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
               <FileText className="w-5 h-5" />
               Import Pengajar (CSV)
             </AlertDialogTitle>
+            <AlertDialogDescription>
+              Unggah file CSV untuk menambahkan banyak pengajar sekaligus.
+            </AlertDialogDescription>
           </AlertDialogHeader>
 
           <div className="px-6 py-4 space-y-6">
@@ -143,9 +147,13 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
       {showInstructions && (
         <AlertDialog open={showInstructions} onOpenChange={setShowInstructions}>
           <AlertDialogContent className="max-w-md">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Format File CSV</AlertDialogTitle>
-            </AlertDialogHeader>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Format File CSV</AlertDialogTitle>
+            <AlertDialogDescription>
+              Gunakan format berikut untuk mengimpor data pengajar dengan benar.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
             <div className="px-6 py-4 space-y-4">
               <p className="text-sm text-muted-foreground">
                 File CSV harus menggunakan koma (<code>,</code>) sebagai pemisah dan memiliki header di baris pertama.
