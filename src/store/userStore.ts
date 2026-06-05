@@ -84,6 +84,20 @@ export const useUsersStore = create<UserState>((set) => ({
     }));
     return true;
   },
+
+  deletePengajar: async (userId: string): Promise<boolean> => {
+    const { error } = await supabase.rpc('delete_pengajar', {
+      p_user_id: userId,
+    });
+    if (error) {
+      console.error('deletePengajar error:', error);
+      return false;
+    }
+    set((state) => ({
+      users: state.users.filter((u) => u.id !== userId),
+    }));
+    return true;
+  },
 }));
 
 export function getUserById(id: string): User | undefined {
