@@ -199,13 +199,6 @@ export default function KelolaPengajarPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setAssignTarget(user.id)}
-                        >
-                          TPA
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
                           onClick={() => setResetTarget(user.id)}
                         >
                           Reset PW
