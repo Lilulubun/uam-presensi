@@ -62,6 +62,7 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
           await createUser(email, name, nim || '', tpaId ? [tpaId] : []);
           successCount++;
         } catch (err) {
+          console.error(`Error creating user ${email}:`, err);
           errorCount++;
         }
       }
