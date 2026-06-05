@@ -9,7 +9,6 @@ import { supabase } from '../../../lib/supabase';
 import { TambahPengajarModal } from './components/TambahPengajarModal';
 import { BulkTambahPengajarModal } from './components/BulkTambahPengajarModal';
 import { AssignTPAModal } from './components/AssignTPAModal';
-import { ResetPasswordModal } from './components/ResetPasswordModal';
 
 export default function KelolaPengajarPage() {
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ export default function KelolaPengajarPage() {
   const [showTambah, setShowTambah] = useState(false);
   const [showBulkTambah, setShowBulkTambah] = useState(false);
   const [assignTarget, setAssignTarget] = useState<string | null>(null);
-  const [resetTarget, setResetTarget] = useState<string | null>(null);
   const [userTPAs, setUserTPAs] = useState<Record<string, string[]>>({});
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -199,13 +197,6 @@ export default function KelolaPengajarPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setResetTarget(user.id)}
-                        >
-                          Reset PW
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
                           onClick={() => handleToggleActive(user.id)}
                         >
                           {user.isActive !== false ? 'Nonaktifkan' : 'Aktifkan'}
@@ -270,14 +261,6 @@ export default function KelolaPengajarPage() {
           open={!!assignTarget}
           userId={assignTarget}
           onClose={() => setAssignTarget(null)}
-        />
-      )}
-
-      {resetTarget && (
-        <ResetPasswordModal
-          open={!!resetTarget}
-          userId={resetTarget}
-          onClose={() => setResetTarget(null)}
         />
       )}
     </div>
