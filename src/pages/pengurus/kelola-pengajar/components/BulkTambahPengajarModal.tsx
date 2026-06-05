@@ -44,17 +44,22 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
     setSubmitting(true);
     try {
       const text = await file.text();
-      const lines = text.split('\\n').filter(line => line.trim() !== '');
-      
+      const lines = text.split('\n').filter(line => line.trim() !== '');
+
+      console.log('CSV raw lines:', lines);
+
       // Skip header
       const dataLines = lines.slice(1);
       let successCount = 0;
       let errorCount = 0;
 
-      for (const line of dataLines) {
+      for (const [idx, line] of dataLines.entries()) {
+        console.log(`Row ${idx + 1}:`, line);
         const [name, email, nim, tpaId] = line.split(',').map(s => s.trim());
+        console.log(`Parsed row ${idx + 1}:`, { name, email, nim, tpaId });
         
         if (!name || !email) {
+          console.warn('Skipping invalid row — missing name or email:', { name, email, nim, tpaId });
           errorCount++;
           continue;
         }
