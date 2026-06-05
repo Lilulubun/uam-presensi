@@ -203,14 +203,14 @@ export default function SessionActivePage() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="px-6 py-2">
-                <textarea
-                  placeholder="Catatan hari ini (opsional) — misal: listrik mati, siswa sedikit"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
-                  rows={3}
-                  disabled={closing}
-                />
+                   <textarea
+                     placeholder="Materi yang diberikan hari ini (opsional) — misal: Surat Al-Fatihah ayat 1-7"
+                     value={notes}
+                     onChange={(e) => setNotes(e.target.value)}
+                     className="w-full rounded-lg border border-input bg-background p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                     rows={3}
+                     disabled={closing}
+                   />
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Batal</AlertDialogCancel>

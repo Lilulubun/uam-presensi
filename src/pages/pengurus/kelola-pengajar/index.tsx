@@ -1,11 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, UserPlus } from 'lucide-react';
+import { ArrowLeft, Search, UserPlus, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../../../app/components/ui/button';
 import { useUsersStore } from '../../../store/userStore';
 import { useTPAStore } from '../../../store/tpaStore';
 import { TambahPengajarModal } from './components/TambahPengajarModal';
+import { BulkTambahPengajarModal } from './components/BulkTambahPengajarModal';
 import { AssignTPAModal } from './components/AssignTPAModal';
 import { ResetPasswordModal } from './components/ResetPasswordModal';
 
@@ -19,6 +20,7 @@ export default function KelolaPengajarPage() {
   const [search, setSearch] = useState('');
   const [tpaFilter, setTpaFilter] = useState('');
   const [showTambah, setShowTambah] = useState(false);
+  const [showBulkTambah, setShowBulkTambah] = useState(false);
   const [assignTarget, setAssignTarget] = useState<string | null>(null);
   const [resetTarget, setResetTarget] = useState<string | null>(null);
 
@@ -93,10 +95,17 @@ export default function KelolaPengajarPage() {
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
-          <Button onClick={() => setShowTambah(true)}>
-            <UserPlus className="w-4 h-4 mr-1.5" />
-            Tambah Pengajar
-          </Button>
+           <div className="flex gap-2">
+             <Button onClick={() => setShowTambah(true)}>
+               <UserPlus className="w-4 h-4 mr-1.5" />
+               Tambah Pengajar
+             </Button>
+             <Button variant="outline" onClick={() => setShowBulkTambah(true)}>
+               <FileText className="w-4 h-4 mr-1.5" />
+               Import CSV
+             </Button>
+           </div>
+
         </div>
 
         {/* Table */}
@@ -189,6 +198,17 @@ export default function KelolaPengajarPage() {
           onClose={() => setShowTambah(false)}
           onSuccess={() => {
             setShowTambah(false);
+            initUsers();
+          }}
+        />
+      )}
+
+      {showBulkTambah && (
+        <BulkTambahPengajarModal
+          open={showBulkTambah}
+          onClose={() => setShowBulkTambah(false)}
+          onSuccess={() => {
+            setShowBulkTambah(false);
             initUsers();
           }}
         />
