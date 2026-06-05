@@ -46,34 +46,42 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
       const text = await file.text();
       const lines = text.split('\n').filter(line => line.trim() !== '');
 
-      console.log('CSV raw lines:', lines);
-
       // Skip header
       const dataLines = lines.slice(1);
+      const rows = dataLines
+        .map((line) => {
+          const [name, email, nim, tpaId] = line.split(',').map(s => s.trim());
+          return { name, email, nim, tpaId };
+        })
+        .filter((r) => r.name && r.email);
+
+      const totalRows = rows.length;
+      const failedEmails: string[] = [];
       let successCount = 0;
-      let errorCount = 0;
+      const BATCH_SIZE = 5;
 
-      for (const [idx, line] of dataLines.entries()) {
-        console.log(`Row ${idx + 1}:`, line);
-        const [name, email, nim, tpaId] = line.split(',').map(s => s.trim());
-        console.log(`Parsed row ${idx + 1}:`, { name, email, nim, tpaId });
-        
-        if (!name || !email) {
-          console.warn('Skipping invalid row — missing name or email:', { name, email, nim, tpaId });
-          errorCount++;
-          continue;
-        }
-
-        try {
-          await createUser(email, name, nim || '', tpaId ? [tpaId] : []);
-          successCount++;
-        } catch (err) {
-          console.error(`Error creating user ${email}:`, err);
-          errorCount++;
+      for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+        const batch = rows.slice(i, i + BATCH_SIZE);
+        const results = await Promise.allSettled(
+          batch.map((r) => createUser(r.email, r.name, r.nim || '', r.tpaId ? [r.tpaId] : []))
+        );
+        for (let j = 0; j < results.length; j++) {
+          const r = results[j];
+          if (r.status === 'fulfilled') {
+            successCount++;
+          } else {
+            failedEmails.push(batch[j].email);
+          }
         }
       }
 
-      toast.success(`Import selesai: ${successCount} berhasil, ${errorCount} gagal`);
+      const errorCount = totalRows - successCount;
+      const msg = `Import selesai: ${successCount} berhasil, ${errorCount} gagal`;
+      if (failedEmails.length > 0) {
+        toast(msg + '\n' + failedEmails.join(', '));
+      } else {
+        toast.success(msg);
+      }
       setFile(null);
       onSuccess();
       onClose();
