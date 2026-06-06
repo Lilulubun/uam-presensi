@@ -55,7 +55,7 @@ export type IzinStatus = 'pending' | 'approved' | 'rejected';
 
 export interface IzinRequest {
   id: string;
-  userId: string;
+  userId?: string;
   startDate: Date;
   endDate: Date;
   alasan: string;

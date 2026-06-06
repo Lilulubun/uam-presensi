@@ -67,6 +67,15 @@ begin
   if v_user is null then raise exception 'not authenticated'; end if;
   if p_end_date < p_start_date then raise exception 'Tanggal akhir harus setelah atau sama dengan tanggal awal'; end if;
 
+  if exists (
+    select 1 from public.izin_requests
+    where user_id = v_user
+      and status = 'pending'
+      and (p_start_date, p_end_date) overlaps (start_date, end_date)
+  ) then
+    raise exception 'Sudah ada pengajuan izin pending untuk rentang tanggal tersebut';
+  end if;
+
   insert into public.izin_requests (user_id, start_date, end_date, alasan)
   values (v_user, p_start_date, p_end_date, p_alasan)
   returning * into v_row;
