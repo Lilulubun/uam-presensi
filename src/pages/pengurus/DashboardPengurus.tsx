@@ -268,15 +268,15 @@ export default function DashboardPengurus() {
           </div>
         </div>
 
-        {pendingIzins.length > 0 && (
-          <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b flex items-center gap-2">
-              <FileText className="w-4 h-4 text-orange-500" />
-              <h2 className="text-sm font-semibold">Izin Pending</h2>
-              <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
-                {pendingIzins.length}
-              </span>
-            </div>
+        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b flex items-center gap-2">
+            <FileText className="w-4 h-4 text-orange-500" />
+            <h2 className="text-sm font-semibold">Izin Pending</h2>
+            <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+              {pendingIzins.length}
+            </span>
+          </div>
+          {pendingIzins.length > 0 ? (
             <ul className="divide-y">
               {pendingIzins.map((izin) => (
                 <li key={izin.id} className="px-4 py-3">
@@ -318,8 +318,10 @@ export default function DashboardPengurus() {
                 </li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="px-4 py-6 text-center text-sm text-muted-foreground">Tidak ada izin pending</p>
+          )}
+        </div>
 
         <div className="bg-card rounded-xl shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b flex items-center gap-2">
