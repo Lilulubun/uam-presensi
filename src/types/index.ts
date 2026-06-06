@@ -51,6 +51,29 @@ export interface Attendance {
   scanOutLocation?: { lat: number; lng: number };
 }
 
+export type IzinStatus = 'pending' | 'approved' | 'rejected';
+
+export interface IzinRequest {
+  id: string;
+  userId: string;
+  startDate: Date;
+  endDate: Date;
+  alasan: string;
+  status: IzinStatus;
+  reviewedBy?: string;
+  createdAt: Date;
+  reviewedAt?: Date;
+  userName?: string;
+  reviewedByName?: string;
+}
+
+export interface DailyReportRow {
+  tgl: Date;
+  tpaId: string;
+  tpaName: string;
+  status: 'hadir' | 'izin' | 'tidak_masuk';
+}
+
 // QR Token Structure
 export interface QRToken {
   token: string;
