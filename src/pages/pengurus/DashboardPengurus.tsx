@@ -279,41 +279,43 @@ export default function DashboardPengurus() {
           {pendingIzins.length > 0 ? (
             <ul className="divide-y">
               {pendingIzins.map((izin) => (
-                  <li key={izin.id} className="px-4 py-3 space-y-2">
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium">{izin.userName}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                        {' – '}
-                        {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={async () => {
-                          const r = await approveIzin(izin.id);
-                          if (r.valid) toast.success(r.message);
-                          else toast.error(r.message);
-                        }}
-                      >
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        Setujui
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-destructive border-destructive/30 hover:bg-destructive/10"
-                        onClick={async () => {
-                          const r = await rejectIzin(izin.id);
-                          if (r.valid) toast.success(r.message);
-                          else toast.error(r.message);
-                        }}
-                      >
-                        <XCircle className="w-3.5 h-3.5" />
-                        Tolak
-                      </Button>
+                  <li key={izin.id} className="px-4 py-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">{izin.userName}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                          {' – '}
+                          {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          onClick={async () => {
+                            const r = await approveIzin(izin.id);
+                            if (r.valid) toast.success(r.message);
+                            else toast.error(r.message);
+                          }}
+                        >
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Setujui
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                          onClick={async () => {
+                            const r = await rejectIzin(izin.id);
+                            if (r.valid) toast.success(r.message);
+                            else toast.error(r.message);
+                          }}
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          Tolak
+                        </Button>
+                      </div>
                     </div>
                   </li>
               ))}
