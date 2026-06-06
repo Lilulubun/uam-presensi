@@ -279,8 +279,7 @@ export default function DashboardPengurus() {
           {pendingIzins.length > 0 ? (
             <ul className="divide-y">
               {pendingIzins.map((izin) => (
-                <li key={izin.id} className="px-4 py-3">
-                  <div className="flex items-start justify-between gap-3">
+                  <li key={izin.id} className="px-4 py-3 space-y-2">
                     <div className="min-w-0">
                       <p className="text-sm font-medium">{izin.userName}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
@@ -290,32 +289,33 @@ export default function DashboardPengurus() {
                       </p>
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
                     </div>
-                    <div className="flex gap-1.5 shrink-0">
-                      <button
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
                         onClick={async () => {
                           const r = await approveIzin(izin.id);
                           if (r.valid) toast.success(r.message);
                           else toast.error(r.message);
                         }}
-                        className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
-                        title="Setujui"
                       >
-                        <CheckCircle className="w-4 h-4" />
-                      </button>
-                      <button
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        Setujui
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive border-destructive/30 hover:bg-destructive/10"
                         onClick={async () => {
                           const r = await rejectIzin(izin.id);
                           if (r.valid) toast.success(r.message);
                           else toast.error(r.message);
                         }}
-                        className="p-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
-                        title="Tolak"
                       >
-                        <XCircle className="w-4 h-4" />
-                      </button>
+                        <XCircle className="w-3.5 h-3.5" />
+                        Tolak
+                      </Button>
                     </div>
-                  </div>
-                </li>
+                  </li>
               ))}
             </ul>
           ) : (
