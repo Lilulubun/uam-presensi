@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User, FileText, CheckCircle, XCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useIzinStore } from '../../store/izinStore';
 import {
   BarChart,
   Bar,
@@ -33,6 +35,12 @@ export default function DashboardPengurus() {
   const users = useUsersStore((s) => s.users);
 
   useRealtimeSessions();
+
+  const { pendingIzins, approveIzin, rejectIzin, fetchPendingIzins } = useIzinStore();
+
+  useEffect(() => {
+    fetchPendingIzins();
+  }, []);
 
   const today = new Date();
 
@@ -259,6 +267,59 @@ export default function DashboardPengurus() {
             })}
           </div>
         </div>
+
+        {pendingIzins.length > 0 && (
+          <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b flex items-center gap-2">
+              <FileText className="w-4 h-4 text-orange-500" />
+              <h2 className="text-sm font-semibold">Izin Pending</h2>
+              <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                {pendingIzins.length}
+              </span>
+            </div>
+            <ul className="divide-y">
+              {pendingIzins.map((izin) => (
+                <li key={izin.id} className="px-4 py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{izin.userName}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                        {' – '}
+                        {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
+                    </div>
+                    <div className="flex gap-1.5 shrink-0">
+                      <button
+                        onClick={async () => {
+                          const r = await approveIzin(izin.id);
+                          if (r.valid) toast.success(r.message);
+                          else toast.error(r.message);
+                        }}
+                        className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                        title="Setujui"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const r = await rejectIzin(izin.id);
+                          if (r.valid) toast.success(r.message);
+                          else toast.error(r.message);
+                        }}
+                        className="p-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                        title="Tolak"
+                      >
+                        <XCircle className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="bg-card rounded-xl shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b flex items-center gap-2">
