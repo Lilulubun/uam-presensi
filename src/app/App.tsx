@@ -15,6 +15,7 @@ import ScanPage from '../pages/pengajar/ScanPage';
 import SessionActivePage from '../pages/pengajar/SessionActivePage';
 import KonfirmasiPresensi from '../pages/pengajar/KonfirmasiPresensi';
 import RiwayatPage from '../pages/pengajar/RiwayatPage';
+import IzinPage from '../pages/pengajar/IzinPage';
 import DashboardPengurus from '../pages/pengurus/DashboardPengurus';
 import TPADetailPage from '../pages/pengurus/TPADetailPage';
 import DetailPengajar from '../pages/pengurus/DetailPengajar';
@@ -80,6 +81,7 @@ export default function App() {
         <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><SessionActivePage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><KonfirmasiPresensi /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><RiwayatPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/izin" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><IzinPage /></ErrorBoundary></ProtectedRoute>} />
 
         {/* Admin routes */}
         <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DashboardPengurus /></ErrorBoundary></ProtectedRoute>} />
