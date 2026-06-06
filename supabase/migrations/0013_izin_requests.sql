@@ -153,7 +153,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not exists (select 1 from public.users where id = auth.uid() and role = 'pengurus') then
+  if not exists (select 1 from public.users u where u.id = auth.uid() and u.role = 'pengurus') then
     raise exception 'forbidden';
   end if;
 
