@@ -1,8 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowLeft, Clock, CheckCircle2, XCircle, FileText } from 'lucide-react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
+import { useIzinStore } from '../../store/izinStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 
@@ -37,6 +39,19 @@ export default function DetailPengajar() {
     return isEarlyExit(a, session);
   }).length;
 
+  const now = new Date();
+  const { monthlyReport, fetchMonthlyReport } = useIzinStore();
+
+  useEffect(() => {
+    if (userId) {
+      fetchMonthlyReport(userId, now.getFullYear(), now.getMonth() + 1);
+    }
+  }, [userId]);
+
+  const hadirCount = monthlyReport.filter((r) => r.status === 'hadir').length;
+  const izinCount = monthlyReport.filter((r) => r.status === 'izin').length;
+  const tidakMasukCount = monthlyReport.filter((r) => r.status === 'tidak_masuk').length;
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
@@ -68,6 +83,57 @@ export default function DetailPengajar() {
             <p className="text-lg font-bold text-red-500">{earlyExitCount}</p>
             <p className="text-xs text-muted-foreground mt-0.5">Awal</p>
           </div>
+        </div>
+
+        {/* Monthly attendance status */}
+        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b flex items-center gap-2">
+            <FileText className="w-4 h-4 text-muted-foreground" />
+            <p className="text-sm font-medium">Status Bulanan</p>
+            <span className="ml-auto text-xs text-muted-foreground">
+              {new Date(now.getFullYear(), now.getMonth()).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 p-3">
+            <div className="text-center p-2 rounded-lg bg-green-50">
+              <p className="text-lg font-bold text-green-600">{hadirCount}</p>
+              <p className="text-xs text-green-700">Hadir</p>
+            </div>
+            <div className="text-center p-2 rounded-lg bg-blue-50">
+              <p className="text-lg font-bold text-blue-600">{izinCount}</p>
+              <p className="text-xs text-blue-700">Izin</p>
+            </div>
+            <div className="text-center p-2 rounded-lg bg-red-50">
+              <p className="text-lg font-bold text-red-500">{tidakMasukCount}</p>
+              <p className="text-xs text-red-600">Tidak Masuk</p>
+            </div>
+          </div>
+
+          {monthlyReport.length > 0 && (
+            <ul className="divide-y border-t">
+              {monthlyReport.map((row) => {
+                const date = new Date(row.tgl + 'T00:00:00');
+                return (
+                  <li key={date.toISOString()} className="px-4 py-2.5 flex items-center gap-3">
+                    <span className="text-sm min-w-[120px]">
+                      {date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex-1">{row.tpaName}</span>
+                    <span
+                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        row.status === 'hadir' ? 'bg-green-50 text-green-600' :
+                        row.status === 'izin' ? 'bg-blue-50 text-blue-600' :
+                        'bg-red-50 text-red-500'
+                      }`}
+                    >
+                      {row.status === 'hadir' ? 'Hadir' : row.status === 'izin' ? 'Izin' : 'Tidak Masuk'}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         {/* Attendance list grouped by session */}
