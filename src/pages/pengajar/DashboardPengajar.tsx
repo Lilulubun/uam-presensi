@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays, User } from 'lucide-react';
+import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays, User, FileText } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
@@ -10,6 +10,8 @@ import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import { computeStreak } from '../../lib/computeStreak';
 import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
+import { useIzinStore } from '../../store/izinStore';
+import { useEffect } from 'react';
 
 export default function DashboardPengajar() {
   const navigate = useNavigate();
@@ -19,6 +21,12 @@ export default function DashboardPengajar() {
   const allSessions = useSessionStore((s) => s.sessions);
   const allAttendances = useAttendanceStore((s) => s.attendances);
   const { locationState, nearestTPA } = useWatchLocation(true);
+  const pendingIzins = useIzinStore((s) => s.myIzins.filter((i) => i.status === 'pending').length);
+  const fetchMyIzins = useIzinStore((s) => s.fetchMyIzins);
+
+  useEffect(() => {
+    fetchMyIzins();
+  }, []);
 
   const today = new Date();
 
@@ -161,6 +169,20 @@ export default function DashboardPengajar() {
           <Button className="w-full h-14 text-base" onClick={() => navigate('/pengajar/scan')}>
             <ScanLine className="w-5 h-5 mr-2" />
             Scan QR Presensi
+          </Button>
+
+          <Button
+            variant="outline"
+            className="w-full h-14 text-base relative"
+            onClick={() => navigate('/pengajar/izin')}
+          >
+            <FileText className="w-5 h-5 mr-2" />
+            Ajukan Izin
+            {pendingIzins > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center font-bold">
+                {pendingIzins}
+              </span>
+            )}
           </Button>
 
           {/* If user is the first teacher of an active session, show manage button */}
