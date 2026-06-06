@@ -6,6 +6,8 @@ import type { Session, Attendance } from '../../../types'
 let mockSessions: Session[] = []
 let mockAttendances: Attendance[] = []
 const mockNavigate = vi.fn()
+const mockIzinMonthlyReport: any[] = []
+const mockFetchMonthlyReport = vi.fn()
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -36,13 +38,34 @@ vi.mock('../../../store/attendanceStore', () => ({
   },
 }))
 
+const mockUsers: any[] = [
+  { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
+  { id: 'user-002', name: 'Siti Rahayu', email: 'siti@uii.ac.id', role: 'pengajar', nim: '21511002' },
+]
+
 vi.mock('../../../store/userStore', () => ({
-  getUserById: (id: string) => {
-    const users: Record<string, any> = {
-      'user-001': { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
-      'user-002': { id: 'user-002', name: 'Siti Rahayu', email: 'siti@uii.ac.id', role: 'pengajar', nim: '21511002' },
+  useUsersStore: (selector?: any) => {
+    const state = { users: mockUsers, userTPAs: [], loading: false }
+    return selector ? selector(state) : state
+  },
+  getUserById: (id: string) => mockUsers.find((u) => u.id === id) ?? null,
+}))
+
+vi.mock('../../../store/izinStore', () => ({
+  useIzinStore: (selector?: any) => {
+    const state = {
+      myIzins: [],
+      pendingIzins: [],
+      monthlyReport: mockIzinMonthlyReport,
+      loading: false,
+      submitIzin: vi.fn(),
+      approveIzin: vi.fn(),
+      rejectIzin: vi.fn(),
+      fetchMyIzins: vi.fn(),
+      fetchPendingIzins: vi.fn(),
+      fetchMonthlyReport: mockFetchMonthlyReport,
     }
-    return users[id] ?? null
+    return selector ? selector(state) : state
   },
 }))
 

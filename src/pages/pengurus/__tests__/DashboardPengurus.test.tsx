@@ -8,6 +8,10 @@ let mockAttendances: Attendance[] = []
 let mockTpas: import('../../../types').TPA[] = []
 const mockLogout = vi.fn()
 const mockNavigate = vi.fn()
+const mockUsers: any[] = [
+  { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
+  { id: 'user-002', name: 'Siti Rahayu', email: 'siti@uii.ac.id', role: 'pengajar', nim: '21511002' },
+]
 
 vi.mock('../../../store/authStore', () => ({
   useAuthStore: (selector?: any) => {
@@ -37,6 +41,31 @@ vi.mock('../../../store/attendanceStore', () => ({
 vi.mock('../../../store/tpaStore', () => ({
   useTPAStore: (selector?: any) => {
     const state = { tpas: mockTpas }
+    return selector ? selector(state) : state
+  },
+}))
+
+vi.mock('../../../store/userStore', () => ({
+  useUsersStore: (selector?: any) => {
+    const state = { users: mockUsers, userTPAs: [], loading: false }
+    return selector ? selector(state) : state
+  },
+}))
+
+vi.mock('../../../store/izinStore', () => ({
+  useIzinStore: (selector?: any) => {
+    const state = {
+      myIzins: [],
+      pendingIzins: [],
+      monthlyReport: [],
+      loading: false,
+      submitIzin: vi.fn(),
+      approveIzin: vi.fn(),
+      rejectIzin: vi.fn(),
+      fetchMyIzins: vi.fn(),
+      fetchPendingIzins: vi.fn(),
+      fetchMonthlyReport: vi.fn(),
+    }
     return selector ? selector(state) : state
   },
 }))
@@ -132,7 +161,7 @@ describe('DashboardPengurus', () => {
 
   it('shows teacher stats table with correct columns', () => {
     renderComponent()
-    expect(screen.getByText('Pengajar')).toBeInTheDocument()
+    expect(screen.getAllByText('Pengajar').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('Total')).toBeInTheDocument()
     expect(screen.getByText('Tepat Waktu')).toBeInTheDocument()
     expect(screen.getByText('Kepatuhan')).toBeInTheDocument()
@@ -218,7 +247,7 @@ describe('DashboardPengurus', () => {
       { id: 'session-1', tpaId: 'tpa-001', isActive: false, dateOpened: new Date(), firstTeacherId: 'user-001' } as Session,
     ]
     renderComponent()
-    expect(screen.getByText('Unknown')).toBeInTheDocument();
+    expect(screen.getByText('Budi Santoso')).toBeInTheDocument();
   })
 
   it('shows 100% compliance for teacher with perfect attendance', () => {

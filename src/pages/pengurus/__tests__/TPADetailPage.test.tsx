@@ -8,6 +8,10 @@ let mockAttendances: Attendance[] = []
 let mockUser: { id: string; name: string; email: string; role: 'pengurus' | 'pengajar' } = { id: 'user-admin', name: 'Rahma Dewi', email: 'pengurus@uii.ac.id', role: 'pengurus' }
 const mockNavigate = vi.fn()
 const mockForceCloseSession = vi.fn()
+const mockUsers: any[] = [
+  { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
+  { id: 'user-002', name: 'Siti Rahayu', email: 'siti@uii.ac.id', role: 'pengajar', nim: '21511002' },
+]
 
 vi.mock('../../../store/authStore', () => ({
   useAuthStore: (selector?: any) => {
@@ -59,6 +63,13 @@ vi.mock('../../../store/tpaStore', () => {
     getTpaByStaticQR: (qr: string) => tpas.find((t) => t.staticQRCode === qr),
   };
 })
+
+vi.mock('../../../store/userStore', () => ({
+  useUsersStore: (selector?: any) => {
+    const state = { users: mockUsers, userTPAs: [], loading: false }
+    return selector ? selector(state) : state
+  },
+}))
 
 import TPADetailPage from '../TPADetailPage'
 
