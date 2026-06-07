@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User, FileText, CheckCircle, XCircle } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User, FileText, CheckCircle, XCircle, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
@@ -272,9 +272,16 @@ export default function DashboardPengurus() {
           <div className="px-4 py-3 border-b flex items-center gap-2">
             <FileText className="w-4 h-4 text-orange-500" />
             <h2 className="text-sm font-semibold">Izin Pending</h2>
-            <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
               {pendingIzins.length}
             </span>
+            <button
+              onClick={() => navigate('/pengurus/riwayat-izin')}
+              className="ml-auto text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1"
+            >
+              <History className="w-3.5 h-3.5" />
+              Riwayat
+            </button>
           </div>
           {pendingIzins.length > 0 ? (
             <ul className="divide-y">

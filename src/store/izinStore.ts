@@ -6,6 +6,7 @@ import { toCamelCase, toCamelCaseArray } from '../lib/transform';
 interface IzinState {
   myIzins: IzinRequest[];
   pendingIzins: IzinRequest[];
+  allIzins: IzinRequest[];
   monthlyReport: DailyReportRow[];
   loading: boolean;
 
@@ -14,6 +15,7 @@ interface IzinState {
   rejectIzin: (id: string) => Promise<ValidationResult>;
   fetchMyIzins: () => Promise<void>;
   fetchPendingIzins: () => Promise<void>;
+  fetchAllIzins: () => Promise<void>;
   fetchMonthlyReport: (userId: string, year: number, month: number) => Promise<void>;
 }
 
@@ -25,6 +27,7 @@ function mapRpcError(error: { message: string } | null): ValidationResult {
 export const useIzinStore = create<IzinState>((set) => ({
   myIzins: [],
   pendingIzins: [],
+  allIzins: [],
   monthlyReport: [],
   loading: false,
 
@@ -77,6 +80,15 @@ export const useIzinStore = create<IzinState>((set) => ({
       set({ pendingIzins: toCamelCaseArray<IzinRequest>(data) });
     } else {
       if (error) console.error('fetchPendingIzins error:', error);
+    }
+  },
+
+  fetchAllIzins: async () => {
+    const { data, error } = await supabase.rpc('get_all_izins');
+    if (!error && data) {
+      set({ allIzins: toCamelCaseArray<IzinRequest>(data) });
+    } else {
+      if (error) console.error('fetchAllIzins error:', error);
     }
   },
 

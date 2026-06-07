@@ -23,6 +23,7 @@ import LaporanPage from '../pages/pengurus/LaporanPage';
 import PengaturanPage from '../pages/pengurus/PengaturanPage';
 import KelolaPengajarPage from '../pages/pengurus/kelola-pengajar';
 import ProfilePage from '../pages/profile';
+import RiwayatIzinPengurus from '../pages/pengurus/RiwayatIzinPengurus';
 
 export default function App() {
   const [storesReady, setStoresReady] = useState(false);
@@ -90,6 +91,7 @@ export default function App() {
         <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
         <Route path="/pengurus/kelola-pengajar" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><KelolaPengajarPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/riwayat-izin" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><RiwayatIzinPengurus /></ErrorBoundary></ProtectedRoute>} />
 
         {/* Profile (both roles) */}
         <Route path="/profile" element={<ProtectedRoute allowedRoles={['pengajar', 'pengurus']}><ErrorBoundary><ProfilePage /></ErrorBoundary></ProtectedRoute>} />
