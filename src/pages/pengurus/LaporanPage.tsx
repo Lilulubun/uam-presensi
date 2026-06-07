@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, FileText, FileSpreadsheet, FileJson, Loader2,
+  ArrowLeft, FileText, FileSpreadsheet, FileDown, Loader2,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Button } from '../../app/components/ui/button';
 import { useTPAStore } from '../../store/tpaStore';
 import { supabase } from '../../lib/supabase';
@@ -296,27 +298,86 @@ export default function LaporanPage() {
     XLSX.writeFile(wb, 'laporan-presensi.xlsx');
   }
 
-  function exportJSON() {
+  function exportPDF() {
     if (!hasData) return;
-    const json = tables.map((t) => ({
-      tpa: t.tpaName,
-      periode: `${dateFrom} – ${dateTo}`,
-      teachers: t.teachers.map((teacher) => ({
-        name: teacher.name,
-        dates: Object.fromEntries(
-          t.dates.map((d) => {
-            const cell = teacher.cells[t.dates.indexOf(d)];
-            return [d, cell.type === 'merged' ? cell.mergedText : { masuk: cell.masukText, keluar: cell.keluarText }];
-          })
-        ),
-        total: totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        tepatWaktu: pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        terlambat: pct(teacher.counts.terlambat, teacher.totalSesi),
-        pulangAwal: pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        izin: pct(teacher.counts.izin, teacher.totalSesi),
-      })),
-    }));
-    downloadBlob(JSON.stringify(json, null, 2), 'laporan-presensi.json', 'application/json');
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const margin = 14;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const fromFormatted = format(new Date(dateFrom + 'T00:00:00'), 'dd/MM/yyyy');
+    const toFormatted = format(new Date(dateTo + 'T00:00:00'), 'dd/MM/yyyy');
+
+    tables.forEach((t, idx) => {
+      if (idx > 0) doc.addPage();
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text(t.tpaName, margin, margin + 10);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(80);
+      doc.text(`Periode: ${fromFormatted} – ${toFormatted}`, margin, margin + 18);
+      doc.setTextColor(0);
+
+      const body = t.teachers.map((teacher) => [
+        teacher.name,
+        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
+        pct(teacher.counts.terlambat, teacher.totalSesi),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi),
+        pct(teacher.counts.izin, teacher.totalSesi),
+      ]);
+
+      autoTable(doc, {
+        startY: margin + 24,
+        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin']],
+        body,
+        margin: { left: margin, right: margin },
+        styles: {
+          font: 'helvetica',
+          fontSize: 9,
+          cellPadding: 3,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.5,
+        },
+        headStyles: {
+          fillColor: [30, 41, 59],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 11,
+        },
+        bodyStyles: {
+          textColor: [30, 41, 59],
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+        columnStyles: {
+          0: { cellWidth: 'auto' },
+          1: { halign: 'center' },
+          2: { halign: 'center' },
+          3: { halign: 'center' },
+          4: { halign: 'center' },
+          5: { halign: 'center' },
+        },
+      });
+    });
+
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(148);
+      doc.text(
+        `Halaman ${i} dari ${totalPages}`,
+        pageWidth - margin,
+        doc.internal.pageSize.getHeight() - 8,
+        { align: 'right' },
+      );
+    }
+
+    doc.save('laporan-presensi.pdf');
   }
 
   return (
@@ -403,8 +464,8 @@ export default function LaporanPage() {
             <Button variant="outline" size="sm" onClick={exportExcel} disabled={!hasData}>
               <FileSpreadsheet className="w-4 h-4 mr-1.5" /> Excel
             </Button>
-            <Button variant="outline" size="sm" onClick={exportJSON} disabled={!hasData}>
-              <FileJson className="w-4 h-4 mr-1.5" /> JSON
+            <Button variant="outline" size="sm" onClick={exportPDF} disabled={!hasData}>
+              <FileDown className="w-4 h-4 mr-1.5" /> PDF
             </Button>
           </div>
         </div>

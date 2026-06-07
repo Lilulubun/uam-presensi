@@ -89,7 +89,7 @@ describe('LaporanPage', () => {
     renderComponent();
     expect(screen.getByText('CSV')).toBeInTheDocument();
     expect(screen.getByText('Excel')).toBeInTheDocument();
-    expect(screen.getByText('JSON')).toBeInTheDocument();
+    expect(screen.getByText('PDF')).toBeInTheDocument();
   });
 
   it('shows empty state when no data', async () => {
