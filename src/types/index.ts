@@ -74,6 +74,21 @@ export interface DailyReportRow {
   status: 'hadir' | 'izin' | 'tidak_masuk';
 }
 
+// Laporan Presensi (pivot report)
+export interface LaporanRow {
+  tpaId: string;
+  tpaName: string;
+  teacherId: string;
+  teacherName: string;
+  tgl: string;
+  sessionIsActive: boolean;
+  firstTeacherId: string;
+  scanInTime: string | null;
+  scanOutTime: string | null;
+  lateMinutes: number | null;
+  isIzin: boolean;
+}
+
 // QR Token Structure
 export interface QRToken {
   token: string;
