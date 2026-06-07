@@ -311,7 +311,7 @@ export default function LaporanPage() {
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
-      doc.text(`Laporan Presensi UAM ${t.tpaName}`, margin, margin + 10);
+      doc.text(`Laporan Presensi Pengajar UAM ${t.tpaName}`, margin, margin + 10);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
