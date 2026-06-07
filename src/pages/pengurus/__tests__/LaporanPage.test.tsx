@@ -218,12 +218,13 @@ describe('LaporanPage', () => {
     });
     renderComponent();
     await waitFor(() => {
-      // tepat_waktu: sessions 1 and 2 have scan_out → 2/3 = 67%
-      expect(screen.getByText('67%')).toBeInTheDocument();
-      // terlambat: session 2 only → 1/3 = 33%
-      // pulang_awal: session 3 only → 1/3 = 33%
-      // hadir_fisik: sessions with scan_out = 2 → 2/3
-      expect(screen.getByText('2/3')).toBeInTheDocument();
+      // hadir_fisik=2, total_sesi=3, izin=0 → denominator=3 → Total=67%
+      // tepat_waktu=2, total_sesi=3 → 67%
+      expect(screen.getAllByText('67%').length).toBe(2);
+      // terlambat=1 → 33%, pulang_awal=1 → 33%
+      expect(screen.getAllByText('33%').length).toBe(2);
+      // izin=0 → 0%
+      expect(screen.getByText('0%')).toBeInTheDocument();
     });
   });
 

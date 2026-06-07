@@ -172,6 +172,12 @@ function pct(value: number, total: number): string {
   return `${Math.round((value / total) * 100)}%`;
 }
 
+function totalPct(hadirFisik: number, totalSesi: number, izin: number): string {
+  const denom = totalSesi - izin;
+  if (denom <= 0) return '-';
+  return `${Math.round((hadirFisik / denom) * 100)}%`;
+}
+
 function downloadBlob(content: string, filename: string, mime: string) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -247,7 +253,7 @@ export default function LaporanPage() {
       t.teachers.map((teacher) => [
         t.tpaName,
         teacher.name,
-        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
+        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
         pct(teacher.counts.tepatWaktu, teacher.totalSesi),
         pct(teacher.counts.terlambat, teacher.totalSesi),
         pct(teacher.counts.pulangAwal, teacher.totalSesi),
@@ -273,7 +279,7 @@ export default function LaporanPage() {
       const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
-        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
+        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
         pct(teacher.counts.tepatWaktu, teacher.totalSesi),
         pct(teacher.counts.terlambat, teacher.totalSesi),
         pct(teacher.counts.pulangAwal, teacher.totalSesi),
@@ -303,7 +309,7 @@ export default function LaporanPage() {
             return [d, cell.type === 'merged' ? cell.mergedText : { masuk: cell.masukText, keluar: cell.keluarText }];
           })
         ),
-        total: `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
+        total: totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
         tepatWaktu: pct(teacher.counts.tepatWaktu, teacher.totalSesi),
         terlambat: pct(teacher.counts.terlambat, teacher.totalSesi),
         pulangAwal: pct(teacher.counts.pulangAwal, teacher.totalSesi),
@@ -473,7 +479,7 @@ export default function LaporanPage() {
                         {teacher.name}
                       </td>
                       <td className="sticky left-[160px] z-10 bg-card text-center px-2 py-2 text-xs font-medium tabular-nums border-b border-r">
-                        {teacher.counts.hadirFisik}/{teacher.totalSesi}
+                        {totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
                         {pct(teacher.counts.tepatWaktu, teacher.totalSesi)}
