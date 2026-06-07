@@ -5,17 +5,21 @@ import { supabase } from '../lib/supabase';
 interface UserState {
   users: User[];
   userTPAs: PengajarTPA[];
+  pengajarByTPA: Record<string, User[]>;
   loading: boolean;
   init: () => Promise<void>;
   loadUserTPAs: (userId: string) => Promise<void>;
+  fetchPengajarByTPA: (tpaId: string) => Promise<User[]>;
   assignTPA: (userId: string, tpaId: string) => Promise<boolean>;
   unassignTPA: (userId: string, tpaId: string) => Promise<boolean>;
   toggleActive: (userId: string) => Promise<boolean>;
+  deletePengajar: (userId: string) => Promise<boolean>;
 }
 
 export const useUsersStore = create<UserState>((set) => ({
   users: [] as User[],
   userTPAs: [] as PengajarTPA[],
+  pengajarByTPA: {} as Record<string, User[]>,
   loading: false,
 
   init: async () => {
@@ -46,6 +50,26 @@ export const useUsersStore = create<UserState>((set) => ({
         userTPAs: rows.map((r) => ({ userId, tpaId: r.tpa_id, tpaName: r.tpa_name })),
       });
     }
+  },
+
+  fetchPengajarByTPA: async (tpaId: string): Promise<User[]> => {
+    const { data, error } = await supabase.rpc('get_pengajar_by_tpa', { p_tpa_id: tpaId });
+    if (error) {
+      console.error('userStore.fetchPengajarByTPA error:', error);
+      return [];
+    }
+    const rows = data as { user_id: string; name: string; email: string; nim: string }[];
+    const users: User[] = rows.map((r) => ({
+      id: r.user_id,
+      name: r.name,
+      email: r.email,
+      role: 'pengajar' as const,
+      nim: r.nim || undefined,
+    }));
+    set((state) => ({
+      pengajarByTPA: { ...state.pengajarByTPA, [tpaId]: users },
+    }));
+    return users;
   },
 
   assignTPA: async (userId: string, tpaId: string): Promise<boolean> => {

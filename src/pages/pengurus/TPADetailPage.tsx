@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut, XSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
@@ -215,10 +215,22 @@ function SessionAttendees({
   session: Session;
 }) {
   const users = useUsersStore((s) => s.users);
+  const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
+  const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
   const navigate = useNavigate();
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
-  if (sessionAttendances.length === 0) {
+  const tpaUsers = pengajarByTPA[session.tpaId];
+  const attendingUserIds = new Set(sessionAttendances.map((a) => a.userId));
+  const absentUsers = (tpaUsers ?? []).filter((u) => !attendingUserIds.has(u.id));
+
+  useEffect(() => {
+    if (!pengajarByTPA[session.tpaId]) {
+      fetchPengajarByTPA(session.tpaId);
+    }
+  }, [session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
+
+  if (sessionAttendances.length === 0 && absentUsers.length === 0) {
     return <p className="px-4 py-3 text-xs text-muted-foreground">Belum ada presensi</p>;
   }
 
@@ -264,6 +276,25 @@ function SessionAttendees({
           </li>
         );
       })}
+      {absentUsers.map((u) => (
+        <li key={u.id} className="px-4 py-2.5 flex items-center gap-3 bg-red-50/50">
+          <div className="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-semibold shrink-0">
+            {u.name?.charAt(0) ?? '?'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate">
+              <button
+                className="hover:underline text-left"
+                onClick={() => navigate(`/pengurus/pengajar/${u.id}`)}
+              >
+                {u.name}
+              </button>
+            </p>
+            <p className="text-xs text-red-500">Tidak hadir</p>
+          </div>
+          <XSquare className="w-4 h-4 text-red-400 shrink-0" />
+        </li>
+      ))}
     </ul>
   );
 }

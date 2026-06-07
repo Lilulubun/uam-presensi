@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ArrowLeft, Users, Clock, CheckCircle2, LogOut } from 'lucide-react';
 import { getCurrentLocation } from '../../lib/gps-utils';
@@ -34,6 +34,8 @@ export default function SessionActivePage() {
     useShallow((s) => s.attendances.filter((a) => a.sessionId === sessionId))
   );
   const users = useUsersStore((s) => s.users);
+  const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
+  const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notes, setNotes] = useState('');
@@ -77,6 +79,16 @@ export default function SessionActivePage() {
       setClosing(false);
     }
   };
+
+  useEffect(() => {
+    if (!session.isActive && session.tpaId && !pengajarByTPA[session.tpaId]) {
+      fetchPengajarByTPA(session.tpaId);
+    }
+  }, [session.isActive, session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
+
+  const effectiveTPAUsers = session.isActive ? [] : (pengajarByTPA[session.tpaId] ?? []);
+  const attendingUserIds = new Set(attendances.filter((a) => a.scanInTime).map((a) => a.userId));
+  const absentUsers = effectiveTPAUsers.filter((u) => !attendingUserIds.has(u.id));
 
   const checkedInCount = attendances.filter((a) => a.scanInTime).length;
   const checkedOutCount = attendances.filter((a) => a.scanOutTime).length;
@@ -182,6 +194,34 @@ export default function SessionActivePage() {
                   </li>
                 );
               })}
+            </ul>
+          </div>
+        )}
+
+        {/* Absent users — shown after session is closed */}
+        {!session.isActive && absentUsers.length > 0 && (
+          <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-red-100">
+            <div className="px-4 py-3 border-b flex items-center gap-2 bg-red-50">
+              <Users className="w-4 h-4 text-red-500" />
+              <p className="text-sm font-medium text-red-700">Tidak Hadir ({absentUsers.length})</p>
+            </div>
+            <ul className="divide-y">
+              {absentUsers.map((u) => (
+                <li key={u.id} className="px-4 py-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-semibold">
+                    {u.name?.charAt(0) ?? '?'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{u.name}</p>
+                    {u.nim && (
+                      <p className="text-xs text-muted-foreground">{u.nim}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-red-500 font-medium bg-red-50 px-2 py-0.5 rounded">
+                    Tidak Masuk
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
         )}

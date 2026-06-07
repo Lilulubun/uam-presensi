@@ -66,7 +66,7 @@ vi.mock('../../../store/tpaStore', () => {
 
 vi.mock('../../../store/userStore', () => ({
   useUsersStore: (selector?: any) => {
-    const state = { users: mockUsers, userTPAs: [], loading: false }
+    const state = { users: mockUsers, userTPAs: [], loading: false, pengajarByTPA: {}, fetchPengajarByTPA: vi.fn() }
     return selector ? selector(state) : state
   },
 }))

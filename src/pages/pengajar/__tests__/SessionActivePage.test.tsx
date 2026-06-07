@@ -48,7 +48,12 @@ vi.mock('../../../store/tpaStore', () => ({
 vi.mock('../../../store/userStore', () => ({
   getUserById: () => ({ id: 'user-001', name: 'Budi Santoso' }),
   useUsersStore: (selector?: any) => {
-    const state = { users: [{ id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar' }], loading: false }
+    const state = {
+      users: [{ id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar' }],
+      loading: false,
+      pengajarByTPA: {},
+      fetchPengajarByTPA: vi.fn(),
+    }
     return selector ? selector(state) : state
   },
 }))
@@ -122,7 +127,7 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
     const confirmButton = screen.getByRole('button', { name: /^Tutup Sesi$/ })
     fireEvent.click(confirmButton)
     await vi.waitFor(() => {
-      expect(mockCloseSession).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 })
+      expect(mockCloseSession).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 }, undefined)
     })
   })
 
