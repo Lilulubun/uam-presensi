@@ -232,8 +232,7 @@ function SessionAttendees({
   const attendingUserIds = new Set(sessionAttendances.map((a) => a.userId));
   const absentUsers = (tpaUsers ?? []).filter((u) => !attendingUserIds.has(u.id));
 
-  const sessionDate = new Date(session.dateOpened);
-  const sessionDateStr = sessionDate.toISOString().slice(0, 10);
+  const sessionDateStr = (session.dateOpened as unknown as string).slice(0, 10);
 
   const izinUserIds = new Set(
     izins
@@ -241,8 +240,8 @@ function SessionAttendees({
         (ir) =>
           ir.status === 'approved' &&
           ir.userId &&
-          sessionDateStr >= new Date(ir.startDate).toISOString().slice(0, 10) &&
-          sessionDateStr <= new Date(ir.endDate).toISOString().slice(0, 10)
+          sessionDateStr >= (ir.startDate as unknown as string).slice(0, 10) &&
+          sessionDateStr <= (ir.endDate as unknown as string).slice(0, 10)
       )
       .map((ir) => ir.userId)
   );
