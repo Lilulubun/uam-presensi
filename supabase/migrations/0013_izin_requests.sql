@@ -226,10 +226,10 @@ begin
 
   return query
     with teacher_tpa as (
-      select tpa_id from public.pengajar_tpa where user_id = p_user_id
+      select pt.tpa_id from public.pengajar_tpa pt where pt.user_id = p_user_id
     ),
     month_sessions as (
-      select s.id, s.tpa_id, s.date_opened::date as tgl
+      select s.id, s.tpa_id as ms_tpa_id, s.date_opened::date as tgl
       from public.sessions s
       join teacher_tpa tt on tt.tpa_id = s.tpa_id
       where extract(year from s.date_opened) = p_year
@@ -250,17 +250,17 @@ begin
     )
     select
       ms.tgl,
-      ms.tpa_id,
+      ms.ms_tpa_id,
       t.name as tpa_name,
       case
-        when s.tgl is not null then 'hadir'
-        when e.tgl is not null then 'izin'
+        when sc.tgl is not null then 'hadir'
+        when ex.tgl is not null then 'izin'
         else 'tidak_masuk'
       end as status
     from month_sessions ms
-    left join scanned s on s.tgl = ms.tgl
-    left join excused e on e.tgl = ms.tgl
-    join public.tpas t on t.id = ms.tpa_id
+    left join scanned sc on sc.tgl = ms.tgl
+    left join excused ex on ex.tgl = ms.tgl
+    join public.tpas t on t.id = ms.ms_tpa_id
     order by ms.tgl;
 end; $$;
 
