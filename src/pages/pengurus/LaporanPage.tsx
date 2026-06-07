@@ -242,21 +242,21 @@ export default function LaporanPage() {
   // Export functions
   function exportCSV() {
     if (!hasData) return;
-    const headers = ['TPA', 'Nama', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])), 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin', 'Total'];
+    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
     const csvRows = tables.flatMap((t) =>
       t.teachers.map((teacher) => [
         t.tpaName,
         teacher.name,
+        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
+        pct(teacher.counts.terlambat, teacher.totalSesi),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi),
+        pct(teacher.counts.izin, teacher.totalSesi),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
           return [cell.masukText ?? '', cell.keluarText ?? ''];
         }),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        pct(teacher.counts.terlambat, teacher.totalSesi),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        pct(teacher.counts.izin, teacher.totalSesi),
-        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
       ])
     );
     const csv = [
@@ -270,19 +270,19 @@ export default function LaporanPage() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
     for (const t of tables) {
-      const headers = ['Nama', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]), 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin', 'Total'];
+      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Izin', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
+        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
+        pct(teacher.counts.terlambat, teacher.totalSesi),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi),
+        pct(teacher.counts.izin, teacher.totalSesi),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
           return [cell.masukText ?? '', cell.keluarText ?? ''];
         }),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        pct(teacher.counts.terlambat, teacher.totalSesi),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        pct(teacher.counts.izin, teacher.totalSesi),
-        `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
       ]);
       const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
       XLSX.utils.book_append_sheet(wb, ws, t.tpaName.slice(0, 31));
@@ -303,11 +303,11 @@ export default function LaporanPage() {
             return [d, cell.type === 'merged' ? cell.mergedText : { masuk: cell.masukText, keluar: cell.keluarText }];
           })
         ),
+        total: `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
         tepatWaktu: pct(teacher.counts.tepatWaktu, teacher.totalSesi),
         terlambat: pct(teacher.counts.terlambat, teacher.totalSesi),
         pulangAwal: pct(teacher.counts.pulangAwal, teacher.totalSesi),
         izin: pct(teacher.counts.izin, teacher.totalSesi),
-        total: `${teacher.counts.hadirFisik}/${teacher.totalSesi}`,
       })),
     }));
     downloadBlob(JSON.stringify(json, null, 2), 'laporan-presensi.json', 'application/json');
@@ -322,7 +322,7 @@ export default function LaporanPage() {
         <h1 className="font-semibold text-lg flex-1">Laporan Presensi</h1>
       </header>
 
-      <main className="max-w-full mx-auto p-4 flex flex-col gap-4">
+      <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
         {/* Filters */}
         <div className="bg-card rounded-xl shadow-sm p-4 flex flex-col gap-3">
           <p className="text-sm font-semibold">Filter</p>
@@ -432,72 +432,80 @@ export default function LaporanPage() {
               <h2 className="font-semibold text-sm">{t.tpaName}</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full border-separate border-spacing-0">
                 <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th rowSpan={2} className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap sticky left-0 bg-muted/50 z-10">
+                  <tr className="bg-muted/50">
+                    <th rowSpan={2} className="sticky left-0 z-10 bg-muted/50 text-left px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[160px] border-b border-r">
                       Nama
                     </th>
+                    <th rowSpan={2} className="sticky left-[160px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[48px] border-b border-r">
+                      Total
+                    </th>
+                    <th rowSpan={2} className="sticky left-[208px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[52px] border-b border-r">
+                      Tepat<br />Waktu
+                    </th>
+                    <th rowSpan={2} className="sticky left-[260px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[56px] border-b border-r">
+                      Terlambat
+                    </th>
+                    <th rowSpan={2} className="sticky left-[316px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[52px] border-b border-r">
+                      Pulang<br />Awal
+                    </th>
+                    <th rowSpan={2} className="sticky left-[368px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[40px] border-b border-r">
+                      Izin
+                    </th>
                     {t.dates.map((d) => (
-                      <th key={d} colSpan={2} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l">
+                      <th key={d} colSpan={2} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r">
                         {formatShortDate(d)}
                       </th>
                     ))}
-                    <th rowSpan={2} className="text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l min-w-[80px]">
-                      Tepat<br />Waktu
-                    </th>
-                    <th rowSpan={2} className="text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l min-w-[80px]">
-                      Terlambat
-                    </th>
-                    <th rowSpan={2} className="text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l min-w-[80px]">
-                      Pulang<br />Awal
-                    </th>
-                    <th rowSpan={2} className="text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l min-w-[60px]">
-                      Izin
-                    </th>
-                    <th rowSpan={2} className="text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-l min-w-[60px]">
-                      Total
-                    </th>
                   </tr>
-                  <tr className="border-b bg-muted/30">
+                  <tr className="bg-muted/30">
                     {t.dates.flatMap((d) => [
-                      <th key={`${d}-in`} className="text-center px-2 py-1.5 text-[10px] font-medium text-muted-foreground border-l">Masuk</th>,
-                      <th key={`${d}-out`} className="text-center px-2 py-1.5 text-[10px] font-medium text-muted-foreground">Keluar</th>,
+                      <th key={`${d}-in`} className="text-center px-2 py-1.5 text-[10px] font-medium text-muted-foreground border-b border-r">Masuk</th>,
+                      <th key={`${d}-out`} className="text-center px-2 py-1.5 text-[10px] font-medium text-muted-foreground border-b border-r">Keluar</th>,
                     ])}
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody>
                   {t.teachers.map((teacher) => (
                     <tr key={teacher.name} className="hover:bg-muted/20 transition-colors">
-                      <td className="px-3 py-2.5 font-medium text-sm whitespace-nowrap sticky left-0 bg-card z-10">
+                      <td className="sticky left-0 z-10 bg-card text-left px-3 py-2 text-xs font-medium min-w-[160px] border-b border-r">
                         {teacher.name}
+                      </td>
+                      <td className="sticky left-[160px] z-10 bg-card text-center px-2 py-2 text-xs font-medium tabular-nums border-b border-r">
+                        {teacher.counts.hadirFisik}/{teacher.totalSesi}
+                      </td>
+                      <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
+                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi)}
+                      </td>
+                      <td className="sticky left-[260px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
+                        {pct(teacher.counts.terlambat, teacher.totalSesi)}
+                      </td>
+                      <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
+                        {pct(teacher.counts.pulangAwal, teacher.totalSesi)}
+                      </td>
+                      <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
+                        {pct(teacher.counts.izin, teacher.totalSesi)}
                       </td>
                       {teacher.cells.map((cell, i) => {
                         if (cell.type === 'merged') {
                           return (
-                            <td key={i} colSpan={2} className={`px-3 py-2.5 text-xs text-center border-l ${cell.mergedClass ?? ''}`}>
+                            <td key={i} colSpan={2} className={`text-center px-2 py-2 text-[11px] border-b border-r ${cell.mergedClass ?? ''}`}>
                               {cell.mergedText}
                             </td>
                           );
                         }
                         return (
                           <>
-                            <td key={`${i}-in`} className={`px-3 py-2.5 text-xs tabular-nums text-center border-l ${cell.masukClass ?? ''}`}>
+                            <td key={`${i}-in`} className={`text-center px-2 py-2 text-[11px] tabular-nums border-b border-r ${cell.masukClass ?? ''}`}>
                               {cell.masukText}
                             </td>
-                            <td key={`${i}-out`} className={`px-3 py-2.5 text-xs tabular-nums text-center ${cell.keluarClass ?? ''}`}>
+                            <td key={`${i}-out`} className={`text-center px-2 py-2 text-[11px] tabular-nums border-b border-r ${cell.keluarClass ?? ''}`}>
                               {cell.keluarText}
                             </td>
                           </>
                         );
                       })}
-                      <td className="px-3 py-2.5 text-xs text-center border-l">{pct(teacher.counts.tepatWaktu, teacher.totalSesi)}</td>
-                      <td className="px-3 py-2.5 text-xs text-center border-l">{pct(teacher.counts.terlambat, teacher.totalSesi)}</td>
-                      <td className="px-3 py-2.5 text-xs text-center border-l">{pct(teacher.counts.pulangAwal, teacher.totalSesi)}</td>
-                      <td className="px-3 py-2.5 text-xs text-center border-l">{pct(teacher.counts.izin, teacher.totalSesi)}</td>
-                      <td className="px-3 py-2.5 text-xs text-center border-l font-medium tabular-nums">
-                        {teacher.counts.hadirFisik}/{teacher.totalSesi}
-                      </td>
                     </tr>
                   ))}
                 </tbody>
