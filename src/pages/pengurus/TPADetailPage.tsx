@@ -234,17 +234,36 @@ function SessionAttendees({
 
   const sessionDateStr = (session.dateOpened as unknown as string).slice(0, 10);
 
+  console.log('[DEBUG] sessionDate:', sessionDateStr);
+  console.log('[DEBUG] izins:', izins);
+  console.log('[DEBUG] absentUsers:', absentUsers.map(u => ({ id: u.id, name: u.name })));
+
   const izinUserIds = new Set(
     izins
       .filter(
-        (ir) =>
-          ir.status === 'approved' &&
-          ir.userId &&
-          sessionDateStr >= (ir.startDate as unknown as string).slice(0, 10) &&
-          sessionDateStr <= (ir.endDate as unknown as string).slice(0, 10)
+        (ir) => {
+          const match =
+            ir.status === 'approved' &&
+            ir.userId &&
+            sessionDateStr >= (ir.startDate as unknown as string).slice(0, 10) &&
+            sessionDateStr <= (ir.endDate as unknown as string).slice(0, 10);
+          if (!match) {
+            console.log('[DEBUG] izin no match:', {
+              id: ir.id,
+              status: ir.status,
+              userId: ir.userId,
+              startDate: (ir.startDate as unknown as string).slice(0, 10),
+              endDate: (ir.endDate as unknown as string).slice(0, 10),
+              sessionDate: sessionDateStr,
+            });
+          }
+          return match;
+        }
       )
       .map((ir) => ir.userId)
   );
+
+  console.log('[DEBUG] izinUserIds:', [...izinUserIds]);
 
   const trulyAbsentUsers = absentUsers.filter((u) => !izinUserIds.has(u.id));
   const excusedUsers = absentUsers.filter((u) => izinUserIds.has(u.id));
