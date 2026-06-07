@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut, XSquare } from 'lucide-react';
+import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut, XSquare, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
+import { useIzinStore } from '../../store/izinStore';
 import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 import { logEvent } from '../../lib/log-event';
@@ -22,7 +23,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '../../app/components/ui/alert-dialog';
-import type { Attendance, Session } from '../../types';
+import type { Attendance, Session, IzinRequest } from '../../types';
 
 export default function TPADetailPage() {
   const { tpaId } = useParams<{ tpaId: string }>();
@@ -32,8 +33,13 @@ export default function TPADetailPage() {
   const attendances = useAttendanceStore((s) => s.attendances);
   const forceCloseSession = useSessionStore((s) => s.forceCloseSession);
   const users = useUsersStore((s) => s.users);
+  const { allIzins, fetchAllIzins } = useIzinStore();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [forceClosing, setForceClosing] = useState(false);
+
+  useEffect(() => {
+    fetchAllIzins();
+  }, []);
 
   const tpa = getTpaById(tpaId ?? '');
 
@@ -99,7 +105,7 @@ export default function TPADetailPage() {
             <p className="text-xs text-green-700">
               Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
             </p>
-            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
+            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} izins={allIzins} />
 
             {isPengurus && (
               <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -194,7 +200,7 @@ export default function TPADetailPage() {
                     </div>
                   )}
 
-                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
+                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} izins={allIzins} />
                 </div>
               );
             })}
@@ -209,10 +215,12 @@ function SessionAttendees({
   sessionId,
   attendances,
   session,
+  izins,
 }: {
   sessionId: string;
   attendances: Attendance[];
   session: Session;
+  izins: IzinRequest[];
 }) {
   const users = useUsersStore((s) => s.users);
   const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
@@ -223,6 +231,24 @@ function SessionAttendees({
   const tpaUsers = pengajarByTPA[session.tpaId];
   const attendingUserIds = new Set(sessionAttendances.map((a) => a.userId));
   const absentUsers = (tpaUsers ?? []).filter((u) => !attendingUserIds.has(u.id));
+
+  const sessionDate = new Date(session.dateOpened);
+  const sessionDateStr = sessionDate.toISOString().slice(0, 10);
+
+  const izinUserIds = new Set(
+    izins
+      .filter(
+        (ir) =>
+          ir.status === 'approved' &&
+          ir.userId &&
+          sessionDateStr >= new Date(ir.startDate).toISOString().slice(0, 10) &&
+          sessionDateStr <= new Date(ir.endDate).toISOString().slice(0, 10)
+      )
+      .map((ir) => ir.userId)
+  );
+
+  const trulyAbsentUsers = absentUsers.filter((u) => !izinUserIds.has(u.id));
+  const excusedUsers = absentUsers.filter((u) => izinUserIds.has(u.id));
 
   useEffect(() => {
     if (!pengajarByTPA[session.tpaId]) {
@@ -276,7 +302,26 @@ function SessionAttendees({
           </li>
         );
       })}
-      {absentUsers.map((u) => (
+      {excusedUsers.map((u) => (
+        <li key={u.id} className="px-4 py-2.5 flex items-center gap-3 bg-blue-50/50">
+          <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-semibold shrink-0">
+            {u.name?.charAt(0) ?? '?'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate">
+              <button
+                className="hover:underline text-left"
+                onClick={() => navigate(`/pengurus/pengajar/${u.id}`)}
+              >
+                {u.name}
+              </button>
+            </p>
+            <p className="text-xs text-blue-600">Izin</p>
+          </div>
+          <FileText className="w-4 h-4 text-blue-400 shrink-0" />
+        </li>
+      ))}
+      {trulyAbsentUsers.map((u) => (
         <li key={u.id} className="px-4 py-2.5 flex items-center gap-3 bg-red-50/50">
           <div className="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-semibold shrink-0">
             {u.name?.charAt(0) ?? '?'}
