@@ -23,7 +23,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '../../app/components/ui/alert-dialog';
-import type { Attendance, Session, IzinRequest } from '../../types';
+import type { Attendance, Session } from '../../types';
 
 export default function TPADetailPage() {
   const { tpaId } = useParams<{ tpaId: string }>();
@@ -33,7 +33,7 @@ export default function TPADetailPage() {
   const attendances = useAttendanceStore((s) => s.attendances);
   const forceCloseSession = useSessionStore((s) => s.forceCloseSession);
   const users = useUsersStore((s) => s.users);
-  const { allIzins, fetchAllIzins } = useIzinStore();
+  const fetchAllIzins = useIzinStore((s) => s.fetchAllIzins);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [forceClosing, setForceClosing] = useState(false);
 
@@ -105,7 +105,7 @@ export default function TPADetailPage() {
             <p className="text-xs text-green-700">
               Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
             </p>
-            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} izins={allIzins} />
+            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
 
             {isPengurus && (
               <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -200,7 +200,7 @@ export default function TPADetailPage() {
                     </div>
                   )}
 
-                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} izins={allIzins} />
+                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
                 </div>
               );
             })}
@@ -215,16 +215,15 @@ function SessionAttendees({
   sessionId,
   attendances,
   session,
-  izins,
 }: {
   sessionId: string;
   attendances: Attendance[];
   session: Session;
-  izins: IzinRequest[];
 }) {
   const users = useUsersStore((s) => s.users);
   const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
   const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
+  const allIzins = useIzinStore((s) => s.allIzins);
   const navigate = useNavigate();
   const sessionAttendances = attendances.filter((a) => a.sessionId === sessionId && a.scanInTime);
 
@@ -235,11 +234,11 @@ function SessionAttendees({
   const sessionDateStr = (session.dateOpened as unknown as string).slice(0, 10);
 
   console.log('[DEBUG] sessionDate:', sessionDateStr);
-  console.log('[DEBUG] izins:', izins);
+  console.log('[DEBUG] allIzins:', allIzins);
   console.log('[DEBUG] absentUsers:', absentUsers.map(u => ({ id: u.id, name: u.name })));
 
   const izinUserIds = new Set(
-    izins
+    allIzins
       .filter(
         (ir) => {
           const match =
