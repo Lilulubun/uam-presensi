@@ -236,7 +236,10 @@ export default function LaporanPage() {
           setError(err.message);
           setData(null);
         } else {
-          setData(toCamelCaseArray<LaporanRow>(result ?? []));
+          const camelData = toCamelCaseArray<LaporanRow>(result ?? []);
+          const dates = [...new Set(camelData.map((r: LaporanRow) => r.tgl))].sort();
+          console.log('LaporanPage: rows=', camelData.length, 'dates=', dates);
+          setData(camelData);
         }
       });
 
