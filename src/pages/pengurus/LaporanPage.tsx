@@ -499,7 +499,7 @@ export default function LaporanPage() {
               <h2 className="font-semibold text-sm">{t.tpaName}</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full border-separate border-spacing-0">
+              <table className="min-w-full border-separate border-spacing-0">
                 <thead>
                   <tr className="bg-muted/50">
                     <th rowSpan={2} className="sticky left-0 z-10 bg-muted/50 text-left px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[160px] border-b border-r">
