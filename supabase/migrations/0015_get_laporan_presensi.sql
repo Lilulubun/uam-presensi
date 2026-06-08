@@ -2,7 +2,8 @@
 -- Returns attendance report data for a date range and optional TPA filter.
 -- One row per teacher per session in their assigned TPA.
 -- Accessible to: pengurus only
--- Idempotent: CREATE OR REPLACE
+
+drop function if exists public.get_laporan_presensi(date, date, text[]);
 
 create or replace function public.get_laporan_presensi(
   p_dari date,
