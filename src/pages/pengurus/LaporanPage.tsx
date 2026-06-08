@@ -110,7 +110,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       dateSet.set(id, new Set());
     }
     grouped.get(id)!.rows.push(row);
-    dateSet.get(id)!.add(row.tgl);
+    const localDate = format(new Date(row.dateOpened), 'yyyy-MM-dd');
+    dateSet.get(id)!.add(localDate);
   }
 
   const tables: TpaTable[] = [];
@@ -131,7 +132,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       }
       const teacher = teacherMap.get(row.teacherId)!;
       const cell = getCellDisplay(row);
-      teacher.cells.set(row.tgl, cell);
+      const localDate = format(new Date(row.dateOpened), 'yyyy-MM-dd');
+      teacher.cells.set(localDate, cell);
 
       if (row.isIzin) {
         teacher.counts.izin++;
