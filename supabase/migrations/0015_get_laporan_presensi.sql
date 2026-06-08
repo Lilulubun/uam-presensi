@@ -16,7 +16,6 @@ returns table (
   teacher_id uuid,
   teacher_name text,
   tgl date,
-  date_opened timestamptz,
   session_is_active bool,
   first_teacher_id uuid,
   scan_in_time timestamptz,
@@ -30,6 +29,8 @@ set search_path = public
 stable
 as $$
 begin
+  set timezone = 'Asia/Jakarta';
+
   if not exists (
     select 1 from public.users where id = auth.uid() and role = 'pengurus'
   ) then
@@ -43,7 +44,6 @@ begin
       u.id as teacher_id,
       u.name as teacher_name,
       s.date_opened::date as tgl,
-      s.date_opened,
       s.is_active as session_is_active,
       s.first_teacher_id,
       a.scan_in_time,

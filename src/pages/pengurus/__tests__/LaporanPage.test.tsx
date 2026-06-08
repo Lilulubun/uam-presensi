@@ -45,7 +45,6 @@ function row(overrides: Record<string, any> = {}) {
     teacher_id: 'user-1',
     teacher_name: 'Budi',
     tgl: '2026-06-02',
-    date_opened: '2026-06-02T09:00:00+00:00',
     session_is_active: false,
     first_teacher_id: 'user-1',
     scan_in_time: '2026-06-02T16:00:00+07:00',
@@ -211,9 +210,9 @@ describe('LaporanPage', () => {
   it('calculates percentages correctly', async () => {
     mockRpc.mockResolvedValue({
       data: [
-        row({ tgl: '2026-06-02', date_opened: '2026-06-02T09:00:00+00:00', teacher_name: 'Budi' }),                                          // tepat_waktu + hadir
-        row({ tgl: '2026-06-04', date_opened: '2026-06-04T09:00:00+00:00', teacher_name: 'Budi', late_minutes: 10 }),                         // terlambat + tepat_waktu + hadir
-        row({ tgl: '2026-06-06', date_opened: '2026-06-06T09:00:00+00:00', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // pulang_awal (no hadir)
+        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),                                          // tepat_waktu + hadir
+        row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),                         // terlambat + tepat_waktu + hadir
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // pulang_awal (no hadir)
       ],
       error: null,
     });

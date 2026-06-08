@@ -81,7 +81,6 @@ export interface LaporanRow {
   teacherId: string;
   teacherName: string;
   tgl: string;
-  dateOpened: string;
   sessionIsActive: boolean;
   firstTeacherId: string;
   scanInTime: string | null;
