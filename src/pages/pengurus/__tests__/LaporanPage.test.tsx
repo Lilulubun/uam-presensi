@@ -218,12 +218,12 @@ describe('LaporanPage', () => {
     renderComponent();
     await waitFor(() => {
       // hadir_fisik=3, total_sesi=3, izin=0, tidakMasuk=0
-      // denominator (individual) = 3-0-0=3, denominator (total/tidakMasuk) = 3-0=3
-      // Total=100%, tepatWaktu=2→67%, terlambat=0→0%, pulangAwal=1→33%, tidakMasuk=0→0%
+      // denomA=3, denomB=3
+      // Total=100%, tepatWaktu=2, terlambat=0, pulangAwal=1, tidakMasuk=0%
       expect(screen.getByText('100%')).toBeInTheDocument();
-      expect(screen.getByText('67%')).toBeInTheDocument();
-      expect(screen.getByText('33%')).toBeInTheDocument();
-      expect(screen.getAllByText('0%').length).toBe(2);
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('0%')).toBeInTheDocument();
     });
   });
 

@@ -270,9 +270,9 @@ export default function LaporanPage() {
         t.tpaName,
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        teacher.counts.tepatWaktu,
+        teacher.counts.terlambat,
+        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -296,9 +296,9 @@ export default function LaporanPage() {
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        teacher.counts.tepatWaktu,
+        teacher.counts.terlambat,
+        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -336,9 +336,9 @@ export default function LaporanPage() {
       const body = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        teacher.counts.tepatWaktu,
+        teacher.counts.terlambat,
+        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
       ]);
 
@@ -569,13 +569,13 @@ export default function LaporanPage() {
                         {totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
+                        {teacher.counts.tepatWaktu}
                       </td>
                       <td className="sticky left-[260px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
+                        {teacher.counts.terlambat}
                       </td>
                       <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
+                        {teacher.counts.pulangAwal}
                       </td>
                       <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
                         {pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin)}
