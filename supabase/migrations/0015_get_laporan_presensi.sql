@@ -49,17 +49,18 @@ begin
       a.scan_in_time,
       a.scan_out_time,
       a.late_minutes,
-      (ir.id is not null) as is_izin
+      exists (
+        select 1 from public.izin_requests ir
+        where ir.user_id = u.id
+        and ir.status = 'approved'
+        and s.date_opened::date between ir.start_date and ir.end_date
+      ) as is_izin
     from public.sessions s
     join public.tpas t on t.id = s.tpa_id
     join public.pengajar_tpa pt on pt.tpa_id = s.tpa_id
     join public.users u on u.id = pt.user_id and u.role = 'pengajar'
     left join public.attendances a
       on a.session_id = s.id and a.user_id = u.id
-    left join public.izin_requests ir
-      on ir.user_id = u.id
-      and ir.status = 'approved'
-      and s.date_opened::date between ir.start_date and ir.end_date
     where s.date_opened::date between p_dari and p_sampai
       and (p_tpa_ids is null or array_length(p_tpa_ids, 1) is null or s.tpa_id = any(p_tpa_ids))
     order by s.tpa_id, u.name, s.date_opened;
