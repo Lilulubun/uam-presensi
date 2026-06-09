@@ -210,20 +210,19 @@ describe('LaporanPage', () => {
   it('calculates percentages correctly', async () => {
     mockRpc.mockResolvedValue({
       data: [
-        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),                                          // tepat_waktu + hadir
-        row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),                         // terlambat + tepat_waktu + hadir
-        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // pulang_awal (no hadir)
+        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),                                          // tepatWaktu + hadirFisik (scan-in, scan-out, not late)
+        row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),                         // terlambat + hadirFisik (scan-in, scan-out, late)
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // pulangAwal + hadirFisik (scan-in, no scan-out)
       ],
       error: null,
     });
     renderComponent();
     await waitFor(() => {
-      // hadir_fisik=2, total_sesi=3, izin=0 → denominator=3 → Total=67%
-      // tepat_waktu=2, total_sesi=3 → 67%
-      expect(screen.getAllByText('67%').length).toBe(2);
-      // terlambat=1 → 33%, pulang_awal=1 → 33%
-      expect(screen.getAllByText('33%').length).toBe(2);
+      // hadir_fisik=3, total_sesi=3, izin=0 → denominator=3 → Total=100%
+      // tepatWaktu=1 → 33%, terlambat=1 → 33%, pulangAwal=1 → 33%
       // izin=0 → 0%
+      expect(screen.getByText('100%')).toBeInTheDocument();
+      expect(screen.getAllByText('33%').length).toBe(3);
       expect(screen.getByText('0%')).toBeInTheDocument();
     });
   });

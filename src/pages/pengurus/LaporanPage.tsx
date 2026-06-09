@@ -140,10 +140,10 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         const isLate = (row.lateMinutes ?? 0) > 0;
         const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
 
-        if (hasScanOut) teacher.counts.tepatWaktu++;
+        if (hasScanOut && !isLate) teacher.counts.tepatWaktu++;
         if (isLate) teacher.counts.terlambat++;
         if (isEarly) teacher.counts.pulangAwal++;
-        if (hasScanOut) teacher.counts.hadirFisik++;
+        teacher.counts.hadirFisik++;
       }
     }
 
@@ -256,10 +256,10 @@ export default function LaporanPage() {
         t.tpaName,
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        pct(teacher.counts.terlambat, teacher.totalSesi),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        pct(teacher.counts.izin, teacher.totalSesi),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.izin, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -282,10 +282,10 @@ export default function LaporanPage() {
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        pct(teacher.counts.terlambat, teacher.totalSesi),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        pct(teacher.counts.izin, teacher.totalSesi),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.izin, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -322,10 +322,10 @@ export default function LaporanPage() {
       const body = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi),
-        pct(teacher.counts.terlambat, teacher.totalSesi),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi),
-        pct(teacher.counts.izin, teacher.totalSesi),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.izin, teacher.totalSesi - teacher.counts.izin),
       ]);
 
       autoTable(doc, {
@@ -543,16 +543,16 @@ export default function LaporanPage() {
                         {totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi)}
+                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[260px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.terlambat, teacher.totalSesi)}
+                        {pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.pulangAwal, teacher.totalSesi)}
+                        {pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.izin, teacher.totalSesi)}
+                        {pct(teacher.counts.izin, teacher.totalSesi - teacher.counts.izin)}
                       </td>
                       {teacher.cells.map((cell, i) => {
                         if (cell.type === 'merged') {
