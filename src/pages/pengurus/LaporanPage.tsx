@@ -78,14 +78,23 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
 
   const timeIn = formatTime(new Date(row.scanInTime));
   const hasScanOut = !!row.scanOutTime;
-  const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
   const isLate = (row.lateMinutes ?? 0) > 15;
+  const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
+
+  if (isLate) {
+    return {
+      type: 'split',
+      masukText: timeIn,
+      masukClass: 'bg-orange-50 text-orange-600',
+      keluarText: isEarly ? 'Pulang Awal' : (hasScanOut ? formatTime(new Date(row.scanOutTime)) : '-'),
+      keluarClass: isEarly ? 'bg-red-50 text-red-600 font-medium' : '',
+    };
+  }
 
   if (isEarly) {
     return {
       type: 'split',
       masukText: timeIn,
-      masukClass: isLate ? 'bg-orange-50 text-orange-600' : '',
       keluarText: 'Pulang Awal',
       keluarClass: 'bg-red-50 text-red-600 font-medium',
     };
@@ -94,7 +103,6 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
   return {
     type: 'split',
     masukText: timeIn,
-    masukClass: isLate ? 'bg-orange-50 text-orange-600' : '',
     keluarText: hasScanOut ? formatTime(new Date(row.scanOutTime)) : '-',
     keluarClass: '',
   };
@@ -137,13 +145,16 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       if (row.isIzin) {
         teacher.counts.izin++;
       } else if (row.scanInTime) {
-        const hasScanOut = !!row.scanOutTime;
         const isLate = (row.lateMinutes ?? 0) > 15;
-        const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
+        const isEarly = !row.sessionIsActive && !row.scanOutTime && row.teacherId !== row.firstTeacherId;
 
-        if (hasScanOut && !isLate) teacher.counts.tepatWaktu++;
-        if (isLate) teacher.counts.terlambat++;
-        if (isEarly) teacher.counts.pulangAwal++;
+        if (isLate) {
+          teacher.counts.terlambat++;
+        } else if (isEarly) {
+          teacher.counts.pulangAwal++;
+        } else {
+          teacher.counts.tepatWaktu++;
+        }
         teacher.counts.hadirFisik++;
       } else {
         teacher.counts.tidakMasuk++;
