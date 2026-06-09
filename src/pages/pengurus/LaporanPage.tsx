@@ -126,9 +126,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
 
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
-    const totalSesi = dates.length;
 
-    const teacherMap = new Map<string, { name: string; cells: Map<string, CellDisplay>; counts: TeacherCounts }>();
+    const teacherMap = new Map<string, { name: string; cells: Map<string, CellDisplay>; counts: TeacherCounts; totalSesi: number }>();
 
     for (const row of group.rows) {
       if (!teacherMap.has(row.teacherId)) {
@@ -136,9 +135,11 @@ function processData(rows: LaporanRow[]): TpaTable[] {
           name: row.teacherName,
           cells: new Map(),
           counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
+          totalSesi: 0,
         });
       }
       const teacher = teacherMap.get(row.teacherId)!;
+      teacher.totalSesi++;
       const cell = getCellDisplay(row);
       teacher.cells.set(row.tgl, cell);
 
@@ -169,7 +170,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         mergedClass: 'text-muted-foreground',
       }),
       counts: t.counts,
-      totalSesi,
+      totalSesi: t.totalSesi,
     }));
 
     tables.push({ tpaName: group.name, dates, teachers });
