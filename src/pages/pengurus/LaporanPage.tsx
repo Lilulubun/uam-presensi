@@ -44,6 +44,7 @@ interface TeacherCounts {
   pulangAwal: number;
   hadirFisik: number;
   izin: number;
+  tidakMasuk: number;
 }
 
 interface TeacherRow {
@@ -126,7 +127,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         teacherMap.set(row.teacherId, {
           name: row.teacherName,
           cells: new Map(),
-          counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0 },
+          counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
         });
       }
       const teacher = teacherMap.get(row.teacherId)!;
@@ -144,6 +145,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         if (isLate) teacher.counts.terlambat++;
         if (isEarly) teacher.counts.pulangAwal++;
         teacher.counts.hadirFisik++;
+      } else {
+        teacher.counts.tidakMasuk++;
       }
     }
 
@@ -250,15 +253,16 @@ export default function LaporanPage() {
   // Export functions
   function exportCSV() {
     if (!hasData) return;
-    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
+    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
     const csvRows = tables.flatMap((t) =>
       t.teachers.map((teacher) => [
         t.tpaName,
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -277,13 +281,14 @@ export default function LaporanPage() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
     for (const t of tables) {
-      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
+      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -320,14 +325,15 @@ export default function LaporanPage() {
       const body = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
-        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin),
-        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk),
+        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
       ]);
 
       autoTable(doc, {
         startY: margin + 24,
-        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal']],
+        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk']],
         body,
         margin: { left: margin, right: margin },
         styles: {
@@ -355,6 +361,7 @@ export default function LaporanPage() {
           2: { halign: 'center' },
           3: { halign: 'center' },
           4: { halign: 'center' },
+          5: { halign: 'center' },
         },
       });
     });
@@ -513,6 +520,9 @@ export default function LaporanPage() {
                     <th rowSpan={2} className="sticky left-[316px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[52px] border-b border-r">
                       Pulang<br />Awal
                     </th>
+                    <th rowSpan={2} className="sticky left-[368px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[56px] border-b border-r">
+                      Tidak<br />Masuk
+                    </th>
                     {t.dates.map((d) => (
                       <th key={d} colSpan={2} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r">
                         {formatShortDate(d)}
@@ -536,13 +546,16 @@ export default function LaporanPage() {
                         {totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin)}
+                        {pct(teacher.counts.tepatWaktu, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
                       </td>
                       <td className="sticky left-[260px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin)}
+                        {pct(teacher.counts.terlambat, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
                       </td>
                       <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin)}
+                        {pct(teacher.counts.pulangAwal, teacher.totalSesi - teacher.counts.izin - teacher.counts.tidakMasuk)}
+                      </td>
+                      <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
+                        {pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin)}
                       </td>
                       {teacher.cells.map((cell, i) => {
                         if (cell.type === 'merged') {
