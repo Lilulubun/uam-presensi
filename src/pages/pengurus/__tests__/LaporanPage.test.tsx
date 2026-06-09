@@ -227,6 +227,29 @@ describe('LaporanPage', () => {
     });
   });
 
+  it('deduplicates rows per teacher+date to prevent inflated counts', async () => {
+    // 5 rows, but only 3 unique dates → duplicate rows must be ignored
+    mockRpc.mockResolvedValue({
+      data: [
+        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),
+        row({ tgl: '2026-06-02', teacher_name: 'Budi' }), // duplicate
+        row({ tgl: '2026-06-04', teacher_name: 'Budi' }),
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }),
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // duplicate
+      ],
+      error: null,
+    });
+    renderComponent();
+    await waitFor(() => {
+      // totalSesi=3 (unique dates), hadirFisik=3, izin=0, tidakMasuk=0
+      // denomA=3 → Total=100%, denomB=3 → tepatWaktu=2, pulangAwal=1, tidakMasuk=0%
+      expect(screen.getByText('100%')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('0%')).toBeInTheDocument();
+    });
+  });
+
   it('shows periode text', async () => {
     renderComponent();
     expect(screen.getByText(/Periode:/)).toBeInTheDocument();

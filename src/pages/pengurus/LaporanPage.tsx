@@ -127,7 +127,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
 
-    const teacherMap = new Map<string, { name: string; cells: Map<string, CellDisplay>; counts: TeacherCounts; totalSesi: number }>();
+    const teacherMap = new Map<string, { name: string; cells: Map<string, CellDisplay>; counts: TeacherCounts; totalSesi: number; processedDates: Set<string> }>();
 
     for (const row of group.rows) {
       if (!teacherMap.has(row.teacherId)) {
@@ -136,9 +136,14 @@ function processData(rows: LaporanRow[]): TpaTable[] {
           cells: new Map(),
           counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
           totalSesi: 0,
+          processedDates: new Set(),
         });
       }
       const teacher = teacherMap.get(row.teacherId)!;
+
+      if (teacher.processedDates.has(row.tgl)) continue;
+      teacher.processedDates.add(row.tgl);
+
       teacher.totalSesi++;
       const cell = getCellDisplay(row);
       teacher.cells.set(row.tgl, cell);
