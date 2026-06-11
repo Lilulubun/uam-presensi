@@ -24,7 +24,8 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     const { data, error } = await supabase
       .from('attendances')
       .select('*')
-      .order('scan_in_time', { ascending: false });
+      .order('scan_in_time', { ascending: false })
+      .limit(500);
     if (!error && data) {
       set({ attendances: toCamelCaseArray<Attendance>(data), loading: false });
     } else {

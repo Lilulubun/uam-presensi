@@ -29,6 +29,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     } else {
       set({ loading: false });
     }
+
+    supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        set({ user: null, isAuthenticated: false });
+      }
+    });
   },
 
   login: async (email: string, password: string): Promise<ValidationResult> => {

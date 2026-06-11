@@ -25,7 +25,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const { data, error } = await supabase
       .from('sessions')
       .select('*')
-      .order('date_opened', { ascending: false });
+      .order('date_opened', { ascending: false })
+      .limit(200);
     if (data && !error) {
       const sessions = toCamelCaseArray<Session>(data);
       const activeSession = sessions.find((s) => s.isActive && s.firstTeacherId === userId) ?? null;

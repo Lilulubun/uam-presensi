@@ -1,18 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Hoisted mock handles — referenced by both the vi.mock factory and the test bodies
-const { mockGetSession, mockSignInWithPassword, mockSignOut, mockProfileSelect, resetMocks } = vi.hoisted(() => {
+const { mockGetSession, mockSignInWithPassword, mockSignOut, mockProfileSelect, mockRpc, resetMocks } = vi.hoisted(() => {
   const mockGetSession = vi.fn();
   const mockSignInWithPassword = vi.fn();
   const mockSignOut = vi.fn();
   const mockProfileSelect = vi.fn();
+  const mockRpc = vi.fn();
   const resetMocks = () => {
     mockGetSession.mockReset();
     mockSignInWithPassword.mockReset();
     mockSignOut.mockReset();
     mockProfileSelect.mockReset();
+    mockRpc.mockReset();
   };
-  return { mockGetSession, mockSignInWithPassword, mockSignOut, mockProfileSelect, resetMocks };
+  return { mockGetSession, mockSignInWithPassword, mockSignOut, mockProfileSelect, mockRpc, resetMocks };
 });
 
 vi.mock('../../lib/supabase', () => ({
@@ -21,7 +23,9 @@ vi.mock('../../lib/supabase', () => ({
       getSession: mockGetSession,
       signInWithPassword: mockSignInWithPassword,
       signOut: mockSignOut,
+      onAuthStateChange: vi.fn(),
     },
+    rpc: mockRpc,
     from: () => ({
       select: () => ({
         eq: () => ({
@@ -66,8 +70,8 @@ describe('useAuthStore (Supabase-backed)', () => {
       mockGetSession.mockResolvedValue({
         data: { session: { user: { id: 'auth-uuid-budi' } } },
       });
-      mockProfileSelect.mockResolvedValue({
-        data: { id: 'auth-uuid-budi', email: 'budi@uii.ac.id', name: 'Budi Santoso', role: 'pengajar', nim: '20521001' },
+      mockRpc.mockResolvedValue({
+        data: [{ id: 'auth-uuid-budi', email: 'budi@uii.ac.id', name: 'Budi Santoso', role: 'pengajar', nim: '20521001', is_active: true }],
         error: null,
       });
       await useAuthStore.getState().init();
@@ -84,8 +88,8 @@ describe('useAuthStore (Supabase-backed)', () => {
         data: { user: { id: 'auth-uuid-siti' }, session: {} },
         error: null,
       });
-      mockProfileSelect.mockResolvedValue({
-        data: { id: 'auth-uuid-siti', email: 'siti@uii.ac.id', name: 'Siti Rahayu', role: 'pengajar', nim: '20521002' },
+      mockRpc.mockResolvedValue({
+        data: [{ id: 'auth-uuid-siti', email: 'siti@uii.ac.id', name: 'Siti Rahayu', role: 'pengajar', nim: '20521002', is_active: true }],
         error: null,
       });
 

@@ -20,21 +20,25 @@ vi.mock('../../lib/supabase', () => ({
     rpc: mockRpc,
     from: (table: string) => {
       if (table === 'sessions') {
-        return {
-          select: () => ({
-            order: () => ({
-              then: (resolve: (v: any) => void) => resolve({ data: sessionsData, error: null }),
-            }),
+        const chain = {
+          order: () => chain,
+          limit: () => ({
+            then: (resolve: (v: any) => void) => resolve({ data: sessionsData, error: null }),
           }),
+        };
+        return {
+          select: () => chain,
         };
       }
       if (table === 'attendances') {
-        return {
-          select: () => ({
-            order: () => ({
-              then: (resolve: any) => resolve({ data: [], error: null }),
-            }),
+        const chain = {
+          order: () => chain,
+          limit: () => ({
+            then: (resolve: any) => resolve({ data: [], error: null }),
           }),
+        };
+        return {
+          select: () => chain,
         };
       }
       return { select: vi.fn() };

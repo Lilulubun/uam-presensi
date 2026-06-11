@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, XCircle, Clock, FileText, User } from 'lucide-react';
 import { useIzinStore } from '../../store/izinStore';
+import { formatDateId } from '../../lib/date-utils';
 
 const statusConfig = {
   pending: { icon: Clock, color: 'text-orange-500', bg: 'bg-orange-50', label: 'Pending' },
@@ -47,15 +48,15 @@ export default function RiwayatIzinPengurus() {
                         <p className="text-sm font-medium">{izin.userName}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {formatDateId(izin.startDate)}
                         {' – '}
-                        {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {formatDateId(izin.endDate)}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
                       {izin.reviewedByName && (
                         <p className="text-xs text-muted-foreground mt-1">
                           Oleh: {izin.reviewedByName}
-                          {izin.reviewedAt && ` • ${new Date(izin.reviewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+                          {izin.reviewedAt && ` • ${formatDateId(izin.reviewedAt)}`}
                         </p>
                       )}
                     </div>

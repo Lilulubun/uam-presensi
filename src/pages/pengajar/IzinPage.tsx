@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, FileText, CalendarDays, CheckCircle2, XCircle, Clock, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useIzinStore } from '../../store/izinStore';
+import { formatDateId } from '../../lib/date-utils';
 
 export default function IzinPage() {
   const navigate = useNavigate();
@@ -134,9 +135,9 @@ export default function IzinPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-sm font-medium">
-                          {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          {formatDateId(izin.startDate)}
                           {' – '}
-                          {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          {formatDateId(izin.endDate)}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">{izin.alasan}</p>
                       </div>

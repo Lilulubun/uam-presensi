@@ -13,8 +13,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { format } from 'date-fns';
-import { id as localeId } from 'date-fns/locale';
 import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
@@ -22,7 +20,7 @@ import { useAttendanceStore } from '../../store/attendanceStore';
 import { useTPAStore } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
-import { formatTime, isSameDay } from '../../lib/date-utils';
+import { formatTime, isSameDay, formatDayName, formatDateIdShort, formatDateId, toJakartaMonth } from '../../lib/date-utils';
 import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
 
 export default function DashboardPengurus() {
@@ -40,7 +38,7 @@ export default function DashboardPengurus() {
 
   useEffect(() => {
     fetchPendingIzins();
-  }, []);
+  }, [fetchPendingIzins]);
 
   const today = new Date();
 
@@ -76,7 +74,7 @@ export default function DashboardPengurus() {
       });
 
       days.push({
-        day: format(d, 'EEE', { locale: localeId }),
+        day: formatDayName(d),
         'Tepat Waktu': dayAttendances.filter((a) => !a.isLate).length,
         Terlambat: dayAttendances.filter((a) => a.isLate).length,
       });
@@ -85,12 +83,11 @@ export default function DashboardPengurus() {
   }, [attendances]);
 
   const totalThisMonth = useMemo(() => {
-    const now = new Date();
+    const currentMonth = toJakartaMonth(new Date());
     return attendances.filter((a) => {
       const t = a.scanInTime;
       if (!t) return false;
-      const d = new Date(t);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      return toJakartaMonth(new Date(t)) === currentMonth;
     }).length;
   }, [attendances]);
 
@@ -291,9 +288,9 @@ export default function DashboardPengurus() {
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">{izin.userName}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {new Date(izin.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                          {formatDateIdShort(izin.startDate)}
                           {' – '}
-                          {new Date(izin.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          {formatDateId(izin.endDate)}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
                       </div>

@@ -5,7 +5,7 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
-import { formatDate, formatTime } from '../../lib/date-utils';
+import { formatDate, formatTime, formatMonthYear, formatDateIdShort, jakartaNow } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 
 export default function DetailPengajar() {
@@ -44,9 +44,10 @@ export default function DetailPengajar() {
 
   useEffect(() => {
     if (userId) {
-      fetchMonthlyReport(userId, now.getFullYear(), now.getMonth() + 1);
+      const { year, month } = jakartaNow();
+      fetchMonthlyReport(userId, year, month + 1);
     }
-  }, [userId]);
+  }, [userId, fetchMonthlyReport]);
 
   const hadirCount = monthlyReport.filter((r) => r.status === 'hadir').length;
   const izinCount = monthlyReport.filter((r) => r.status === 'izin').length;
@@ -91,7 +92,7 @@ export default function DetailPengajar() {
             <FileText className="w-4 h-4 text-muted-foreground" />
             <p className="text-sm font-medium">Status Bulanan</p>
             <span className="ml-auto text-xs text-muted-foreground">
-              {new Date(now.getFullYear(), now.getMonth()).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+              {formatMonthYear(now)}
             </span>
           </div>
 
@@ -113,11 +114,11 @@ export default function DetailPengajar() {
           {monthlyReport.length > 0 && (
             <ul className="divide-y border-t">
               {monthlyReport.map((row) => {
-                const date = new Date(row.tgl + 'T00:00:00');
+                const date = new Date(row.tgl + 'T00:00:00+07:00');
                 return (
-                  <li key={date.toISOString()} className="px-4 py-2.5 flex items-center gap-3">
+                  <li key={row.tgl} className="px-4 py-2.5 flex items-center gap-3">
                     <span className="text-sm min-w-[120px]">
-                      {date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                      {formatDateIdShort(date)}
                     </span>
                     <span className="text-xs text-muted-foreground flex-1">{row.tpaName}</span>
                     <span
