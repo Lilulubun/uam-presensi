@@ -21,7 +21,6 @@ cp .env.example .env.local  # fill in your Supabase credentials
 |---|---|---|
 | `VITE_SUPABASE_URL` | Yes | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
-| `VITE_GPS_DEBUG` | No | Set to `true` to bypass GPS radius checks |
 | `VITE_DEMO_MODE` | No | Set to `true` to show demo credentials on login page |
 
 ## Seeding

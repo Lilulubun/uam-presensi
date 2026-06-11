@@ -7,7 +7,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
-import { formatTime, formatDate, isSameDay } from '../../lib/date-utils';
+import { formatTime, formatDate, isSameDay, jakartaNow } from '../../lib/date-utils';
 import { computeStreak } from '../../lib/computeStreak';
 import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
 import { useIzinStore } from '../../store/izinStore';
@@ -39,8 +39,15 @@ export default function DashboardPengajar() {
   const todayRecord = todayAttendances[0] ?? null;
 
   const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
-  const streak = computeStreak(myAttendances, allSessions);
-  const monthSummary = computeMonthlySummary(myAttendances, today.getFullYear(), today.getMonth() + 1);
+  const myTpaIds = new Set(
+    myAttendances
+      .map((a) => allSessions.find((s) => s.id === a.sessionId)?.tpaId)
+      .filter((id): id is string => id != null),
+  );
+  const mySessions = allSessions.filter((s) => myTpaIds.has(s.tpaId));
+  const streak = computeStreak(myAttendances, mySessions);
+  const { year: jkYear, month: jkMonth } = jakartaNow();
+  const monthSummary = computeMonthlySummary(myAttendances, jkYear, jkMonth + 1);
 
   const recentAttendances = allAttendances
     .filter((a) => a.userId === user?.id && a.scanInTime)

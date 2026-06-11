@@ -1,7 +1,5 @@
 import type { Attendance } from '../types';
-import { toDate } from './date-utils';
-
-const UTC_7_MS = 7 * 60 * 60 * 1000;
+import { toDate, toJakartaDate } from './date-utils';
 
 export interface InactiveAlert {
   isInactive: boolean;
@@ -33,11 +31,12 @@ export function computeInactiveAlert(
     return { isInactive: true, lastActive: null, daysSince: null };
   }
 
-  const nowJakarta = new Date(Date.now() + UTC_7_MS);
-  const lastJakarta = new Date(maxScanIn.getTime() + UTC_7_MS);
+  const nowJakarta = toJakartaDate(new Date());
+  const lastJakarta = toJakartaDate(maxScanIn);
 
-  const diffMs = nowJakarta.getTime() - lastJakarta.getTime();
-  const daysSince = Math.floor(diffMs / 86_400_000);
+  const nowMs = new Date(nowJakarta + 'T00:00:00').getTime();
+  const lastMs = new Date(lastJakarta + 'T00:00:00').getTime();
+  const daysSince = Math.floor((nowMs - lastMs) / 86_400_000);
 
   return {
     isInactive: daysSince > thresholdDays,

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const { mockRpc, mockNavigate } = vi.hoisted(() => ({
@@ -49,6 +49,7 @@ function row(overrides: Record<string, any> = {}) {
     first_teacher_id: 'user-1',
     scan_in_time: '2026-06-02T16:00:00+07:00',
     scan_out_time: '2026-06-02T17:00:00+07:00',
+    is_late: false,
     late_minutes: 0,
     is_izin: false,
     ...overrides,
@@ -158,7 +159,7 @@ describe('LaporanPage', () => {
 
   it('renders Terlambat cell with orange styling', async () => {
     mockRpc.mockResolvedValue({
-      data: [row({ late_minutes: 15 })],
+      data: [row({ is_late: true, late_minutes: 5 })],
       error: null,
     });
     renderComponent();

@@ -8,7 +8,7 @@ import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
-import { formatDateTime, formatTime, formatDate, isSameDay } from '../../lib/date-utils';
+import { formatDateTime, formatTime, formatDate, isSameDay, toJakartaDate } from '../../lib/date-utils';
 import { isEarlyExit } from '../../lib/attendance-utils';
 import { logEvent } from '../../lib/log-event';
 import { Button } from '../../app/components/ui/button';
@@ -231,38 +231,19 @@ function SessionAttendees({
   const attendingUserIds = new Set(sessionAttendances.map((a) => a.userId));
   const absentUsers = (tpaUsers ?? []).filter((u) => !attendingUserIds.has(u.id));
 
-  const sessionDateStr = (session.dateOpened as unknown as string).slice(0, 10);
-
-  console.log('[DEBUG] sessionDate:', sessionDateStr);
-  console.log('[DEBUG] allIzins:', allIzins);
-  console.log('[DEBUG] absentUsers:', absentUsers.map(u => ({ id: u.id, name: u.name })));
+  const sessionDateStr = toJakartaDate(new Date(session.dateOpened));
 
   const izinUserIds = new Set(
     allIzins
       .filter(
-        (ir) => {
-          const match =
-            ir.status === 'approved' &&
-            ir.userId &&
-            sessionDateStr >= (ir.startDate as unknown as string).slice(0, 10) &&
-            sessionDateStr <= (ir.endDate as unknown as string).slice(0, 10);
-          if (!match) {
-            console.log('[DEBUG] izin no match:', {
-              id: ir.id,
-              status: ir.status,
-              userId: ir.userId,
-              startDate: (ir.startDate as unknown as string).slice(0, 10),
-              endDate: (ir.endDate as unknown as string).slice(0, 10),
-              sessionDate: sessionDateStr,
-            });
-          }
-          return match;
-        }
+        (ir) =>
+          ir.status === 'approved' &&
+          ir.userId &&
+          sessionDateStr >= toJakartaDate(new Date(ir.startDate)) &&
+          sessionDateStr <= toJakartaDate(new Date(ir.endDate))
       )
       .map((ir) => ir.userId)
   );
-
-  console.log('[DEBUG] izinUserIds:', [...izinUserIds]);
 
   const trulyAbsentUsers = absentUsers.filter((u) => !izinUserIds.has(u.id));
   const excusedUsers = absentUsers.filter((u) => izinUserIds.has(u.id));

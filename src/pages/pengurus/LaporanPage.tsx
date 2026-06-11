@@ -4,14 +4,12 @@ import {
   ArrowLeft, FileText, FileSpreadsheet, FileDown, Loader2,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { id as localeId } from 'date-fns/locale';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Button } from '../../app/components/ui/button';
 import { useTPAStore } from '../../store/tpaStore';
 import { supabase } from '../../lib/supabase';
-import { formatTime } from '../../lib/date-utils';
+import { formatTime, formatDate, formatShortDate, jakartaNow, monthBounds } from '../../lib/date-utils';
 import { toCamelCaseArray } from '../../lib/transform';
 import type { LaporanRow } from '../../types';
 
@@ -23,9 +21,7 @@ const MONTHS = [
 
 // Current year ± range for year selector
 const YEAR_RANGE = 2;
-const now = new Date();
-const CURRENT_YEAR = now.getFullYear();
-const CURRENT_MONTH = now.getMonth(); // 0-based
+const { year: CURRENT_YEAR, month: CURRENT_MONTH } = jakartaNow();
 
 // Cell display types
 interface CellDisplay {
@@ -51,7 +47,7 @@ interface TeacherRow {
   name: string;
   cells: CellDisplay[];
   counts: TeacherCounts;
-  totalSesi: number;
+  totalHari: number;
 }
 
 interface TpaTable {
@@ -61,6 +57,38 @@ interface TpaTable {
 }
 
 function getCellDisplay(row: LaporanRow): CellDisplay {
+  if (row.scanInTime) {
+    const timeIn = formatTime(new Date(row.scanInTime));
+    const hasScanOut = !!row.scanOutTime;
+    const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
+
+    if (row.isLate) {
+      return {
+        type: 'split',
+        masukText: timeIn,
+        masukClass: 'bg-orange-50 text-orange-600',
+        keluarText: isEarly ? 'Pulang Awal' : (row.scanOutTime ? formatTime(new Date(row.scanOutTime)) : '-'),
+        keluarClass: isEarly ? 'bg-red-50 text-red-600 font-medium' : '',
+      };
+    }
+
+    if (isEarly) {
+      return {
+        type: 'split',
+        masukText: timeIn,
+        keluarText: 'Pulang Awal',
+        keluarClass: 'bg-red-50 text-red-600 font-medium',
+      };
+    }
+
+    return {
+      type: 'split',
+      masukText: timeIn,
+      keluarText: row.scanOutTime ? formatTime(new Date(row.scanOutTime)) : '-',
+      keluarClass: '',
+    };
+  }
+
   if (row.isIzin) {
     return {
       type: 'merged',
@@ -68,43 +96,11 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
       mergedClass: 'bg-yellow-50 text-yellow-700 font-medium',
     };
   }
-  if (!row.scanInTime) {
-    return {
-      type: 'merged',
-      mergedText: 'Tidak Masuk',
-      mergedClass: 'bg-red-50 text-red-600 font-medium',
-    };
-  }
-
-  const timeIn = formatTime(new Date(row.scanInTime));
-  const hasScanOut = !!row.scanOutTime;
-  const isLate = (row.lateMinutes ?? 0) > 15;
-  const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
-
-  if (isLate) {
-    return {
-      type: 'split',
-      masukText: timeIn,
-      masukClass: 'bg-orange-50 text-orange-600',
-      keluarText: isEarly ? 'Pulang Awal' : (hasScanOut ? formatTime(new Date(row.scanOutTime)) : '-'),
-      keluarClass: isEarly ? 'bg-red-50 text-red-600 font-medium' : '',
-    };
-  }
-
-  if (isEarly) {
-    return {
-      type: 'split',
-      masukText: timeIn,
-      keluarText: 'Pulang Awal',
-      keluarClass: 'bg-red-50 text-red-600 font-medium',
-    };
-  }
 
   return {
-    type: 'split',
-    masukText: timeIn,
-    keluarText: hasScanOut ? formatTime(new Date(row.scanOutTime)) : '-',
-    keluarClass: '',
+    type: 'merged',
+    mergedText: 'Tidak Masuk',
+    mergedClass: 'bg-red-50 text-red-600 font-medium',
   };
 }
 
@@ -127,66 +123,66 @@ function processData(rows: LaporanRow[]): TpaTable[] {
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
 
-    const teacherMap = new Map<string, { name: string; cells: Map<string, CellDisplay>; counts: TeacherCounts; totalSesi: number; processedDates: Set<string> }>();
+    const teacherMap = new Map<string, { name: string; bestRow: Map<string, LaporanRow>; counts: TeacherCounts; totalHari: number }>();
 
     for (const row of group.rows) {
       if (!teacherMap.has(row.teacherId)) {
         teacherMap.set(row.teacherId, {
           name: row.teacherName,
-          cells: new Map(),
+          bestRow: new Map(),
           counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
-          totalSesi: 0,
-          processedDates: new Set(),
+          totalHari: 0,
         });
       }
       const teacher = teacherMap.get(row.teacherId)!;
 
-      if (teacher.processedDates.has(row.tgl)) continue;
-      teacher.processedDates.add(row.tgl);
-
-      teacher.totalSesi++;
-      const cell = getCellDisplay(row);
-      teacher.cells.set(row.tgl, cell);
-
-      if (row.isIzin) {
-        teacher.counts.izin++;
-      } else if (row.scanInTime) {
-        const isLate = (row.lateMinutes ?? 0) > 15;
-        const isEarly = !row.sessionIsActive && !row.scanOutTime && row.teacherId !== row.firstTeacherId;
-
-        if (isLate) {
-          teacher.counts.terlambat++;
-        } else if (isEarly) {
-          teacher.counts.pulangAwal++;
-        } else {
-          teacher.counts.tepatWaktu++;
-        }
-        teacher.counts.hadirFisik++;
-      } else {
-        teacher.counts.tidakMasuk++;
+      const existing = teacher.bestRow.get(row.tgl);
+      if (!existing || (!existing.scanInTime && row.scanInTime)) {
+        teacher.bestRow.set(row.tgl, row);
       }
     }
 
-    const teachers = Array.from(teacherMap.values()).map((t) => ({
-      name: t.name,
-      cells: dates.map((d) => t.cells.get(d) ?? {
-        type: 'merged' as const,
-        mergedText: '-',
-        mergedClass: 'text-muted-foreground',
-      }),
-      counts: t.counts,
-      totalSesi: t.totalSesi,
-    }));
+    const teachers = Array.from(teacherMap.values()).map((t) => {
+      const cells = new Map<string, CellDisplay>();
+
+      for (const [tgl, row] of t.bestRow) {
+        t.totalHari++;
+        cells.set(tgl, getCellDisplay(row));
+
+        if (row.scanInTime) {
+          const isEarly = !row.sessionIsActive && !row.scanOutTime && row.teacherId !== row.firstTeacherId;
+
+          if (row.isLate) {
+            t.counts.terlambat++;
+          } else if (isEarly) {
+            t.counts.pulangAwal++;
+          } else {
+            t.counts.tepatWaktu++;
+          }
+          t.counts.hadirFisik++;
+        } else if (row.isIzin) {
+          t.counts.izin++;
+        } else {
+          t.counts.tidakMasuk++;
+        }
+      }
+
+      return {
+        name: t.name,
+        cells: dates.map((d) => cells.get(d) ?? {
+          type: 'merged' as const,
+          mergedText: '-',
+          mergedClass: 'text-muted-foreground',
+        }),
+        counts: t.counts,
+        totalHari: t.totalHari,
+      };
+    });
 
     tables.push({ tpaName: group.name, dates, teachers });
   }
 
   return tables;
-}
-
-function formatShortDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return format(d, 'dd/MM');
 }
 
 function pct(value: number, total: number): string {
@@ -214,9 +210,7 @@ export default function LaporanPage() {
   const navigate = useNavigate();
   const tpas = useTPAStore((s) => s.tpas);
 
-  const today = format(now, 'yyyy-MM-dd');
-  const defaultFrom = format(startOfMonth(now), 'yyyy-MM-dd');
-  const defaultTo = format(endOfMonth(now), 'yyyy-MM-dd');
+  const { from: defaultFrom, to: defaultTo } = monthBounds(CURRENT_YEAR, CURRENT_MONTH);
 
   const [dateFrom, setDateFrom] = useState(defaultFrom);
   const [dateTo, setDateTo] = useState(defaultTo);
@@ -230,9 +224,9 @@ export default function LaporanPage() {
   const handleMonthYearChange = (month: number, year: number) => {
     setMonthFilter(month);
     setYearFilter(year);
-    const d = new Date(year, month, 1);
-    setDateFrom(format(startOfMonth(d), 'yyyy-MM-dd'));
-    setDateTo(format(endOfMonth(d), 'yyyy-MM-dd'));
+    const bounds = monthBounds(year, month);
+    setDateFrom(bounds.from);
+    setDateTo(bounds.to);
   };
 
   // Fetch data when filters change
@@ -275,11 +269,11 @@ export default function LaporanPage() {
       t.teachers.map((teacher) => [
         t.tpaName,
         teacher.name,
-        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
+        totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         teacher.counts.pulangAwal,
-        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -301,11 +295,11 @@ export default function LaporanPage() {
       const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
-        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
+        totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         teacher.counts.pulangAwal,
-        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -323,8 +317,8 @@ export default function LaporanPage() {
     const doc = new jsPDF('p', 'mm', 'a4');
     const margin = 14;
     const pageWidth = doc.internal.pageSize.getWidth();
-    const fromFormatted = format(new Date(dateFrom + 'T00:00:00'), 'dd/MM/yyyy');
-    const toFormatted = format(new Date(dateTo + 'T00:00:00'), 'dd/MM/yyyy');
+    const fromFormatted = formatDate(dateFrom);
+    const toFormatted = formatDate(dateTo);
 
     tables.forEach((t, idx) => {
       if (idx > 0) doc.addPage();
@@ -341,11 +335,11 @@ export default function LaporanPage() {
 
       const body = t.teachers.map((teacher) => [
         teacher.name,
-        totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin),
+        totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         teacher.counts.pulangAwal,
-        pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin),
+        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
       ]);
 
       autoTable(doc, {
@@ -475,7 +469,7 @@ export default function LaporanPage() {
         {/* Info bar + export */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            Periode: {format(new Date(dateFrom + 'T00:00:00'), 'dd/MM/yyyy')} – {format(new Date(dateTo + 'T00:00:00'), 'dd/MM/yyyy')}
+            Periode: {formatDate(dateFrom)} – {formatDate(dateTo)}
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={exportCSV} disabled={!hasData}>
@@ -572,7 +566,7 @@ export default function LaporanPage() {
                         {teacher.name}
                       </td>
                       <td className="sticky left-[160px] z-10 bg-card text-center px-2 py-2 text-xs font-medium tabular-nums border-b border-r">
-                        {totalPct(teacher.counts.hadirFisik, teacher.totalSesi, teacher.counts.izin)}
+                        {totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin)}
                       </td>
                       <td className="sticky left-[208px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
                         {teacher.counts.tepatWaktu}
@@ -584,7 +578,7 @@ export default function LaporanPage() {
                         {teacher.counts.pulangAwal}
                       </td>
                       <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
-                        {pct(teacher.counts.tidakMasuk, teacher.totalSesi - teacher.counts.izin)}
+                        {pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)}
                       </td>
                       {teacher.cells.map((cell, i) => {
                         if (cell.type === 'merged') {

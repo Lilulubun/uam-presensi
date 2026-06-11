@@ -85,6 +85,7 @@ export interface LaporanRow {
   firstTeacherId: string;
   scanInTime: string | null;
   scanOutTime: string | null;
+  isLate: boolean;
   lateMinutes: number | null;
   isIzin: boolean;
 }

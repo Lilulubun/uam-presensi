@@ -115,16 +115,18 @@ describe('computeStreak', () => {
   });
 
   it('ignores future dates', () => {
+    const future = new Date();
+    future.setDate(future.getDate() + 30);
     const sessions = [
       makeSession('2026-06-01T10:00:00+07:00', { id: 's1' }),
       makeSession('2026-06-02T10:00:00+07:00', { id: 's2' }),
-      makeSession('2026-06-10T10:00:00+07:00', { id: 's3' }),
+      makeSession(future.toISOString(), { id: 's3' }),
     ];
     const att = [
       makeAttendance('2026-06-01T10:00:00+07:00', { sessionId: 's1' }),
       makeAttendance('2026-06-02T10:00:00+07:00', { sessionId: 's2' }),
     ];
-    // Future session (Jun 10) is not counted as a teaching day yet
+    // Future session is not counted as a teaching day yet
     // Streak = 2 because the two past sessions were both attended
     expect(computeStreak(att, sessions)).toBe(2);
   });

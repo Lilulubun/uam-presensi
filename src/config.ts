@@ -6,9 +6,6 @@ export const APP_CONFIG = {
   SESSION_TIMEOUT_HOURS: 12, // Auto-mark as stale after 12 hours
 } as const;
 
-// GPS Debug Mode — env-gated, default off
-export const GPS_DEBUG_MODE = import.meta.env.VITE_GPS_DEBUG === 'true';
-
 // UI Configuration
 export const UI_CONFIG = {
   QR_SCANNER_FPS: 10,

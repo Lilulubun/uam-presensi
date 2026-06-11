@@ -1,24 +1,5 @@
 import type { Attendance } from '../types';
-import { toDate } from './date-utils';
-
-const UTC_7_MS = 7 * 60 * 60 * 1000;
-
-function toJakartaMonth(date: Date): string {
-  const ms = date.getTime() + UTC_7_MS;
-  const d = new Date(ms);
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-  return `${y}-${m}`;
-}
-
-function toJakartaDate(date: Date): string {
-  const ms = date.getTime() + UTC_7_MS;
-  const d = new Date(ms);
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(d.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+import { toDate, toJakartaDate, toJakartaMonth } from './date-utils';
 
 export interface MonthlySummary {
   total: number;

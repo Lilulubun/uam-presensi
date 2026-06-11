@@ -8,10 +8,6 @@ vi.mock('../../../../lib/gps-utils', () => ({
   getCurrentLocation: () => mockGetCurrentLocation(),
 }))
 
-vi.mock('../../../../config', () => ({
-  GPS_DEBUG_MODE: false,
-}))
-
 function renderComponent() {
   return render(
     <PermissionPrompt>
