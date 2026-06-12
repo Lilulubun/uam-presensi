@@ -13,6 +13,10 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate, useParams: () => ({ sessionId: 'session-1' }) }
 })
 
+vi.mock('../../../app/hooks/useRealtimeSessions', () => ({
+  useRealtimeSessions: () => {},
+}))
+
 vi.mock('../../../store/authStore', () => ({
   useAuthStore: (selector?: any) => {
     const state = {

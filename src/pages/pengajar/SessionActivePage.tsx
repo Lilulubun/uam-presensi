@@ -23,6 +23,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
+import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 
 export default function SessionActivePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -39,6 +40,8 @@ export default function SessionActivePage() {
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notes, setNotes] = useState('');
+
+  useRealtimeSessions();
 
   if (!session) {
     return (
@@ -81,10 +84,10 @@ export default function SessionActivePage() {
   };
 
   useEffect(() => {
-    if (!session.isActive && session.tpaId && !pengajarByTPA[session.tpaId]) {
+    if (session.tpaId && !pengajarByTPA[session.tpaId]) {
       fetchPengajarByTPA(session.tpaId);
     }
-  }, [session.isActive, session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
+  }, [session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
 
   const effectiveTPAUsers = session.isActive ? [] : (pengajarByTPA[session.tpaId] ?? []);
   const attendingUserIds = new Set(attendances.filter((a) => a.scanInTime).map((a) => a.userId));
@@ -161,7 +164,9 @@ export default function SessionActivePage() {
             </div>
             <ul className="divide-y">
               {attendances.map((attendance) => {
-                const teacher = users.find((u) => u.id === attendance.userId);
+                const teacher =
+                  users.find((u) => u.id === attendance.userId) ||
+                  (pengajarByTPA[session.tpaId] ?? []).find((u) => u.id === attendance.userId);
                 return (
                   <li key={attendance.id} className="px-4 py-3 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold">
