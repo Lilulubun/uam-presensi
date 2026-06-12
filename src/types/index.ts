@@ -124,7 +124,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
   init: () => Promise<void>;
-  login: (email: string, password: string) => Promise<ValidationResult>;
+  login: (identifier: string, password: string) => Promise<ValidationResult>;
   logout: () => Promise<void>;
 }
 

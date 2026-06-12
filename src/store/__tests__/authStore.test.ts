@@ -83,22 +83,58 @@ describe('useAuthStore (Supabase-backed)', () => {
   });
 
   describe('login()', () => {
-    it('calls signInWithPassword, fetches profile, and returns valid result on success', async () => {
+    it('resolves NIM to email and calls signInWithPassword', async () => {
+      mockRpc.mockImplementation((name, args) => {
+        if (name === 'get_email_by_nim' && args.p_nim === '20521002') {
+          return Promise.resolve({ data: 'siti@uii.ac.id', error: null });
+        }
+        if (name === 'get_profile') {
+          return Promise.resolve({
+            data: [{ id: 'auth-uuid-siti', email: 'siti@uii.ac.id', name: 'Siti Rahayu', role: 'pengajar', nim: '20521002', is_active: true }],
+            error: null,
+          });
+        }
+        return Promise.resolve({ data: null, error: null });
+      });
+
       mockSignInWithPassword.mockResolvedValue({
         data: { user: { id: 'auth-uuid-siti' }, session: {} },
         error: null,
       });
+
+      const result = await useAuthStore.getState().login('20521002', 'pw');
+
+      expect(mockRpc).toHaveBeenCalledWith('get_email_by_nim', { p_nim: '20521002' });
+      expect(mockSignInWithPassword).toHaveBeenCalledWith({ email: 'siti@uii.ac.id', password: 'pw' });
+      expect(result.valid).toBe(true);
+      expect(useAuthStore.getState().user?.email).toBe('siti@uii.ac.id');
+    });
+
+    it('calls signInWithPassword directly if identifier is an email', async () => {
       mockRpc.mockResolvedValue({
         data: [{ id: 'auth-uuid-siti', email: 'siti@uii.ac.id', name: 'Siti Rahayu', role: 'pengajar', nim: '20521002', is_active: true }],
+        error: null,
+      });
+      mockSignInWithPassword.mockResolvedValue({
+        data: { user: { id: 'auth-uuid-siti' }, session: {} },
         error: null,
       });
 
       const result = await useAuthStore.getState().login('siti@uii.ac.id', 'pw');
 
+      expect(mockRpc).not.toHaveBeenCalledWith('get_email_by_nim', expect.anything());
       expect(mockSignInWithPassword).toHaveBeenCalledWith({ email: 'siti@uii.ac.id', password: 'pw' });
       expect(result.valid).toBe(true);
-      expect(useAuthStore.getState().user?.email).toBe('siti@uii.ac.id');
-      expect(useAuthStore.getState().isAuthenticated).toBe(true);
+    });
+
+    it('returns error if NIM is not found', async () => {
+      mockRpc.mockResolvedValue({ data: null, error: null });
+
+      const result = await useAuthStore.getState().login('wrong_nim', 'pw');
+
+      expect(result.valid).toBe(false);
+      expect(result.message).toBe('NIM tidak ditemukan');
+      expect(mockSignInWithPassword).not.toHaveBeenCalled();
     });
 
     it('returns invalid Indonesian result on auth error', async () => {

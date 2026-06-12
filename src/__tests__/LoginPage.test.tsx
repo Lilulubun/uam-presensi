@@ -36,7 +36,7 @@ describe('LoginPage', () => {
         <LoginPage />
       </MemoryRouter>
     );
-    expect(screen.getByPlaceholderText('email@uii.ac.id')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('20521001')).toBeInTheDocument();
     expect(screen.getByText('Masuk')).toBeInTheDocument();
   });
 

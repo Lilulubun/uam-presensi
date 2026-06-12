@@ -6,7 +6,7 @@ import { Input } from '../app/components/ui/input';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(identifier, password);
 
       if (result.valid) {
         const user = useAuthStore.getState().user;
@@ -55,15 +55,15 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2" htmlFor="email">
-                Email
+              <label className="block text-sm font-medium mb-2" htmlFor="identifier">
+                NIM
               </label>
               <Input
-                id="email"
-                type="email"
-                placeholder="email@uii.ac.id"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="identifier"
+                type="text"
+                placeholder="20521001"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
                 disabled={loading}
               />

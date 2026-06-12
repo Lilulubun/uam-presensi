@@ -48,14 +48,14 @@ npm run typecheck  # TypeScript type check
 
 ## Demo Accounts
 
-| Role | Email | Password (set via SEED_*_PASSWORD) |
-|---|---|---|
-| Pengajar | budi@uii.ac.id | _(env-gated)_ |
-| Pengajar | siti@uii.ac.id | _(env-gated)_ |
-| Pengajar | ahmad@uii.ac.id | _(env-gated)_ |
-| Pengurus | admin@uam.id | _(env-gated)_ |
+Users can login using either their **NIM** or **Email**.
 
-Set `VITE_DEMO_MODE=true` to show credentials on the login page.
+| Role | NIM | Email | Password |
+|---|---|---|---|
+| Pengajar | 20521001 | budi@uii.ac.id | _(env-gated)_ |
+| Pengajar | 20521002 | siti@uii.ac.id | _(env-gated)_ |
+| Pengajar | 20521003 | ahmad@uii.ac.id | _(env-gated)_ |
+| Pengurus | — | admin@uam.id | _(env-gated)_ |
 
 ## Early-Exit Formula
 

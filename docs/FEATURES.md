@@ -13,7 +13,7 @@
 | **State** | Zustand 5 |
 | **Charts** | Recharts 2 (bar charts) |
 | **Backend** | Supabase (PostgreSQL + Auth + Realtime + Edge Functions) |
-| **Auth** | Supabase Auth (email/password) |
+| **Auth** | Supabase Auth (NIM or email + password) |
 | **QR** | html5-qrcode (scan), qrcode (generate) |
 | **Export** | xlsx (Excel), native CSV/JSON |
 | **Tests** | Vitest + Testing Library |
@@ -46,7 +46,7 @@
 
 | Path | Page | Role | Description |
 |------|------|------|-------------|
-| `/login` | `LoginPage` | public | Email/password login, role-based redirect |
+| `/login` | `LoginPage` | public | NIM or email/password login, role-based redirect |
 | `/` | — | all | Redirects to dashboard or login |
 | `/pengajar/dashboard` | `DashboardPengajar` | pengajar | Today's status, streak flame, monthly summary, GPS status, scan/izin buttons, recent history |
 | `/pengajar/scan` | `ScanPage` | pengajar | QR scanner with GPS permission gate |

@@ -37,10 +37,25 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  login: async (email: string, password: string): Promise<ValidationResult> => {
+  login: async (identifier: string, password: string): Promise<ValidationResult> => {
+    let email = identifier;
+
+    // Try to resolve NIM to email if the identifier doesn't look like an email
+    if (!identifier.includes('@')) {
+      const { data: resolvedEmail, error: nimError } = await supabase.rpc('get_email_by_nim', {
+        p_nim: identifier,
+      });
+
+      if (!nimError && resolvedEmail) {
+        email = resolvedEmail;
+      } else if (!nimError && !resolvedEmail) {
+        return { valid: false, message: 'NIM tidak ditemukan' };
+      }
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !data.user) {
-      return { valid: false, message: INDONESIAN_AUTH_ERROR };
+      return { valid: false, message: identifier.includes('@') ? INDONESIAN_AUTH_ERROR : 'NIM atau password salah' };
     }
     const profile = await fetchProfile();
     if (!profile) {
