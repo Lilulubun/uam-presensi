@@ -41,7 +41,7 @@ export default function PengaturanPage() {
     const doc = win.document;
     doc.write('<!DOCTYPE html><html><head>');
     doc.write(`<title>${tpa.staticQRCode}</title>`);
-    doc.write('<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}.card{text-align:center;padding:40px;border:2px solid #e5e7eb;border-radius:12px;max-width:360px}h1{font-size:22px;margin:0 0 8px}p{color:#6b7280;margin:0 0 20px;font-size:14px}img{display:block;margin:0 auto}.footer{margin-top:20px;font-size:12px;color:#9ca3af}</style></head><body>');
+    doc.write('<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}.card{text-align:center;padding:48px;border:2px solid #e5e7eb;border-radius:16px;max-width:400px}h1{font-size:28px;font-weight:700;margin:0 0 12px;line-height:1.2}p{color:#4b5563;margin:0 0 24px;font-size:16px;line-height:1.5}img{display:block;margin:0 auto}.footer{margin-top:32px;font-size:12px;color:#9ca3af;letter-spacing:0.025em}</style></head><body>');
     const card = doc.createElement('div');
     card.className = 'card';
     const h1 = doc.createElement('h1');
@@ -101,8 +101,8 @@ export default function PengaturanPage() {
               </div>
 
               <div>
-                <p className="text-sm font-semibold leading-tight">{tpa.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{tpa.staticQRCode}</p>
+                <p className="text-base font-semibold leading-tight">{tpa.name}</p>
+                <p className="text-xs text-muted-foreground mt-1">{tpa.staticQRCode}</p>
               </div>
 
               <button

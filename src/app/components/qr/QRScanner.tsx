@@ -49,10 +49,10 @@ export function QRScanner({ onScan, onError, disabled = false }: QRScannerProps)
           {/* Corner guides */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="relative w-52 h-52">
-              <span className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-lg" />
-              <span className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-lg" />
-              <span className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-lg" />
-              <span className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-lg" />
+              <span className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/60" />
+              <span className="absolute top-0 right-0 w-8 h-8 border-t border-r border-white/60" />
+              <span className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-white/60" />
+              <span className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/60" />
             </div>
           </div>
         </div>

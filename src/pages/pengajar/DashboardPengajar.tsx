@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, Flame, CalendarDays, User, FileText } from 'lucide-react';
+import { QrCode, History, LogOut, Clock, CheckCircle2, ScanLine, CalendarDays, User, FileText } from 'lucide-react';
 import { Button } from '../../app/components/ui/button';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
@@ -8,7 +8,6 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay, jakartaNow } from '../../lib/date-utils';
-import { computeStreak } from '../../lib/computeStreak';
 import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
 import { useIzinStore } from '../../store/izinStore';
 import { useEffect } from 'react';
@@ -39,13 +38,6 @@ export default function DashboardPengajar() {
   const todayRecord = todayAttendances[0] ?? null;
 
   const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
-  const myTpaIds = new Set(
-    myAttendances
-      .map((a) => allSessions.find((s) => s.id === a.sessionId)?.tpaId)
-      .filter((id): id is string => id != null),
-  );
-  const mySessions = allSessions.filter((s) => myTpaIds.has(s.tpaId));
-  const streak = computeStreak(myAttendances, mySessions);
   const { year: jkYear, month: jkMonth } = jakartaNow();
   const monthSummary = computeMonthlySummary(myAttendances, jkYear, jkMonth + 1);
 
@@ -113,32 +105,6 @@ export default function DashboardPengajar() {
             </p>
           )}
         </div>
-
-        {/* Streak card */}
-        {streak > 0 && (
-          <div className="bg-card rounded-xl p-4 shadow-sm flex items-center gap-3">
-            <Flame className="w-5 h-5 text-orange-500 shrink-0" />
-            <div>
-              <p className="font-semibold text-sm">
-                🔥 {streak} Hari Berturut-turut
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Terakhir{' '}
-                {myAttendances
-                  .filter((a) => a.scanInTime)
-                  .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())[0]
-                  ?.scanInTime
-                  ? formatDate(
-                      myAttendances
-                        .filter((a) => a.scanInTime)
-                        .sort((a, b) => new Date(b.scanInTime!).getTime() - new Date(a.scanInTime!).getTime())[0]
-                        .scanInTime!
-                    )
-                  : ''}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Monthly summary card */}
         {monthSummary.total > 0 && (
