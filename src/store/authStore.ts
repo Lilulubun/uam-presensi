@@ -46,11 +46,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         p_nim: identifier,
       });
 
-      if (!nimError && resolvedEmail) {
-        email = resolvedEmail;
-      } else if (!nimError && !resolvedEmail) {
+      if (nimError) {
+        return { valid: false, message: 'Gagal memverifikasi NIM. Hubungi admin.' };
+      }
+      if (!resolvedEmail) {
         return { valid: false, message: 'NIM tidak ditemukan' };
       }
+      email = resolvedEmail;
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
