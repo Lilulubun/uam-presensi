@@ -38,26 +38,40 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   login: async (identifier: string, password: string): Promise<ValidationResult> => {
-    let email = identifier;
-
-    // Try to resolve NIM to email if the identifier doesn't look like an email
     if (!identifier.includes('@')) {
-      const { data: resolvedEmail, error: nimError } = await supabase.rpc('get_email_by_nim', {
+      const { data: rows, error: nimError } = await supabase.rpc('get_emails_by_nim', {
         p_nim: identifier,
       });
 
       if (nimError) {
         return { valid: false, message: 'Gagal memverifikasi NIM. Hubungi admin.' };
       }
-      if (!resolvedEmail) {
+      if (!rows || rows.length === 0) {
         return { valid: false, message: 'NIM tidak ditemukan' };
       }
-      email = resolvedEmail;
+
+      // Multiple accounts may share this NIM — try each email
+      for (const row of rows) {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: row.email, password });
+        if (error || !data.user) continue;
+        const profile = await fetchProfile();
+        if (!profile) {
+          await supabase.auth.signOut();
+          continue;
+        }
+        if (profile.isActive === false) {
+          await supabase.auth.signOut();
+          return { valid: false, message: 'Akun Anda telah dinonaktifkan. Hubungi admin.' };
+        }
+        set({ user: profile, isAuthenticated: true });
+        return { valid: true, message: 'Login berhasil', data: profile };
+      }
+      return { valid: false, message: 'NIM atau password salah' };
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: identifier, password });
     if (error || !data.user) {
-      return { valid: false, message: identifier.includes('@') ? INDONESIAN_AUTH_ERROR : 'NIM atau password salah' };
+      return { valid: false, message: INDONESIAN_AUTH_ERROR };
     }
     const profile = await fetchProfile();
     if (!profile) {

@@ -85,8 +85,8 @@ describe('useAuthStore (Supabase-backed)', () => {
   describe('login()', () => {
     it('resolves NIM to email and calls signInWithPassword', async () => {
       mockRpc.mockImplementation((name, args) => {
-        if (name === 'get_email_by_nim' && args.p_nim === '20521002') {
-          return Promise.resolve({ data: 'siti@uii.ac.id', error: null });
+        if (name === 'get_emails_by_nim' && args.p_nim === '20521002') {
+          return Promise.resolve({ data: [{ email: 'siti@uii.ac.id' }], error: null });
         }
         if (name === 'get_profile') {
           return Promise.resolve({
@@ -104,7 +104,7 @@ describe('useAuthStore (Supabase-backed)', () => {
 
       const result = await useAuthStore.getState().login('20521002', 'pw');
 
-      expect(mockRpc).toHaveBeenCalledWith('get_email_by_nim', { p_nim: '20521002' });
+      expect(mockRpc).toHaveBeenCalledWith('get_emails_by_nim', { p_nim: '20521002' });
       expect(mockSignInWithPassword).toHaveBeenCalledWith({ email: 'siti@uii.ac.id', password: 'pw' });
       expect(result.valid).toBe(true);
       expect(useAuthStore.getState().user?.email).toBe('siti@uii.ac.id');
@@ -122,13 +122,13 @@ describe('useAuthStore (Supabase-backed)', () => {
 
       const result = await useAuthStore.getState().login('siti@uii.ac.id', 'pw');
 
-      expect(mockRpc).not.toHaveBeenCalledWith('get_email_by_nim', expect.anything());
+      expect(mockRpc).not.toHaveBeenCalledWith('get_emails_by_nim', expect.anything());
       expect(mockSignInWithPassword).toHaveBeenCalledWith({ email: 'siti@uii.ac.id', password: 'pw' });
       expect(result.valid).toBe(true);
     });
 
     it('returns error if NIM is not found', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: null });
+      mockRpc.mockResolvedValue({ data: [], error: null });
 
       const result = await useAuthStore.getState().login('wrong_nim', 'pw');
 
