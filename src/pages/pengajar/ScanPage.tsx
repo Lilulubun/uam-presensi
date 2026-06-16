@@ -88,14 +88,7 @@ export default function ScanPage() {
             toast.error(result.message);
           }
         } else {
-          const result = await checkOut(token.sessionId, token.token, location);
-          if (result.valid) {
-            queueMicrotask(() => navigate('/pengajar/konfirmasi', {
-              state: { success: true, type: 'out', message: result.message, data: result.data },
-            }));
-          } else {
-            toast.error(result.message);
-          }
+          toast.error('QR presensi keluar tidak lagi diperlukan. Kehadiran Anda dicatat otomatis saat sesi ditutup.');
         }
       } catch (err) {
         toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan');
@@ -133,7 +126,7 @@ export default function ScanPage() {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center max-w-xs">
-              Arahkan kamera ke QR TPA (statis) untuk membuka sesi, atau QR sesi aktif dari pengajar pertama untuk presensi masuk/keluar
+              Arahkan kamera ke QR TPA (statis) untuk membuka sesi, atau QR sesi aktif dari pengajar pertama untuk presensi masuk
             </p>
           )}
         </div>

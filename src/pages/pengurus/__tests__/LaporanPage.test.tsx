@@ -169,21 +169,6 @@ describe('LaporanPage', () => {
     });
   });
 
-  it('renders Pulang Awal cell', async () => {
-    mockRpc.mockResolvedValue({
-      data: [row({
-        scan_out_time: null,
-        first_teacher_id: 'user-other',
-        late_minutes: 0,
-      })],
-      error: null,
-    });
-    renderComponent();
-    await waitFor(() => {
-      expect(screen.getByText('Pulang Awal')).toBeInTheDocument();
-    });
-  });
-
   it('renders Tidak Masuk merged cell', async () => {
     mockRpc.mockResolvedValue({
       data: [row({ scan_in_time: null, scan_out_time: null })],
@@ -212,18 +197,16 @@ describe('LaporanPage', () => {
       data: [
         row({ tgl: '2026-06-02', teacher_name: 'Budi' }),                                          // tepatWaktu + hadirFisik (scan-in, scan-out, not late)
         row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),                         // tepatWaktu + hadirFisik (scan-in, scan-out, 10 ≤ 15 → not late)
-        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // pulangAwal + hadirFisik (scan-in, no scan-out)
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // tepatWaktu + hadirFisik (scan-in, no scan-out)
       ],
       error: null,
     });
     renderComponent();
     await waitFor(() => {
       // hadir_fisik=3, total_sesi=3, izin=0, tidakMasuk=0
-      // denomA=3, denomB=3
-      // Total=100%, tepatWaktu=2, terlambat=0, pulangAwal=1, tidakMasuk=0%
+      // Total=100%, tepatWaktu=3, terlambat=0, tidakMasuk=0%
       expect(screen.getByText('100%')).toBeInTheDocument();
-      expect(screen.getByText('2')).toBeInTheDocument();
-      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
       expect(screen.getByText('0%')).toBeInTheDocument();
     });
   });
@@ -243,10 +226,9 @@ describe('LaporanPage', () => {
     renderComponent();
     await waitFor(() => {
       // totalSesi=3 (unique dates), hadirFisik=3, izin=0, tidakMasuk=0
-      // denomA=3 → Total=100%, denomB=3 → tepatWaktu=2, pulangAwal=1, tidakMasuk=0%
+      // Total=100%, tepatWaktu=3, tidakMasuk=0%
       expect(screen.getByText('100%')).toBeInTheDocument();
-      expect(screen.getByText('2')).toBeInTheDocument();
-      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
       expect(screen.getByText('0%')).toBeInTheDocument();
     });
   });

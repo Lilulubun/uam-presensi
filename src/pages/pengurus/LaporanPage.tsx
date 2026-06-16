@@ -37,7 +37,6 @@ interface CellDisplay {
 interface TeacherCounts {
   tepatWaktu: number;
   terlambat: number;
-  pulangAwal: number;
   hadirFisik: number;
   izin: number;
   tidakMasuk: number;
@@ -59,25 +58,14 @@ interface TpaTable {
 function getCellDisplay(row: LaporanRow): CellDisplay {
   if (row.scanInTime) {
     const timeIn = formatTime(new Date(row.scanInTime));
-    const hasScanOut = !!row.scanOutTime;
-    const isEarly = !row.sessionIsActive && !hasScanOut && row.teacherId !== row.firstTeacherId;
 
     if (row.isLate) {
       return {
         type: 'split',
         masukText: timeIn,
         masukClass: 'bg-orange-50 text-orange-600',
-        keluarText: isEarly ? 'Pulang Awal' : (row.scanOutTime ? formatTime(new Date(row.scanOutTime)) : '-'),
-        keluarClass: isEarly ? 'bg-red-50 text-red-600 font-medium' : '',
-      };
-    }
-
-    if (isEarly) {
-      return {
-        type: 'split',
-        masukText: timeIn,
-        keluarText: 'Pulang Awal',
-        keluarClass: 'bg-red-50 text-red-600 font-medium',
+        keluarText: row.scanOutTime ? formatTime(new Date(row.scanOutTime)) : '-',
+        keluarClass: '',
       };
     }
 
@@ -130,7 +118,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         teacherMap.set(row.teacherId, {
           name: row.teacherName,
           bestRow: new Map(),
-          counts: { tepatWaktu: 0, terlambat: 0, pulangAwal: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
+          counts: { tepatWaktu: 0, terlambat: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
           totalHari: 0,
         });
       }
@@ -150,12 +138,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         cells.set(tgl, getCellDisplay(row));
 
         if (row.scanInTime) {
-          const isEarly = !row.sessionIsActive && !row.scanOutTime && row.teacherId !== row.firstTeacherId;
-
           if (row.isLate) {
             t.counts.terlambat++;
-          } else if (isEarly) {
-            t.counts.pulangAwal++;
           } else {
             t.counts.tepatWaktu++;
           }
@@ -264,7 +248,7 @@ export default function LaporanPage() {
   // Export functions
   function exportCSV() {
     if (!hasData) return;
-    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
+    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
     const csvRows = tables.flatMap((t) =>
       t.teachers.map((teacher) => [
         t.tpaName,
@@ -272,7 +256,6 @@ export default function LaporanPage() {
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -292,13 +275,12 @@ export default function LaporanPage() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
     for (const t of tables) {
-      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
+      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -338,13 +320,12 @@ export default function LaporanPage() {
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        teacher.counts.pulangAwal,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
       ]);
 
       autoTable(doc, {
         startY: margin + 24,
-        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Pulang Awal', 'Tidak Masuk']],
+        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk']],
         body,
         margin: { left: margin, right: margin },
         styles: {
@@ -372,7 +353,6 @@ export default function LaporanPage() {
           2: { halign: 'center' },
           3: { halign: 'center' },
           4: { halign: 'center' },
-          5: { halign: 'center' },
         },
       });
     });
@@ -519,10 +499,10 @@ export default function LaporanPage() {
                     <th rowSpan={3} className="sticky left-0 z-10 bg-muted/50 text-left px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[160px] border-b border-r">
                       Nama
                     </th>
-                    <th colSpan={4} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r uppercase tracking-wider">
+                    <th colSpan={3} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r uppercase tracking-wider">
                       Persentase
                     </th>
-                    <th rowSpan={3} className="sticky left-[368px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[56px] border-b border-r uppercase tracking-wider">
+                    <th rowSpan={3} className="sticky left-[316px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[56px] border-b border-r uppercase tracking-wider">
                       Alpa
                     </th>
                     {t.dates.map((d) => (
@@ -535,7 +515,7 @@ export default function LaporanPage() {
                     <th rowSpan={2} className="sticky left-[160px] z-10 bg-muted/30 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[48px] border-b border-r uppercase tracking-wider">
                       Total
                     </th>
-                    <th colSpan={3} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r uppercase tracking-wider">
+                    <th colSpan={2} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r uppercase tracking-wider">
                       Masuk
                     </th>
                     {t.dates.flatMap((d) => [
@@ -554,9 +534,6 @@ export default function LaporanPage() {
                     <th className="sticky left-[260px] z-10 bg-muted/20 text-center px-2 py-1.5 text-[10px] font-semibold text-muted-foreground border-b border-r uppercase tracking-wider">
                       Lambat
                     </th>
-                    <th className="sticky left-[316px] z-10 bg-muted/20 text-center px-2 py-1.5 text-[10px] font-semibold text-muted-foreground border-b border-r uppercase tracking-wider">
-                      Pulang<br />Awal
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -574,10 +551,7 @@ export default function LaporanPage() {
                       <td className="sticky left-[260px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
                         {teacher.counts.terlambat}
                       </td>
-                      <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs border-b border-r">
-                        {teacher.counts.pulangAwal}
-                      </td>
-                      <td className="sticky left-[368px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
+                      <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
                         {pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)}
                       </td>
                       {teacher.cells.map((cell, i) => {

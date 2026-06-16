@@ -130,7 +130,6 @@ describe('DetailPengajar', () => {
     expect(screen.getByText('Total')).toBeInTheDocument()
     expect(screen.getByText('Tepat')).toBeInTheDocument()
     expect(screen.getByText('Telat')).toBeInTheDocument()
-    expect(screen.getByText('Awal')).toBeInTheDocument()
   })
 
   it('shows attendance entries grouped by session', () => {
@@ -149,23 +148,5 @@ describe('DetailPengajar', () => {
     ]
     renderWithRoute()
     expect(screen.getByText('+15m')).toBeInTheDocument()
-  })
-
-  it('does not mark first teacher as early exit', () => {
-    mockSessions = [closedSession]
-    mockAttendances = [
-      { id: 'att-1', sessionId: 'session-1', userId: 'user-001', scanInTime: new Date('2026-06-02T10:00:00Z'), scanOutTime: undefined, isLate: false, lateMinutes: 0 } as Attendance,
-    ]
-    renderWithRoute('user-001')
-    expect(screen.queryByText('Pulang awal')).not.toBeInTheDocument()
-  })
-
-  it('marks non-first teacher as early exit when no scanOut and session closed', () => {
-    mockSessions = [closedSession]
-    mockAttendances = [
-      { id: 'att-1', sessionId: 'session-1', userId: 'user-002', scanInTime: new Date('2026-06-02T10:00:00Z'), scanOutTime: undefined, isLate: false, lateMinutes: 0 } as Attendance,
-    ]
-    renderWithRoute('user-002')
-    expect(screen.getByText('Pulang awal')).toBeInTheDocument()
   })
 })

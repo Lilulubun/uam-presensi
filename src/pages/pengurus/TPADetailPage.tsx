@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, XCircle, LogOut, XSquare, FileText } from 'lucide-react';
+import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, LogOut, XSquare, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
@@ -9,7 +9,6 @@ import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
 import { formatDateTime, formatTime, formatDate, isSameDay, toJakartaDate } from '../../lib/date-utils';
-import { isEarlyExit } from '../../lib/attendance-utils';
 import { logEvent } from '../../lib/log-event';
 import { Button } from '../../app/components/ui/button';
 import {
@@ -119,7 +118,7 @@ export default function TPADetailPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Tindakan ini akan menutup paksa sesi yang sedang berlangsung. QR presensi keluar akan diaktifkan.
+                      Tindakan ini akan menutup paksa sesi yang sedang berlangsung. Kehadiran semua pengajar akan difinalisasi.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -148,9 +147,6 @@ export default function TPADetailPage() {
               const sessionAttendances = attendances.filter((a) => a.sessionId === session.id);
               const presentCount = sessionAttendances.filter((a) => a.scanInTime).length;
               const lateCount = sessionAttendances.filter((a) => a.isLate).length;
-              const earlyExitCount = sessionAttendances.filter(
-                (a) => isEarlyExit(a, session)
-              ).length;
               const firstTeacher = users.find((u) => u.id === session.firstTeacherId);
               const isToday = isSameDay(new Date(session.dateOpened), today);
 
@@ -186,11 +182,6 @@ export default function TPADetailPage() {
                     {lateCount > 0 && (
                       <span className="flex items-center gap-1 text-orange-500">
                         <Clock className="w-3 h-3" /> {lateCount} terlambat
-                      </span>
-                    )}
-                    {earlyExitCount > 0 && (
-                      <span className="flex items-center gap-1 text-red-500">
-                        <AlertCircle className="w-3 h-3" /> {earlyExitCount} pulang awal
                       </span>
                     )}
                   </div>
@@ -264,7 +255,6 @@ function SessionAttendees({
     <ul className="divide-y">
       {sessionAttendances.map((a) => {
         const teacher = users.find((u) => u.id === a.userId);
-        const earlyExit = isEarlyExit(a, session);
 
         return (
           <li key={a.id} className="px-4 py-2.5 flex items-center gap-3">
@@ -291,9 +281,7 @@ function SessionAttendees({
                   +{a.lateMinutes}m
                 </span>
               )}
-              {earlyExit ? (
-                <XCircle className="w-4 h-4 text-red-400" />
-              ) : a.scanOutTime ? (
+              {a.scanOutTime ? (
                 <CheckCircle2 className="w-4 h-4 text-green-500" />
               ) : (
                 <Clock className="w-4 h-4 text-primary" />

@@ -1,12 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { ArrowLeft, Clock, CheckCircle2, XCircle, FileText } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, FileText } from 'lucide-react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
 import { formatDate, formatTime, formatMonthYear, formatDateIdShort, jakartaNow } from '../../lib/date-utils';
-import { isEarlyExit } from '../../lib/attendance-utils';
 
 export default function DetailPengajar() {
   const { userId } = useParams<{ userId: string }>();
@@ -34,10 +33,6 @@ export default function DetailPengajar() {
   const total = myAttendances.length;
   const onTime = myAttendances.filter((a) => !a.isLate).length;
   const late = myAttendances.filter((a) => a.isLate).length;
-  const earlyExitCount = myAttendances.filter((a) => {
-    const session = sessions.find((s) => s.id === a.sessionId);
-    return isEarlyExit(a, session);
-  }).length;
 
   const now = new Date();
   const { monthlyReport, fetchMonthlyReport } = useIzinStore();
@@ -67,7 +62,7 @@ export default function DetailPengajar() {
 
       <main className="max-w-lg mx-auto p-4 flex flex-col gap-4">
         {/* Summary cards */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div className="bg-card rounded-xl p-3 shadow-sm text-center">
             <p className="text-lg font-bold">{total}</p>
             <p className="text-xs text-muted-foreground mt-0.5">Total</p>
@@ -79,10 +74,6 @@ export default function DetailPengajar() {
           <div className="bg-card rounded-xl p-3 shadow-sm text-center">
             <p className="text-lg font-bold text-orange-500">{late}</p>
             <p className="text-xs text-muted-foreground mt-0.5">Telat</p>
-          </div>
-          <div className="bg-card rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold text-red-500">{earlyExitCount}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Awal</p>
           </div>
         </div>
 
@@ -145,15 +136,10 @@ export default function DetailPengajar() {
         ) : (
           <div className="flex flex-col gap-3">
             {myAttendances.map((a) => {
-              const session = sessions.find((s) => s.id === a.sessionId);
-              const earlyExit = isEarlyExit(a, session);
-
               return (
                 <div key={a.id} className="bg-card rounded-xl shadow-sm p-4 flex items-center gap-3">
                   <div className="shrink-0">
-                    {earlyExit ? (
-                      <XCircle className="w-5 h-5 text-red-400" />
-                    ) : a.scanOutTime ? (
+                    {a.scanOutTime ? (
                       <CheckCircle2 className="w-5 h-5 text-green-500" />
                     ) : (
                       <Clock className="w-5 h-5 text-primary" />
@@ -172,11 +158,6 @@ export default function DetailPengajar() {
                     {a.isLate && (
                       <span className="text-xs text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
                         +{a.lateMinutes}m
-                      </span>
-                    )}
-                    {earlyExit && (
-                      <span className="text-xs text-red-500 bg-red-50 px-1.5 py-0.5 rounded">
-                        Pulang awal
                       </span>
                     )}
                   </div>

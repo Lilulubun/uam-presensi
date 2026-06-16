@@ -122,36 +122,39 @@ export default function SessionActivePage() {
       </header>
 
       <main className="flex-1 p-4 flex flex-col gap-6 max-w-lg mx-auto w-full">
-        {/* QR Display */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm flex flex-col items-center gap-2">
-          {session.isActive ? (
-            <>
-              <p className="font-semibold text-center mb-1">QR Presensi Masuk</p>
-              <p className="text-xs text-muted-foreground text-center mb-3">
-                Tampilkan ke pengajar lain untuk scan presensi masuk
-              </p>
-              <QRDisplay sessionId={session.id} type="in" />
-            </>
-          ) : (
-            <>
-              <p className="font-semibold text-center mb-1">QR Presensi Keluar</p>
-              <p className="text-xs text-muted-foreground text-center mb-3">
-                Tampilkan ke pengajar untuk scan presensi keluar
-              </p>
-              <QRDisplay sessionId={session.id} type="out" />
-            </>
-          )}
-        </div>
+        {/* QR Display - Only shown while session is active */}
+        {session.isActive ? (
+          <div className="bg-card rounded-2xl p-5 shadow-sm flex flex-col items-center gap-2">
+            <p className="font-semibold text-center mb-1">QR Presensi Masuk</p>
+            <p className="text-xs text-muted-foreground text-center mb-3">
+              Tampilkan ke pengajar lain untuk scan presensi masuk
+            </p>
+            <QRDisplay sessionId={session.id} type="in" />
+          </div>
+        ) : (
+          <div className="bg-green-50 border border-green-100 rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2 text-center">
+            <CheckCircle2 className="w-12 h-12 text-green-500 mb-2" />
+            <p className="font-bold text-green-800 text-lg">Sesi Selesai</p>
+            <p className="text-sm text-green-700">
+              Presensi telah difinalisasi. Semua pengajar yang hadir telah tercatat jam keluarnya.
+            </p>
+            {session.closeNotes && (
+              <div className="mt-4 pt-4 border-t border-green-200 w-full">
+                <p className="text-xs font-semibold text-green-800 uppercase tracking-wider mb-1">Materi TPA:</p>
+                <p className="text-sm text-green-700 italic">"{session.closeNotes}"</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-primary">{checkedInCount}</p>
-            <p className="text-xs text-muted-foreground mt-1">Presensi Masuk</p>
-          </div>
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-primary">{checkedOutCount}</p>
-            <p className="text-xs text-muted-foreground mt-1">Presensi Keluar</p>
+        <div className="grid grid-cols-1 gap-3">
+          <div className="bg-card rounded-xl p-4 shadow-sm text-center flex items-center justify-center gap-3">
+            <Users className="w-5 h-5 text-primary" />
+            <div>
+              <p className="text-2xl font-bold text-primary">{checkedInCount}</p>
+              <p className="text-xs text-muted-foreground">Total Pengajar Hadir</p>
+            </div>
           </div>
         </div>
 
@@ -244,12 +247,12 @@ export default function SessionActivePage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  QR presensi keluar akan aktif. Sesi yang ditutup tidak bisa dibuka kembali.
+                  Pastikan semua pengajar sudah memindai presensi masuk. Menutup sesi akan memfinalisasi kehadiran hari ini.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="px-6 py-2">
                    <textarea
-                     placeholder="Materi yang diberikan hari ini (opsional) — misal: Surat Al-Fatihah ayat 1-7"
+                     placeholder="Materi yang diberikan hari ini (wajib) — misal: Surat Al-Fatihah ayat 1-7"
                      value={notes}
                      onChange={(e) => setNotes(e.target.value)}
                      className="w-full rounded-lg border border-input bg-background p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
@@ -259,7 +262,12 @@ export default function SessionActivePage() {
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleCloseSession}>Tutup Sesi</AlertDialogAction>
+                <AlertDialogAction 
+                  onClick={handleCloseSession} 
+                  disabled={!notes.trim() || closing}
+                >
+                  Tutup Sesi
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

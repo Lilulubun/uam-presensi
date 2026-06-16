@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { formatDate, formatTime } from '../../lib/date-utils';
-import { isEarlyExit } from '../../lib/attendance-utils';
 
 export default function RiwayatPage() {
   const navigate = useNavigate();
@@ -67,15 +66,10 @@ export default function RiwayatPage() {
           <div className="bg-card rounded-xl shadow-sm overflow-hidden">
             <ul className="divide-y">
               {attendances.map((attendance) => {
-                const session = sessions.find((s) => s.id === attendance.sessionId);
-                const earlyExit = isEarlyExit(attendance, session);
-
                 return (
                   <li key={attendance.id} className="px-4 py-3 flex items-center gap-3">
                     <div className="shrink-0">
-                      {earlyExit ? (
-                        <XCircle className="w-5 h-5 text-red-400" />
-                      ) : attendance.scanOutTime ? (
+                      {attendance.scanOutTime ? (
                         <CheckCircle2 className="w-5 h-5 text-green-500" />
                       ) : (
                         <Clock className="w-5 h-5 text-primary" />
@@ -95,9 +89,7 @@ export default function RiwayatPage() {
                         {attendance.scanOutTime && ` – ${formatTime(new Date(attendance.scanOutTime))}`}
                       </p>
                       <p className={`text-xs mt-0.5 ${attendance.isLate ? 'text-orange-500' : 'text-green-600'}`}>
-                        {earlyExit
-                          ? 'Pulang awal'
-                          : attendance.isLate
+                        {attendance.isLate
                           ? `Terlambat ${attendance.lateMinutes}m`
                           : 'Tepat waktu'}
                       </p>
