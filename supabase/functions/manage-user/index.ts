@@ -29,8 +29,10 @@ interface CreatePayload {
   action: 'create';
   email: string;
   name: string;
-  nim: string;
-  tpaIds: string[];
+  nim?: string;
+  role?: 'pengajar' | 'pengurus';
+  password?: string;
+  tpaIds?: string[];
 }
 
 interface ResetPwPayload {
@@ -42,7 +44,8 @@ interface ResetPwPayload {
 type Payload = CreatePayload | ResetPwPayload;
 
 async function handleCreate(p: CreatePayload): Promise<Response> {
-  const password = `${p.nim}uam`;
+  const role = p.role || 'pengajar';
+  const password = p.password || `${p.nim || '1234'}uam`;
 
   const { data: authUser, error: createErr } = await supabase.auth.admin.createUser({
     email: p.email,
@@ -61,15 +64,15 @@ async function handleCreate(p: CreatePayload): Promise<Response> {
     id: userId,
     email: p.email,
     name: p.name,
-    role: 'pengajar',
-    nim: p.nim,
+    role,
+    nim: p.nim || null,
   });
   if (profileErr) {
     await supabase.auth.admin.deleteUser(userId);
     return jsonResponse({ error: profileErr.message }, 500);
   }
 
-  if (p.tpaIds.length > 0) {
+  if (role === 'pengajar' && p.tpaIds && p.tpaIds.length > 0) {
     const rows = p.tpaIds.map((tpaId) => ({ user_id: userId, tpa_id: tpaId }));
     const { error: tpaErr } = await supabase.from('pengajar_tpa').insert(rows);
     if (tpaErr) {

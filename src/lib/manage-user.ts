@@ -31,8 +31,10 @@ async function callFunction<T>(payload: unknown): Promise<T> {
 export async function createUser(
   email: string,
   name: string,
-  nim: string,
-  tpaIds: string[],
+  nim?: string,
+  tpaIds: string[] = [],
+  role: 'pengajar' | 'pengurus' = 'pengajar',
+  password?: string,
 ): Promise<CreateResult> {
   return callFunction<CreateResult>({
     action: 'create',
@@ -40,6 +42,8 @@ export async function createUser(
     name,
     nim,
     tpaIds,
+    role,
+    password,
   });
 }
 
