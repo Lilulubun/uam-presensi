@@ -179,7 +179,7 @@ All are `SECURITY DEFINER` PostgreSQL functions:
 | Function | Parameters | Returns | Purpose |
 |----------|-----------|---------|---------|
 | `open_session(tpa_id, location)` | text, jsonb | `sessions` | GPS-validated session open, auto-record first-teacher attendance, generate in-token |
-| `close_session(session_id, location?, notes?)` | uuid, jsonb?, text? | `sessions` | Close session (first-teacher only), auto-checkout, generate out-token |
+| `close_session(session_id, location?, notes)` | uuid, jsonb?, text | `sessions` | Close session (first-teacher only), mandatory notes, auto-checkout all attendees |
 | `admin_force_close(session_id)` | uuid | `sessions` | Force-close any session (pengurus only) |
 
 ### Attendance
@@ -187,8 +187,7 @@ All are `SECURITY DEFINER` PostgreSQL functions:
 | Function | Parameters | Returns | Purpose |
 |----------|-----------|---------|---------|
 | `check_in(session_id, token, location)` | uuid, text, jsonb | `check_in_result` | Validate QR token (single-use + expiry), GPS radius, late detection |
-| `check_out(session_id, token, location)` | uuid, text, jsonb | `attendances` | Validate out-token, GPS, must have checked in |
-| `rotate_qr_token(session_id, direction)` | uuid, `qr_direction` | jsonb | Rotate dynamic QR (first-teacher for `in`, first-teacher/admin for `out`) |
+| `rotate_qr_token(session_id, direction)` | uuid, `qr_direction` | jsonb | Rotate dynamic QR (first-teacher for `in`, `out` rotation deprecated) |
 | `get_session_report(session_id)` | uuid | table | Per-session attendance with user details |
 
 ### User Data
@@ -247,14 +246,11 @@ All are `SECURITY DEFINER` PostgreSQL functions:
 - Single-use: each token consumed immediately after scan
 - Rotated via `rotate_qr_token()` by first teacher
 
-### Check Out
-1. First teacher closes session with optional GPS and close notes
-2. `close_session()` generates dynamic out-token, auto-checkouts the first teacher
-3. Other teachers scan the out-token to record `scan_out_time` and location
-4. `check_out()` validates: must have checked in, token valid, GPS within radius
-
-### Early Exit Detection
-- Teachers who checked in but the session closed without their check-out (and are not first teacher) → flagged as early exit
+### Close Session & Finalization
+1. First teacher closes session via "Tutup Sesi" button
+2. **Mandatory Materi TPA**: First teacher must fill in teaching materials (notes)
+3. `close_session()` performs **Bulk Checkout**: sets `scan_out_time` for all attendees to the current timestamp
+4. Once closed, no further check-ins are allowed for that session
 
 ### Leave Requests (Izin)
 1. Teacher submits leave via `IzinPage` with date range + reason

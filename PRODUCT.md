@@ -1,43 +1,76 @@
-# Product
+# Sistem Presensi Pengajar (UAM) — Unified Product Requirements
 
-## Register
+This document outlines the core purpose, user roles, and technical mechanisms of the UII Ayo Mengajar (UAM) attendance system, incorporating the **Single-Scan Attendance** model implemented in June 2026.
 
-product
+---
 
-## Users
+## 1. Product Purpose
+Sistem Presensi Pengajar is a specialized attendance monitoring system for UII Ayo Mengajar, a community teaching program where university students teach at TPA (Taman Pendidikan Al-Quran) locations. 
 
-**Pengajar (Teachers)** — TPA teachers who check in/out using QR codes at their assigned TPA locations. They're on-site, in a hurry between sessions, using their phone. Primary task: scan QR on arrival, scan again on departure, view their attendance history.
+The system replaces manual sign-in sheets with a **fraud-proof, QR-based digital check-in** that provides administrators with real-time data while keeping the on-site process for teachers near zero friction.
 
-**Pengurus (Administrators)** — Program coordinators monitoring attendance across all TPAs. They work from a dashboard on desktop/laptop. Primary tasks: view real-time attendance status, review reports, manage TPA data, generate attendance exports.
+---
 
-## Product Purpose
+## 2. Core Mechanism: Single-Scan Attendance
+The system operates on a **"Session-Based"** model that eliminates the need for teachers to scan out individually.
 
-Sistem Presensi Pengajar is the attendance monitoring system for UII Ayo Mengajar, a community teaching program where university students teach at TPA (Taman Pendidikan Al-Quran) locations across the region. The system replaces manual sign-in sheets with QR-code-based check-ins, giving administrators accurate real-time data on teacher attendance while keeping the check-in friction near zero for teachers.
+### The Flow:
+1.  **Opening the Session (First Teacher):** 
+    *   The first teacher to arrive at a TPA scans the **Static QR Code** (physically printed at the location).
+    *   The system validates their **GPS location** (geofencing).
+    *   A new session is created, and this teacher is automatically recorded as present and designated as the "First Teacher".
+2.  **Check-In (Subsequent Teachers):**
+    *   Other teachers scan a **Dynamic QR Code** displayed on the First Teacher's phone.
+    *   The Dynamic QR refreshes every 30 seconds to prevent fraudulent remote check-ins.
+    *   The system validates their GPS location and records their "Masuk" time.
+3.  **Closing the Session (Finalization):**
+    *   At the end of the teaching day, the First Teacher clicks "Tutup Sesi".
+    *   **Mandatory Report:** The First Teacher **must** enter the **Materi TPA** (e.g., "Surat Al-Fatihah ayat 1-7").
+    *   **Uniform Exit:** Once submitted, the system automatically "stamps" the current time as the "Keluar" time for every teacher who scanned into that session.
+    *   **No Individual Scan-Out:** Teachers do not need to scan a QR code to leave.
 
-Success looks like: teachers check in and out in under 5 seconds per scan, administrators can see who's present at any TPA at a glance, and the monthly attendance report is one click away.
+### Key Logic Changes:
+*   **Abolished "Early Exit" (Pulang Awal):** There is no longer a penalty or status for leaving early, as all attendance is finalized at the moment the session is closed.
+*   **Late Arrival (Terlambat):** Late arrivals are still tracked based on the time of the "Masuk" scan compared to the TPA schedule.
 
-## Brand Personality
+---
 
-Religious, educational, modern. The tone is respectful but not formal, helpful but not chatty. Think of a capable teaching assistant — organized, clear, and quietly supportive. Indonesian-language interface throughout.
+## 3. Users & Roles
 
-## Anti-references
+### Pengajar (Teachers)
+University student volunteers teaching on-site.
+*   **Primary Tasks:** Scan QR to record presence, host sessions for others (if first to arrive), submit teaching materials, and view personal attendance history/streaks.
+*   **Context:** On-site with a phone, often in a hurry between teaching blocks.
 
-- Avoid corporate/enterprise aesthetics (heavy data tables, dense metric walls)
-- Avoid gamification (badges, streaks, playful illustrations)
-- Avoid dark/clubby dark-mode-first approach — light mode is primary, dark is secondary
+### Pengurus (Administrators)
+Program coordinators monitoring the program from a desk.
+*   **Primary Tasks:** Manage TPAs and Teachers, review real-time session activity, approve "Izin" (leave) requests, and generate evaluation reports.
+*   **Context:** Desktop/Laptop browser, focused on high-level data and reporting.
 
-## Design Principles
+---
 
-1. **Scan-first, think-second.** The primary user action is a QR scan. Every millisecond of friction in that flow is a failure. The scan page should be one tap away from login, and the confirmation should be instantaneous.
+## 4. Key Features
 
-2. **Status at a glance.** Both teachers and admins need to answer "what's happening now?" without digging. The dashboard must surface active sessions, pending check-outs, and today's stats in the first viewport.
+### Fraud Prevention
+*   **GPS Geofencing:** Every attendance action is gated by a radius check.
+*   **Dynamic QR:** Check-in tokens rotate constantly to prevent screenshots/sharing.
+*   **First Teacher Gatekeeper:** One physical person must be "hosting" the session on-site.
 
-3. **Respect the context gap.** Teachers are on-site with a phone in hand; admins are at a desk with a full browser. Layouts, interactions, and data density must match the device and the moment.
+### Reporting & Evaluation
+*   **Automated Laporan:** Generates monthly attendance grids showing entry/exit times and status.
+*   **One-Click Export:** Native PDF, Excel, and CSV downloads for program stakeholders.
+*   **Statistics:** Tracks total sessions, on-time percentage, and absence rates per teacher/TPA.
+*   **Streak System:** Encourages consistency via a "Teaching Streak" counter.
 
-4. **Only ask once.** Attendance data entry should never require typing. If a scan doesn't work, the fallback should be a tap, not a form.
+### Teacher Management
+*   **Secure Creation:** Admin-only dashboard for creating accounts or bulk-importing teachers via CSV.
+*   **Izin Request Flow:** Teachers can submit leave requests with digital justifications for admin approval.
 
-5. **Indonesian first, English never.** All labels, messages, and notifications are in Bahasa Indonesia. No untranslated tech jargon.
+---
 
-## Accessibility & Inclusion
-
-Target WCAG AA. Adequate color contrast on all text, focus indicators for keyboard navigation, proper labels for screen readers. Touch targets at least 44px for mobile. Reduced motion respected.
+## 5. Design Principles
+1.  **Scan-first, think-second.** The primary action (attendance) must be instantaneous.
+2.  **Status at a glance.** Dashboards surface what is happening *now*.
+3.  **Respect the context gap.** Mobile-first for teachers; data-dense for admins.
+4.  **Indonesian first, English never.** All labels and messages are in Bahasa Indonesia.
+5.  **Single-Scan simplicity.** Eliminate administrative "homework" (scan-outs) to focus on teaching.
