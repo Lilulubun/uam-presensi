@@ -55,5 +55,5 @@ export function useDynamicQR(sessionId: string, type: 'in' | 'out') {
     return () => clearInterval(interval);
   }, [expiry, sessionId, type]);
 
-  return { qrDataUrl, secondsLeft };
+  return { qrDataUrl, secondsLeft, token, expiry };
 }

@@ -1,6 +1,7 @@
 import { useDynamicQR } from '../../hooks/useDynamicQR';
 import { Loader2 } from 'lucide-react';
 import { APP_CONFIG } from '../../../config';
+import { encodeQRData } from '../../../lib/qr-utils';
 
 interface QRDisplayProps {
   sessionId: string;
@@ -9,12 +10,20 @@ interface QRDisplayProps {
 }
 
 export function QRDisplay({ sessionId, type, label }: QRDisplayProps) {
-  const { qrDataUrl, secondsLeft } = useDynamicQR(sessionId, type);
+  const { qrDataUrl, secondsLeft, token, expiry } = useDynamicQR(sessionId, type);
 
   const totalSeconds = APP_CONFIG.QR_REFRESH_INTERVAL / 1000;
   const progress = (secondsLeft / totalSeconds) * 100;
 
   const urgency = secondsLeft <= 5 ? 'text-destructive' : secondsLeft <= 10 ? 'text-orange-500' : 'text-primary';
+
+  // Regenerate QR image and expose token for test simulation using standard encodeQRData
+  const qrTokenData = token && expiry ? encodeQRData({
+    token,
+    sessionId,
+    type,
+    expiry: expiry instanceof Date ? expiry.getTime() : new Date(expiry).getTime(),
+  }) : '';
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -29,6 +38,7 @@ export function QRDisplay({ sessionId, type, label }: QRDisplayProps) {
             src={qrDataUrl}
             alt="Dynamic QR Code"
             className="w-56 h-56 object-contain"
+            data-qr-token={qrTokenData}
           />
         ) : (
           <div className="w-56 h-56 flex items-center justify-center">

@@ -6,4 +6,6 @@ export async function loginAs(page: Page, nimOrEmail: string, password: string) 
   await page.getByLabel('NIM').fill(nimOrEmail);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Masuk' }).click();
+  // Wait for login redirection to be completed
+  await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 15000 });
 }

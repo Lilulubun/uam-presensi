@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
@@ -103,6 +103,20 @@ export default function ScanPage() {
   const handleCameraError = useCallback((error: string) => {
     toast.error(error);
   }, []);
+
+  // Expose scan trigger globally for E2E tests immediately when ScanPage is loaded
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__simulateQRScan = (text: string) => {
+        handleScan(text);
+      };
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        delete (window as any).__simulateQRScan;
+      }
+    };
+  }, [handleScan]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">

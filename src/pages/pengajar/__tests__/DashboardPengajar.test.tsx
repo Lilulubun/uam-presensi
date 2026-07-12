@@ -21,6 +21,22 @@ vi.mock('../../../store/authStore', () => ({
   },
 }))
 
+vi.mock('../../../lib/date-utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../lib/date-utils')>()
+  return {
+    ...actual,
+    formatTime: (date: Date | string) => {
+      const d = typeof date === 'string' ? new Date(date) : date
+      const hours = String(d.getHours()).padStart(2, '0')
+      const minutes = String(d.getMinutes()).padStart(2, '0')
+      return `${hours}:${minutes}`
+    },
+    formatDate: () => '12/07/2026',
+    isSameDay: () => true,
+    jakartaNow: () => ({ year: 2026, month: 6 }), // 0-indexed month
+  }
+})
+
 vi.mock('../../../store/sessionStore', () => ({
   useSessionStore: (selector?: any) => {
     const state = { sessions: mockSessions, activeSession: mockActiveSession }

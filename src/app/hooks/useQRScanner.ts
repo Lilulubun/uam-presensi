@@ -47,6 +47,14 @@ export function useQRScanner({
     const scanner = new Html5Qrcode(elementId, { verbose: false });
     scannerRef.current = scanner;
 
+    if (typeof window !== 'undefined') {
+      (window as any).__simulateQRScan = (text: string) => {
+        if (isMounted) {
+          onScanRef.current(text);
+        }
+      };
+    }
+
     scanner
       .start(
         { facingMode: 'environment' },
