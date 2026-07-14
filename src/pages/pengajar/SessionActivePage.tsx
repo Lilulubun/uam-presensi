@@ -16,6 +16,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '../../app/components/ui/alert-dialog';
+import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
@@ -40,6 +41,7 @@ export default function SessionActivePage() {
   const [closing, setClosing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  const [expectedUserIds, setExpectedUserIds] = useState<Set<string>>(new Set());
 
   useRealtimeSessions();
 
@@ -89,9 +91,28 @@ export default function SessionActivePage() {
     }
   }, [session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
 
-  const effectiveTPAUsers = session.isActive ? [] : (pengajarByTPA[session.tpaId] ?? []);
+  // Fetch expected teachers list when session is closed
+  useEffect(() => {
+    if (!session.isActive && session.id) {
+      supabase
+        .from('session_expected_teachers')
+        .select('user_id')
+        .eq('session_id', session.id)
+        .then(({ data, error }) => {
+          if (!error && data) {
+            const ids = new Set((data as { user_id: string }[]).map((r) => r.user_id));
+            setExpectedUserIds(ids);
+          }
+        });
+    }
+  }, [session.isActive, session.id]);
+
+  // Absent = expected but not scanned in
   const attendingUserIds = new Set(attendances.filter((a) => a.scanInTime).map((a) => a.userId));
-  const absentUsers = effectiveTPAUsers.filter((u) => !attendingUserIds.has(u.id));
+  const allTPAUsers = pengajarByTPA[session.tpaId] ?? [];
+  const absentUsers = session.isActive
+    ? []
+    : allTPAUsers.filter((u) => expectedUserIds.has(u.id) && !attendingUserIds.has(u.id));
 
   const checkedInCount = attendances.filter((a) => a.scanInTime).length;
   const checkedOutCount = attendances.filter((a) => a.scanOutTime).length;
@@ -232,6 +253,37 @@ export default function SessionActivePage() {
               ))}
             </ul>
           </div>
+        )}
+
+        {/* Non-expected attendees — shown after session is closed */}
+        {!session.isActive && expectedUserIds.size > 0 && (
+          (() => {
+            const nonExpectedAttendees = users.filter(
+              (u) => attendingUserIds.has(u.id) && !expectedUserIds.has(u.id)
+            );
+            if (nonExpectedAttendees.length === 0) return null;
+            return (
+              <details className="bg-card rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                <summary className="px-4 py-3 flex items-center gap-2 cursor-pointer text-sm text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  Tidak Dijadwalkan ({nonExpectedAttendees.length})
+                </summary>
+                <ul className="divide-y border-t">
+                  {nonExpectedAttendees.map((u) => (
+                    <li key={u.id} className="px-4 py-3 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-semibold">
+                        {u.name?.charAt(0) ?? '?'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{u.name}</p>
+                      </div>
+                      <span className="text-xs text-gray-400">Non-Jadwal</span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            );
+          })()
         )}
 
         {/* Close session button — only for first teacher while session is active */}
