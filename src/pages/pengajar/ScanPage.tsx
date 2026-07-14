@@ -5,13 +5,16 @@ import { ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
 import { QRScanner } from '../../app/components/qr/QRScanner';
 import PermissionPrompt from '../../app/components/gps/PermissionPrompt';
 import { LocationStatus } from '../../app/components/gps/LocationStatus';
+import { ExpectedTeacherSelector } from '../../app/components/session/ExpectedTeacherSelector';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { useUsersStore } from '../../store/userStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { getCurrentLocation, calculateDistance } from '../../lib/gps-utils';
 import { decodeQRData } from '../../lib/qr-utils';
 import { getTpaByStaticQR } from '../../store/tpaStore';
+import type { Coordinates } from '../../types';
 
 interface ActiveSessionInfo {
   tpaName: string;
@@ -21,15 +24,20 @@ interface ActiveSessionInfo {
 export default function ScanPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const openSession = useSessionStore((s) => s.openSession);
+  const openSessionWithExpected = useSessionStore((s) => s.openSessionWithExpected);
   const getActiveSessionByTPA = useSessionStore((s) => s.getActiveSessionByTPA);
   const checkIn = useAttendanceStore((s) => s.checkIn);
   const checkOut = useAttendanceStore((s) => s.checkOut);
+  const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
+  const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
 
   const { locationState, nearestTPA, refetch: refetchLocation } = useWatchLocation(true);
 
   const [processing, setProcessing] = useState(false);
   const [activeSessionInfo, setActiveSessionInfo] = useState<ActiveSessionInfo | null>(null);
+  const [showExpectedSelector, setShowExpectedSelector] = useState(false);
+  const [pendingTpaId, setPendingTpaId] = useState<string | null>(null);
+  const [pendingLocation, setPendingLocation] = useState<Coordinates | null>(null);
   const processingRef = useRef(false);
 
   const handleScan = useCallback(
@@ -57,14 +65,14 @@ export default function ScanPage() {
             return;
           }
 
-          const result = await openSession(tpa.id, location);
-
-          if (result.valid) {
-            toast.success(`Sesi dibuka di ${tpa.name}! Anda pengajar pertama.`);
-            queueMicrotask(() => navigate(`/pengajar/session/${result.data.id}`));
-          } else {
-            toast.error(result.message);
+          // Fetch pengajar list for this TPA, then show ExpectedTeacherSelector
+          const pengajarList = pengajarByTPA[tpa.id];
+          if (!pengajarList || pengajarList.length === 0) {
+            await fetchPengajarByTPA(tpa.id);
           }
+          setPendingTpaId(tpa.id);
+          setPendingLocation(location);
+          setShowExpectedSelector(true);
           return;
         }
 
@@ -97,8 +105,28 @@ export default function ScanPage() {
         setProcessing(false);
       }
     },
-    [user, openSession, getActiveSessionByTPA, checkIn, checkOut, navigate, locationState]
+    [user, openSessionWithExpected, getActiveSessionByTPA, checkIn, checkOut, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
   );
+
+  const handleExpectedSubmit = useCallback(async (selectedIds: string[]) => {
+    if (!pendingTpaId || !pendingLocation) return;
+
+    setProcessing(true);
+    try {
+      const result = await openSessionWithExpected(pendingTpaId, pendingLocation, selectedIds);
+      if (result.valid) {
+        toast.success(`Sesi dibuka dengan ${selectedIds.length} pengajar wajib hadir!`);
+        setShowExpectedSelector(false);
+        queueMicrotask(() => navigate(`/pengajar/session/${result.data.id}`));
+      } else {
+        toast.error(result.message);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan');
+    } finally {
+      setProcessing(false);
+    }
+  }, [pendingTpaId, pendingLocation, openSessionWithExpected, navigate]);
 
   const handleCameraError = useCallback((error: string) => {
     toast.error(error);
@@ -164,6 +192,23 @@ export default function ScanPage() {
           </div>
           <LocationStatus locationState={locationState} nearestTPA={nearestTPA} />
         </div>
+
+        {/* Expected Teacher Selector — shown after static QR scan */}
+        {showExpectedSelector && pendingTpaId && (
+          <div className="w-full max-w-sm">
+            <ExpectedTeacherSelector
+              teachers={pengajarByTPA[pendingTpaId] ?? []}
+              currentUserId={user?.id ?? ''}
+              onSubmit={handleExpectedSubmit}
+              onCancel={() => {
+                setShowExpectedSelector(false);
+                setPendingTpaId(null);
+                setPendingLocation(null);
+              }}
+              loading={processing}
+            />
+          </div>
+        )}
 
         {/* Active session info banner */}
         {activeSessionInfo && (
