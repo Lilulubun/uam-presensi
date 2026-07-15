@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuesioner Wawancara — Laporan Presensi UAM</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        uam: {
+          50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4',
+          400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+          800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+        },
+        accent: { DEFAULT: '#0d6efd', light: '#3b82f6' },
+      }
+    }
+  }
+}
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .section-anchor { scroll-margin-top: 6rem; }
+  .progress-bar { transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .toast { animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.5s forwards; }
+  @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @media print { .no-print { display: none !important; } }
+  .hero-gradient { background: linear-gradient(135deg, #0d9488 0%, #0f766e 40%, #115e59 100%); }
+  .card-hover { transition: all 0.2s ease; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -8px rgba(0,0,0,0.12); }
+  .markdown-body { font-family: 'JetBrains Mono', 'Courier New', monospace; white-space: pre-wrap; }
+  .mockup-cell {
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px; font-size: 11px; font-weight: 500;
+    padding: 4px 10px; min-width: 90px; min-height: 36px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .lainnya-input {
+    max-height: 0; overflow: hidden; transition: max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+    margin-top: 0; padding-top: 0; padding-bottom: 0;
+  }
+  .lainnya-input.active {
+    max-height: 60px; margin-top: 8px; padding-top: 8px; padding-bottom: 0;
+  }
+  .section-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
+  }
+  input[type="radio"]:checked + label, input[type="checkbox"]:checked + label {
+    border-color: #14b8a6; background-color: #f0fdfa;
+    box-shadow: 0 0 0 2px rgba(20,184,166,0.15);
+  }
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<!-- ========== HERO HEADER WITH STUDENT DETAILS ========== -->
+<header class="hero-gradient text-white no-print">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+      <!-- Logo area -->
+      <div class="flex-shrink-0 w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-2xl font-extrabold border border-white/20 shadow-lg">
+        UAM
+      </div>
+      <div class="flex-1 min-w-0">
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight leading-tight">
+          Kuesioner Kebutuhan Laporan Presensi
+        </h1>
+        <p class="text-teal-100 text-sm mt-1">
+          Wawancara HR Manager — UII Ayo Mengajar
+        </p>
+      </div>
+    </div>
+    <!-- Student Info Badge -->
+    <div class="mt-5 bg-white/10 backdrop-blur rounded-xl p-4 border border-white/15 text-sm leading-relaxed">
+      <p class="text-teal-50 text-xs uppercase tracking-wider font-semibold mb-2">ℹ️ Penelitian Tugas Akhir (Skripsi)</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-white/90">
+        <div class="flex gap-2">
+          <span class="text-teal-200 flex-shrink-0">👤</span>
+          <span><strong>Nama:</strong> Muhammad Nawal Haq Al Buny</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-teal-200 flex-shrink-0">🎓</span>
+          <span><strong>NIM:</strong> 23523198</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-teal-200 flex-shrink-0">🏫</span>
+          <span><strong>Prodi:</strong> Informatika — Universitas Islam Indonesia</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-teal-200 flex-shrink-0">👩‍🏫</span>
+          <span><strong>Dosen Pembimbing:</strong> Dr. Nur Wijayaning R., S.Kom., M.Cs.</span>
+        </div>
+      </div>
+      <div class="mt-2 pt-2 border-t border-white/10 text-white/80 text-xs">
+        <strong>📄 Judul Skripsi:</strong> Sistem Informasi Monitoring SDM dan Presensi Pengajar UAM
+      </div>
+    </div>
+    <!-- Quick badges -->
+    <div class="flex flex-wrap gap-2 mt-4">
+      <span class="text-xs bg-white/20 px-3 py-1.5 rounded-full font-medium backdrop-blur">⏱ ±5 menit</span>
+      <span class="text-xs bg-white/20 px-3 py-1.5 rounded-full font-medium backdrop-blur">🖱 Klik pilihan — minim mengetik</span>
+      <span class="text-xs bg-white/20 px-3 py-1.5 rounded-full font-medium backdrop-blur">📋 Hasil = Markdown & WA</span>
+      <span class="text-xs bg-white/20 px-3 py-1.5 rounded-full font-medium backdrop-blur">🎨 Dilengkapi visual mockup</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== STICKY NAV / PROGRESS ========== -->
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
+  <div class="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-slate-500">
+      <span id="progressText" class="font-semibold text-slate-700">0/22</span>
+      <span class="hidden sm:inline">terjawab</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="w-36 sm:w-48 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+        <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-uam-500 to-uam-600 rounded-full" style="width:0%"></div>
+      </div>
+      <span id="progressPct" class="text-xs font-bold text-uam-600 w-10 text-right">0%</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="max-w-4xl mx-auto px-4 py-6 pb-36">
+
+  <!-- Instructions card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-8">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl flex-shrink-0">📋</span>
+      <div>
+        <h2 class="text-lg font-bold text-slate-800 mb-1">Panduan Pengisian</h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Kuesioner ini terdiri dari <strong>6 seksi</strong> yang masing-masing dilengkapi <strong>visual mockup</strong>
+          dari tampilan nyata aplikasi Laporan Presensi UAM. Cukup <strong>klik pilihan</strong> yang paling sesuai.
+          Setiap pertanyaan memiliki opsi <strong>"Lainnya"</strong> untuk isian bebas.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-md font-medium border border-amber-200">⚠️ Tanda * = wajib diisi</span>
+          <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium border border-blue-200">✏️ "Lainnya" = isian bebas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FORM ========== -->
+  <form id="kuisionerForm" class="space-y-8">
+<div class="section-anchor" id="section-q1">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            1
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Rumus & Perhitungan Kehadiran (Total%, Alpa%)</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q1">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q1</span>Bagaimana rumus perhitungan Total% kehadiran yang diinginkan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q1_0" name="q1" value="hadir_total" class="sr-only peer card-radio" required><label for="q1_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Total% = (Sesi Hadir / Total Sesi) × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q1_1" name="q1" value="hadir_minus_izin" class="sr-only peer card-radio" required><label for="q1_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Total% = (Sesi Hadir / (Total Sesi − Izin)) × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q1_2" name="q1" value="hadir_plus_izin" class="sr-only peer card-radio" required><label for="q1_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Total% = ((Hadir + Izin) / Total Sesi) × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q1_3" name="q1" value="__lainnya__" class="sr-only peer card-radio" required><label for="q1_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q1">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q2">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q2</span>Bagaimana perhitungan Alpa% (persentase ketidakhadiran tanpa izin)? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q2_0" name="q2" value="alpa_total" class="sr-only peer card-radio" required><label for="q2_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Alpa% = (Tidak Masuk / Total Sesi) × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q2_1" name="q2" value="alpa_minus_izin" class="sr-only peer card-radio" required><label for="q2_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Alpa% = (Tidak Masuk / (Total Sesi − Izin)) × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q2_2" name="q2" value="alpa_include_izin" class="sr-only peer card-radio" required><label for="q2_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Alpa% = (Tidak Masuk + Izin) / Total Sesi × 100%</span></label></div>
+<div class="relative"><input type="radio" id="q2_3" name="q2" value="__lainnya__" class="sr-only peer card-radio" required><label for="q2_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q2">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q3">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q3</span>Seperti apa tampilan ringkasan (summary card) yang diinginkan di bagian atas laporan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tampilan Ringkasan (Summary Cards)</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white rounded-xl p-3 border border-slate-200 text-center shadow-sm">
+          <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Total Hadir</p>
+          <p class="text-xl font-bold text-uam-600">87%</p>
+          <p class="text-[10px] text-slate-400">52/60 sesi</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-slate-200 text-center shadow-sm">
+          <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Tepat Waktu</p>
+          <p class="text-xl font-bold text-green-600">41</p>
+          <p class="text-[10px] text-slate-400">sesi on-time</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-slate-200 text-center shadow-sm">
+          <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Terlambat</p>
+          <p class="text-xl font-bold text-orange-500">11</p>
+          <p class="text-[10px] text-slate-400">sesi late</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-slate-200 text-center shadow-sm">
+          <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Alpa</p>
+          <p class="text-xl font-bold text-red-500">13%</p>
+          <p class="text-[10px] text-slate-400">8/60 sesi</p>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q3_0" name="q3" value="4cards" class="sr-only peer card-radio" required><label for="q3_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">4 kartu sejajar: Total Hadir | Tepat Waktu | Terlambat | Alpa</span></label></div>
+<div class="relative"><input type="radio" id="q3_1" name="q3" value="2cards" class="sr-only peer card-radio" required><label for="q3_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">2 kartu besar: Kehadiran (Total%) | Ketidakhadiran (Alpa%)</span></label></div>
+<div class="relative"><input type="radio" id="q3_2" name="q3" value="progress_bar" class="sr-only peer card-radio" required><label for="q3_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Progress bar horizontal dengan label di bawah</span></label></div>
+<div class="relative"><input type="radio" id="q3_3" name="q3" value="__lainnya__" class="sr-only peer card-radio" required><label for="q3_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q3">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q4">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q4</span>Apa KPI target persentase kehadiran minimal pengajar per semester? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q4_0" name="q4" value="75" class="sr-only peer card-radio" required><label for="q4_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">75%</span></label></div>
+<div class="relative"><input type="radio" id="q4_1" name="q4" value="80" class="sr-only peer card-radio" required><label for="q4_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">80%</span></label></div>
+<div class="relative"><input type="radio" id="q4_2" name="q4" value="85" class="sr-only peer card-radio" required><label for="q4_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">85%</span></label></div>
+<div class="relative"><input type="radio" id="q4_3" name="q4" value="90" class="sr-only peer card-radio" required><label for="q4_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">90%</span></label></div>
+<div class="relative"><input type="radio" id="q4_4" name="q4" value="__lainnya__" class="sr-only peer card-radio" required><label for="q4_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q4">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+<div class="section-anchor" id="section-q5">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Kolom & Struktur Tabel</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q5">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q5</span>Kolom ringkasan mana yang HARUS muncul di tabel laporan? (pilih semua)</legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="checkbox" id="q5_0" name="q5" value="total_pct" class="sr-only peer card-checkbox" ><label for="q5_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Total% (persentase kehadiran)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_1" name="q5" value="tepat_waktu" class="sr-only peer card-checkbox" ><label for="q5_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Tepat Waktu (jumlah sesi on-time)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_2" name="q5" value="terlambat" class="sr-only peer card-checkbox" ><label for="q5_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Lambat / Terlambat (jumlah sesi late)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_3" name="q5" value="izin" class="sr-only peer card-checkbox" ><label for="q5_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin (jumlah izin)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_4" name="q5" value="alpa" class="sr-only peer card-checkbox" ><label for="q5_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Alpa% (persentase tanpa izin)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_5" name="q5" value="target" class="sr-only peer card-checkbox" ><label for="q5_5" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Target / KPI (perbandingan vs target)</span></label></div>
+<div class="relative"><input type="checkbox" id="q5_6" name="q5" value="__lainnya__" class="sr-only peer card-checkbox" ><label for="q5_6" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q5">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q6">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q6</span>Bagaimana struktur header tabel yang paling sesuai? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 overflow-x-auto">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Struktur Header Tabel (dari LaporanPage.tsx)</p>
+      <table class="min-w-full text-[10px] border-collapse">
+        <thead>
+          <tr class="bg-slate-800 text-white">
+            <th class="px-2 py-1.5 text-left border border-slate-700" rowspan="3">Nama</th>
+            <th class="px-2 py-1.5 text-center border border-slate-700" colspan="4">Persentase</th>
+            <th class="px-2 py-1.5 text-center border border-slate-700" rowspan="3">Alpa</th>
+            <th class="px-2 py-1.5 text-center border border-slate-700" colspan="2">1 Jul</th>
+            <th class="px-2 py-1.5 text-center border border-slate-700" colspan="2">2 Jul</th>
+            <th class="px-2 py-1.5 text-center border border-slate-700" colspan="2">3 Jul</th>
+          </tr>
+          <tr class="bg-slate-700 text-white">
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Total</th>
+            <th class="px-2 py-1 text-center border border-slate-600" colspan="2">Masuk</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Izin</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Masuk</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Keluar</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Masuk</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Keluar</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Masuk</th>
+            <th class="px-2 py-1 text-center border border-slate-600" rowspan="2">Keluar</th>
+          </tr>
+          <tr class="bg-slate-600 text-white">
+            <th class="px-2 py-0.5 text-center border border-slate-500 text-[9px]">Tepat<br>Waktu</th>
+            <th class="px-2 py-0.5 text-center border border-slate-500 text-[9px]">Lambat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-white">
+            <td class="px-2 py-1.5 border border-slate-200 font-medium">Ahmad Fauzi</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200 font-bold text-uam-600">87%</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">8</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">2</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">2</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200 text-red-600 font-medium">14%</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200 bg-orange-50 text-orange-600">07:45</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">16:00</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">07:30</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200">16:00</td>
+            <td class="px-2 py-1.5 text-center border border-slate-200 bg-yellow-50 text-yellow-700" colspan="2">Izin</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q6_0" name="q6" value="3baris" class="sr-only peer card-radio" required><label for="q6_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Header 3 baris: Nama | Kelompok Persentase (Total/Tepat/Lambat/Alpa) | Tanggal-tanggal</span></label></div>
+<div class="relative"><input type="radio" id="q6_1" name="q6" value="2baris" class="sr-only peer card-radio" required><label for="q6_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Header 2 baris: Nama | Total | Tepat | Lambat | Alpa | Tanggal...</span></label></div>
+<div class="relative"><input type="radio" id="q6_2" name="q6" value="1baris" class="sr-only peer card-radio" required><label for="q6_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Header 1 baris ringkas: Nama | Hadir% | Alpa% | Sesi...</span></label></div>
+<div class="relative"><input type="radio" id="q6_3" name="q6" value="__lainnya__" class="sr-only peer card-radio" required><label for="q6_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q6">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q7">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q7</span>Bagaimana penanganan izin terhadap perhitungan Total%? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q7_0" name="q7" value="izin_mengurangi" class="sr-only peer card-radio" required><label for="q7_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Izin mengurangi persentase (dihitung tidak hadir)</span></label></div>
+<div class="relative"><input type="radio" id="q7_1" name="q7" value="izin_dikecualikan" class="sr-only peer card-radio" required><label for="q7_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Izin TIDAK mengurangi persentase (dikecualikan dari denominator)</span></label></div>
+<div class="relative"><input type="radio" id="q7_2" name="q7" value="izin_bersyarat" class="sr-only peer card-radio" required><label for="q7_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Izin bersyarat: hanya sakit & akademik yang dikecualikan</span></label></div>
+<div class="relative"><input type="radio" id="q7_3" name="q7" value="__lainnya__" class="sr-only peer card-radio" required><label for="q7_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q7">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+<div class="section-anchor" id="section-q8">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Tampilan Kalender & Sel Harian</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q8">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q8</span>Untuk sel harian 'Tepat Waktu', bagaimana tampilan yang diinginkan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tampilan Sel Harian di Tabel Presensi</p>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tepat Waktu</span>
+          <div class="mockup-cell bg-white text-slate-700 border-green-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:30</span>
+            <span class="text-[10px] text-slate-500">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat + Menit</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5 relative" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 rounded-full font-bold">+15</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Izin</span>
+          <div class="mockup-cell bg-yellow-50 text-yellow-700 border-yellow-200 font-semibold" style="min-height:44px">
+            Izin
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tidak Masuk</span>
+          <div class="mockup-cell bg-red-50 text-red-600 border-red-200 font-semibold" style="min-height:44px">
+            Tidak Masuk
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q8_0" name="q8" value="split_white" class="sr-only peer card-radio" required><label for="q8_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tampilkan Jam Masuk / Jam Keluar (contoh: 07:30 / 16:00), background putih/hijau</span></label></div>
+<div class="relative"><input type="radio" id="q8_1" name="q8" value="split_check" class="sr-only peer card-radio" required><label for="q8_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tampilkan Jam Masuk / Jam Keluar dengan centang hijau</span></label></div>
+<div class="relative"><input type="radio" id="q8_2" name="q8" value="check_only" class="sr-only peer card-radio" required><label for="q8_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Hanya centang hijau tanpa jam</span></label></div>
+<div class="relative"><input type="radio" id="q8_3" name="q8" value="__lainnya__" class="sr-only peer card-radio" required><label for="q8_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q8">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q9">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q9</span>Untuk sel harian 'Terlambat', skema warna dan tampilan yang sesuai? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tampilan Sel Harian di Tabel Presensi</p>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tepat Waktu</span>
+          <div class="mockup-cell bg-white text-slate-700 border-green-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:30</span>
+            <span class="text-[10px] text-slate-500">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat + Menit</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5 relative" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 rounded-full font-bold">+15</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Izin</span>
+          <div class="mockup-cell bg-yellow-50 text-yellow-700 border-yellow-200 font-semibold" style="min-height:44px">
+            Izin
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tidak Masuk</span>
+          <div class="mockup-cell bg-red-50 text-red-600 border-red-200 font-semibold" style="min-height:44px">
+            Tidak Masuk
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q9_0" name="q9" value="orange_split" class="sr-only peer card-radio" required><label for="q9_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background oranye + Jam Masuk / Jam Keluar (contoh: 07:45 / 16:00)</span></label></div>
+<div class="relative"><input type="radio" id="q9_1" name="q9" value="pink_split" class="sr-only peer card-radio" required><label for="q9_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background merah muda + Jam Masuk / Jam Keluar</span></label></div>
+<div class="relative"><input type="radio" id="q9_2" name="q9" value="yellow_label" class="sr-only peer card-radio" required><label for="q9_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background kuning + label 'Terlambat' + menit</span></label></div>
+<div class="relative"><input type="radio" id="q9_3" name="q9" value="__lainnya__" class="sr-only peer card-radio" required><label for="q9_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q9">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q10">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q10</span>Untuk sel harian 'Izin', skema warna yang sesuai? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tampilan Sel Harian di Tabel Presensi</p>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tepat Waktu</span>
+          <div class="mockup-cell bg-white text-slate-700 border-green-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:30</span>
+            <span class="text-[10px] text-slate-500">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat + Menit</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5 relative" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 rounded-full font-bold">+15</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Izin</span>
+          <div class="mockup-cell bg-yellow-50 text-yellow-700 border-yellow-200 font-semibold" style="min-height:44px">
+            Izin
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tidak Masuk</span>
+          <div class="mockup-cell bg-red-50 text-red-600 border-red-200 font-semibold" style="min-height:44px">
+            Tidak Masuk
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q10_0" name="q10" value="yellow_izin" class="sr-only peer card-radio" required><label for="q10_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background kuning + teks 'Izin'</span></label></div>
+<div class="relative"><input type="radio" id="q10_1" name="q10" value="gray_izin" class="sr-only peer card-radio" required><label for="q10_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background abu-abu + teks 'Izin'</span></label></div>
+<div class="relative"><input type="radio" id="q10_2" name="q10" value="blue_izin" class="sr-only peer card-radio" required><label for="q10_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background biru muda + teks 'Izin'</span></label></div>
+<div class="relative"><input type="radio" id="q10_3" name="q10" value="__lainnya__" class="sr-only peer card-radio" required><label for="q10_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q10">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q11">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q11</span>Untuk sel harian 'Tidak Masuk' (tanpa izin/Alpa), skema warna yang sesuai? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tampilan Sel Harian di Tabel Presensi</p>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tepat Waktu</span>
+          <div class="mockup-cell bg-white text-slate-700 border-green-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:30</span>
+            <span class="text-[10px] text-slate-500">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Terlambat + Menit</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col gap-0.5 relative" style="min-height:44px">
+            <span class="text-[10px] font-semibold">07:45</span>
+            <span class="text-[10px] text-orange-400">─────</span>
+            <span class="text-[10px]">16:00</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 rounded-full font-bold">+15</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Izin</span>
+          <div class="mockup-cell bg-yellow-50 text-yellow-700 border-yellow-200 font-semibold" style="min-height:44px">
+            Izin
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Tidak Masuk</span>
+          <div class="mockup-cell bg-red-50 text-red-600 border-red-200 font-semibold" style="min-height:44px">
+            Tidak Masuk
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q11_0" name="q11" value="red_tidakmasuk" class="sr-only peer card-radio" required><label for="q11_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background merah + teks 'Tidak Masuk'</span></label></div>
+<div class="relative"><input type="radio" id="q11_1" name="q11" value="darkred_alpa" class="sr-only peer card-radio" required><label for="q11_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background merah tua + teks 'Alpa'</span></label></div>
+<div class="relative"><input type="radio" id="q11_2" name="q11" value="pink_tidakhadir" class="sr-only peer card-radio" required><label for="q11_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background merah muda + teks 'Tidak Hadir'</span></label></div>
+<div class="relative"><input type="radio" id="q11_3" name="q11" value="__lainnya__" class="sr-only peer card-radio" required><label for="q11_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q11">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+<div class="section-anchor" id="section-q12">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            4
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Fitur GPS & Menit Keterlambatan</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q12">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q12</span>Apakah lokasi GPS (koordinat check-in/check-out) perlu ditampilkan di laporan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q12_0" name="q12" value="gps_di_sel" class="sr-only peer card-radio" required><label for="q12_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Ya — tampilkan koordinat di sel harian</span></label></div>
+<div class="relative"><input type="radio" id="q12_1" name="q12" value="gps_kolom" class="sr-only peer card-radio" required><label for="q12_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Ya — tampilkan di kolom terpisah</span></label></div>
+<div class="relative"><input type="radio" id="q12_2" name="q12" value="gps_flag" class="sr-only peer card-radio" required><label for="q12_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Ya — tampilkan hanya jika di luar radius TPA (flag)</span></label></div>
+<div class="relative"><input type="radio" id="q12_3" name="q12" value="gps_no" class="sr-only peer card-radio" required><label for="q12_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tidak perlu ditampilkan di laporan</span></label></div>
+<div class="relative"><input type="radio" id="q12_4" name="q12" value="__lainnya__" class="sr-only peer card-radio" required><label for="q12_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q12">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q13">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q13</span>Bagaimana informasi keterlambatan ditampilkan di sel harian? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Variasi Tampilan Keterlambatan</p>
+      <div class="flex flex-wrap gap-4 items-end">
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Menit di bawah jam</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 flex-col" style="min-height:48px">
+            <span class="text-[10px] font-semibold">07:45 / 16:00</span>
+            <span class="text-[9px] text-red-500 font-bold">+15 menit</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Badge di pojok</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200 relative" style="min-height:48px">
+            <span class="text-[10px] font-semibold">07:45 / 16:00</span>
+            <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">+15</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1 items-center">
+          <span class="text-[9px] text-slate-400 font-medium uppercase">Background saja</span>
+          <div class="mockup-cell bg-orange-50 text-orange-600 border-orange-200" style="min-height:48px">
+            <span class="text-[10px] font-semibold">07:45 / 16:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q13_0" name="q13" value="menit_bawah" class="sr-only peer card-radio" required><label for="q13_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Menit numerik: '+15 mnt' di bawah jam masuk</span></label></div>
+<div class="relative"><input type="radio" id="q13_1" name="q13" value="oranye_saja" class="sr-only peer card-radio" required><label for="q13_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Background oranye saja (tanpa teks menit)</span></label></div>
+<div class="relative"><input type="radio" id="q13_2" name="q13" value="badge_pojok" class="sr-only peer card-radio" required><label for="q13_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Jam masuk + badge '+XX menit' di pojok</span></label></div>
+<div class="relative"><input type="radio" id="q13_3" name="q13" value="__lainnya__" class="sr-only peer card-radio" required><label for="q13_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q13">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q14">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q14</span>Ambang batas keterlambatan (late threshold) yang digunakan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q14_0" name="q14" value="0" class="sr-only peer card-radio" required><label for="q14_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">> 0 menit (telat 1 detik = terlambat)</span></label></div>
+<div class="relative"><input type="radio" id="q14_1" name="q14" value="5" class="sr-only peer card-radio" required><label for="q14_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">> 5 menit setelah sesi dimulai</span></label></div>
+<div class="relative"><input type="radio" id="q14_2" name="q14" value="10" class="sr-only peer card-radio" required><label for="q14_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">> 10 menit setelah sesi dimulai</span></label></div>
+<div class="relative"><input type="radio" id="q14_3" name="q14" value="15" class="sr-only peer card-radio" required><label for="q14_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">> 15 menit setelah sesi dimulai</span></label></div>
+<div class="relative"><input type="radio" id="q14_4" name="q14" value="__lainnya__" class="sr-only peer card-radio" required><label for="q14_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q14">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+<div class="section-anchor" id="section-q15">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            5
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Alur Persetujuan (Approval) & Laporan Manual</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q15">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q15</span>Apakah laporan perlu melalui proses approval sebelum final? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q15_0" name="q15" value="ya_approval" class="sr-only peer card-radio" required><label for="q15_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Ya — perlu approval berjenjang (draft → review → final)</span></label></div>
+<div class="relative"><input type="radio" id="q15_1" name="q15" value="tidak_approval" class="sr-only peer card-radio" required><label for="q15_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tidak — laporan otomatis final begitu digenerate</span></label></div>
+<div class="relative"><input type="radio" id="q15_2" name="q15" value="__lainnya__" class="sr-only peer card-radio" required><label for="q15_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q15">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q16">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q16</span>Berapa level approval yang ideal? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q16_0" name="q16" value="1level" class="sr-only peer card-radio" required><label for="q16_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">1 level (Admin/Pengurus langsung final)</span></label></div>
+<div class="relative"><input type="radio" id="q16_1" name="q16" value="2level" class="sr-only peer card-radio" required><label for="q16_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">2 level (Admin → Ketua UAM)</span></label></div>
+<div class="relative"><input type="radio" id="q16_2" name="q16" value="3level" class="sr-only peer card-radio" required><label for="q16_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">3 level (Admin → Pengurus → Ketua)</span></label></div>
+<div class="relative"><input type="radio" id="q16_3" name="q16" value="__lainnya__" class="sr-only peer card-radio" required><label for="q16_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q16">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q17">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q17</span>Apakah sistem perlu mendukung pembuatan laporan manual via Excel upload? <span class="text-red-500 text-xs font-bold">*</span></legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q17_0" name="q17" value="upload_yes" class="sr-only peer card-radio" required><label for="q17_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Ya — upload Excel untuk data presensi manual</span></label></div>
+<div class="relative"><input type="radio" id="q17_1" name="q17" value="upload_no" class="sr-only peer card-radio" required><label for="q17_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tidak — semua data dari sistem scan QR</span></label></div>
+<div class="relative"><input type="radio" id="q17_2" name="q17" value="both" class="sr-only peer card-radio" required><label for="q17_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Keduanya — sistem scan QR + fallback manual Excel</span></label></div>
+<div class="relative"><input type="radio" id="q17_3" name="q17" value="__lainnya__" class="sr-only peer card-radio" required><label for="q17_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q17">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q18">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q18</span>Kategori izin apa saja yang perlu diakomodasi? (pilih semua)</legend>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="checkbox" id="q18_0" name="q18" value="sakit" class="sr-only peer card-checkbox" ><label for="q18_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin Sakit (dengan surat dokter)</span></label></div>
+<div class="relative"><input type="checkbox" id="q18_1" name="q18" value="akademik" class="sr-only peer card-checkbox" ><label for="q18_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin Akademik (UAS, praktikum, sidang)</span></label></div>
+<div class="relative"><input type="checkbox" id="q18_2" name="q18" value="keluarga" class="sr-only peer card-checkbox" ><label for="q18_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin Keluarga (acara penting)</span></label></div>
+<div class="relative"><input type="checkbox" id="q18_3" name="q18" value="organisasi" class="sr-only peer card-checkbox" ><label for="q18_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin Organisasi (kegiatan UII)</span></label></div>
+<div class="relative"><input type="checkbox" id="q18_4" name="q18" value="darurat" class="sr-only peer card-checkbox" ><label for="q18_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Izin Darurat / Musibah</span></label></div>
+<div class="relative"><input type="checkbox" id="q18_5" name="q18" value="__lainnya__" class="sr-only peer card-checkbox" ><label for="q18_5" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q18">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+<div class="section-anchor" id="section-q19">
+
+        <div class="flex items-center gap-3 mb-5 mt-2">
+          <div class="section-badge bg-gradient-to-br from-uam-500 to-uam-700 text-white shadow-lg shadow-uam-500/20">
+            6
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">Format Ekspor & Dashboard Visual</h3>
+        </div>
+        
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q19">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q19</span>Format ekspor laporan apa yang paling dibutuhkan? (pilih semua)</legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tombol Ekspor di Halaman Laporan</p>
+      <div class="flex flex-wrap gap-2 items-center">
+        <span class="text-[10px] text-slate-400 mr-2">Periode: 1 Jul – 31 Jul 2026</span>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-slate-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            CSV
+          </button>
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-green-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M8 16h8M8 8h4"/></svg>
+            Excel
+          </button>
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-red-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="checkbox" id="q19_0" name="q19" value="csv" class="sr-only peer card-checkbox" ><label for="q19_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">CSV (comma-separated)</span></label></div>
+<div class="relative"><input type="checkbox" id="q19_1" name="q19" value="excel" class="sr-only peer card-checkbox" ><label for="q19_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Excel (.xlsx)</span></label></div>
+<div class="relative"><input type="checkbox" id="q19_2" name="q19" value="pdf" class="sr-only peer card-checkbox" ><label for="q19_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">PDF siap cetak dengan kop surat</span></label></div>
+<div class="relative"><input type="checkbox" id="q19_3" name="q19" value="json" class="sr-only peer card-checkbox" ><label for="q19_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">JSON (untuk integrasi sistem lain)</span></label></div>
+<div class="relative"><input type="checkbox" id="q19_4" name="q19" value="__lainnya__" class="sr-only peer card-checkbox" ><label for="q19_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q19">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q20">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q20</span>Elemen dashboard visual apa yang paling penting di halaman laporan? (pilih semua)</legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Layout Dashboard Halaman Laporan</p>
+      <div class="bg-white rounded-xl border border-slate-200 p-3 space-y-3 shadow-sm">
+        <!-- Filter bar -->
+        <div class="flex flex-wrap gap-2 items-center pb-2 border-b border-slate-100">
+          <span class="text-[10px] font-semibold text-slate-500">Filter:</span>
+          <select class="text-[10px] border rounded-lg px-2 py-1 bg-slate-50"><option>Juli</option></select>
+          <select class="text-[10px] border rounded-lg px-2 py-1 bg-slate-50"><option>2026</option></select>
+          <input type="date" class="text-[10px] border rounded-lg px-2 py-1 bg-slate-50" value="2026-07-01">
+          <span class="text-[10px] text-slate-400">s/d</span>
+          <input type="date" class="text-[10px] border rounded-lg px-2 py-1 bg-slate-50" value="2026-07-31">
+          <select class="text-[10px] border rounded-lg px-2 py-1 bg-slate-50"><option>Semua TPA</option></select>
+        </div>
+        <!-- Summary cards -->
+        <div class="grid grid-cols-4 gap-2">
+          <div class="bg-uam-50 rounded-lg p-2 text-center border border-uam-100">
+            <p class="text-[9px] text-uam-600 uppercase font-bold">Hadir</p>
+            <p class="text-lg font-extrabold text-uam-700">87%</p>
+          </div>
+          <div class="bg-green-50 rounded-lg p-2 text-center border border-green-100">
+            <p class="text-[9px] text-green-600 uppercase font-bold">Tepat</p>
+            <p class="text-lg font-extrabold text-green-700">41</p>
+          </div>
+          <div class="bg-orange-50 rounded-lg p-2 text-center border border-orange-100">
+            <p class="text-[9px] text-orange-600 uppercase font-bold">Lambat</p>
+            <p class="text-lg font-extrabold text-orange-700">11</p>
+          </div>
+          <div class="bg-red-50 rounded-lg p-2 text-center border border-red-100">
+            <p class="text-[9px] text-red-600 uppercase font-bold">Alpa</p>
+            <p class="text-lg font-extrabold text-red-700">13%</p>
+          </div>
+        </div>
+        <!-- Table mini -->
+        <div class="overflow-hidden rounded-lg border border-slate-200">
+          <div class="bg-slate-800 text-white text-[9px] px-3 py-1.5 font-semibold">TPA Al-Muhajirin</div>
+          <table class="w-full text-[9px]">
+            <thead><tr class="bg-slate-100"><th class="px-2 py-1 text-left">Nama</th><th class="px-2 py-1">Total</th><th class="px-2 py-1">Tepat</th><th class="px-2 py-1">Lambat</th><th class="px-2 py-1">Alpa</th></tr></thead>
+            <tbody>
+              <tr class="border-t"><td class="px-2 py-1">Ahmad</td><td class="px-2 py-1 text-center font-bold text-uam-600">87%</td><td class="px-2 py-1 text-center">8</td><td class="px-2 py-1 text-center">2</td><td class="px-2 py-1 text-center text-red-600">14%</td></tr>
+              <tr class="border-t bg-red-50"><td class="px-2 py-1">Budi ⚠️</td><td class="px-2 py-1 text-center font-bold text-red-600">62%</td><td class="px-2 py-1 text-center">3</td><td class="px-2 py-1 text-center">4</td><td class="px-2 py-1 text-center text-red-600">38%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="checkbox" id="q20_0" name="q20" value="filter_bulan" class="sr-only peer card-checkbox" ><label for="q20_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Filter Bulan & Tahun (dropdown)</span></label></div>
+<div class="relative"><input type="checkbox" id="q20_1" name="q20" value="filter_tpa" class="sr-only peer card-checkbox" ><label for="q20_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Filter per TPA (pilih TPA spesifik atau semua)</span></label></div>
+<div class="relative"><input type="checkbox" id="q20_2" name="q20" value="summary_cards" class="sr-only peer card-checkbox" ><label for="q20_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Ringkasan statistik (cards: Total Hadir, Izin, Alpa)</span></label></div>
+<div class="relative"><input type="checkbox" id="q20_3" name="q20" value="progress_bar" class="sr-only peer card-checkbox" ><label for="q20_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Progress bar KPI per pengajar</span></label></div>
+<div class="relative"><input type="checkbox" id="q20_4" name="q20" value="flag_merah" class="sr-only peer card-checkbox" ><label for="q20_4" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug">Highlight / flag pengajar bermasalah (merah)</span></label></div>
+<div class="relative"><input type="checkbox" id="q20_5" name="q20" value="__lainnya__" class="sr-only peer card-checkbox" ><label for="q20_5" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500 peer-checked:bg-uam-500"><svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q20">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q21">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q21</span>Bagaimana preferensi grouping tampilan laporan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Opsi Grouping / Layout Tampilan</p>
+      <div class="flex flex-wrap gap-3">
+        <div class="bg-white rounded-xl border-2 border-uam-300 p-3 shadow-sm flex-1 min-w-[140px]">
+          <p class="text-[10px] font-bold text-uam-700 mb-2">📂 Per TPA → Pengajar</p>
+          <div class="space-y-1.5">
+            <div class="bg-slate-100 rounded px-2 py-1 text-[9px] font-semibold text-slate-600">TPA A</div>
+            <div class="text-[9px] text-slate-500 pl-2">├ Ahmad (87%)</div>
+            <div class="text-[9px] text-slate-500 pl-2">└ Budi (62%)</div>
+            <div class="bg-slate-100 rounded px-2 py-1 text-[9px] font-semibold text-slate-600">TPA B</div>
+            <div class="text-[9px] text-slate-500 pl-2">└ Citra (93%)</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex-1 min-w-[140px] opacity-60">
+          <p class="text-[10px] font-bold text-slate-500 mb-2">📋 Flat Kronologis</p>
+          <div class="space-y-1">
+            <div class="text-[9px] text-slate-400">1 Jul | TPA A | Ahmad | 87%</div>
+            <div class="text-[9px] text-slate-400">2 Jul | TPA B | Citra | 93%</div>
+            <div class="text-[9px] text-slate-400">3 Jul | TPA A | Budi | 62%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q21_0" name="q21" value="tpa_pengajar" class="sr-only peer card-radio" required><label for="q21_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Grouping per TPA → per pengajar (seperti sekarang)</span></label></div>
+<div class="relative"><input type="radio" id="q21_1" name="q21" value="pengajar_tpa" class="sr-only peer card-radio" required><label for="q21_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Grouping per pengajar → per TPA</span></label></div>
+<div class="relative"><input type="radio" id="q21_2" name="q21" value="flat" class="sr-only peer card-radio" required><label for="q21_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">Tabel flat (kronologis per tanggal, tanpa grouping)</span></label></div>
+<div class="relative"><input type="radio" id="q21_3" name="q21" value="__lainnya__" class="sr-only peer card-radio" required><label for="q21_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q21">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+<fieldset class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-5 transition card-hover" id="fs-q22">
+<legend class="text-sm font-semibold text-slate-700 mb-3 block w-full"><span class="inline-flex items-center gap-1.5 text-uam-600 font-mono text-xs bg-uam-50 px-2 py-0.5 rounded-lg mr-2 border border-uam-100">Q22</span>Seperti apa tampilan tombol ekspor (CSV/Excel/PDF) di halaman laporan? <span class="text-red-500 text-xs font-bold">*</span></legend>
+
+    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <p class="text-xs text-slate-500 mb-3 font-medium">👇 Visual Mockup — Tombol Ekspor di Halaman Laporan</p>
+      <div class="flex flex-wrap gap-2 items-center">
+        <span class="text-[10px] text-slate-400 mr-2">Periode: 1 Jul – 31 Jul 2026</span>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-slate-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            CSV
+          </button>
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-green-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M8 16h8M8 8h4"/></svg>
+            Excel
+          </button>
+          <button class="px-3 py-1.5 text-[11px] font-medium bg-white border border-slate-200 rounded-lg text-red-600 flex items-center gap-1 shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+<div class="relative"><input type="radio" id="q22_0" name="q22" value="3buttons" class="sr-only peer card-radio" required><label for="q22_0" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">3 tombol sejajar dengan icon: [CSV] [Excel] [PDF]</span></label></div>
+<div class="relative"><input type="radio" id="q22_1" name="q22" value="dropdown" class="sr-only peer card-radio" required><label for="q22_1" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">1 dropdown 'Ekspor' dengan pilihan format</span></label></div>
+<div class="relative"><input type="radio" id="q22_2" name="q22" value="2buttons" class="sr-only peer card-radio" required><label for="q22_2" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-uam-300 hover:bg-uam-50/50 peer-checked:border-uam-500 peer-checked:bg-uam-50 peer-checked:ring-2 peer-checked:ring-uam-200 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug">2 tombol: [Unduh Excel] [Cetak PDF]</span></label></div>
+<div class="relative"><input type="radio" id="q22_3" name="q22" value="__lainnya__" class="sr-only peer card-radio" required><label for="q22_3" class="flex items-center gap-2.5 p-3 border-2 border-slate-200 rounded-xl cursor-pointer transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50 peer-checked:border-amber-400 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-100 w-full h-full"><span class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center transition-all peer-checked:border-uam-500"><span class="w-2.5 h-2.5 rounded-full bg-transparent transition-all peer-checked:bg-uam-500"></span></span><span class="option-text text-sm text-slate-700 leading-snug flex items-center gap-1.5"><span class="text-amber-600 text-xs">✏️</span> Lainnya (isian bebas)</span></label></div>
+</div>
+
+    <div class="lainnya-input" id="lainnya-q22">
+      <input type="text"
+        class="w-full px-4 py-2.5 text-sm border-2 border-amber-200 rounded-xl bg-amber-50/50 
+        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition
+        placeholder:text-slate-400"
+        placeholder="✏️ Tulis jawaban Anda di sini...">
+    </div>
+    
+</fieldset>
+</div>
+  </form>
+
+  <!-- ========== STICKY BOTTOM BAR ========== -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 p-4 z-40 no-print shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <span class="text-xs text-slate-500" id="footerStatus">Silakan isi semua pertanyaan wajib (bertanda *)</span>
+      <div class="flex gap-3">
+        <button type="button" onclick="resetForm()"
+          class="px-4 py-2.5 text-sm text-slate-600 border border-slate-300 rounded-xl hover:bg-slate-50 transition font-medium">
+          🔄 Reset
+        </button>
+        <button type="button" onclick="generateMarkdown()"
+          class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-uam-600 to-uam-700 rounded-xl hover:from-uam-700 hover:to-uam-800 transition shadow-lg shadow-uam-500/25 flex items-center gap-2">
+          📋 Generate Ringkasan
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ========== RESULT MODAL ========== -->
+<div id="resultModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 no-print backdrop-blur-sm"
+     onclick="if(event.target===this) closeModal()">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">📋</span>
+        <h3 class="font-bold text-slate-800">Ringkasan Kebutuhan Laporan Presensi</h3>
+      </div>
+      <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1">
+      <div class="bg-slate-900 text-green-400 rounded-xl p-5 markdown-body text-sm leading-relaxed overflow-x-auto"
+           id="markdownOutput"></div>
+    </div>
+    <div class="px-6 py-4 border-t border-slate-200 flex flex-wrap gap-2">
+      <button onclick="copyMarkdown()"
+        class="px-4 py-2 text-sm font-medium text-white bg-uam-600 rounded-lg hover:bg-uam-700 transition flex items-center gap-2">
+        📝 Copy Markdown
+      </button>
+      <button onclick="copyWhatsApp()"
+        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+        💬 Copy WhatsApp
+      </button>
+      <button onclick="printResult()"
+        class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition flex items-center gap-2">
+        🖨 Cetak
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div id="toast" class="fixed top-4 right-4 z-[100] hidden"></div>
+
+<script>
+// ============================================================
+// DATA PERTANYAAN
+// ============================================================
+const QUESTIONS = [
+  {
+    "id": "q1",
+    "section": "🧮 Seksi 1: Rumus & Perhitungan Kehadiran (Total%, Alpa%)",
+    "question": "Bagaimana rumus perhitungan Total% kehadiran yang diinginkan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Total% = (Sesi Hadir / Total Sesi) × 100%",
+        "value": "hadir_total"
+      },
+      {
+        "label": "Total% = (Sesi Hadir / (Total Sesi − Izin)) × 100%",
+        "value": "hadir_minus_izin"
+      },
+      {
+        "label": "Total% = ((Hadir + Izin) / Total Sesi) × 100%",
+        "value": "hadir_plus_izin"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q2",
+    "section": "🧮 Seksi 1: Rumus & Perhitungan Kehadiran (Total%, Alpa%)",
+    "question": "Bagaimana perhitungan Alpa% (persentase ketidakhadiran tanpa izin)?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Alpa% = (Tidak Masuk / Total Sesi) × 100%",
+        "value": "alpa_total"
+      },
+      {
+        "label": "Alpa% = (Tidak Masuk / (Total Sesi − Izin)) × 100%",
+        "value": "alpa_minus_izin"
+      },
+      {
+        "label": "Alpa% = (Tidak Masuk + Izin) / Total Sesi × 100%",
+        "value": "alpa_include_izin"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q3",
+    "section": "🧮 Seksi 1: Rumus & Perhitungan Kehadiran (Total%, Alpa%)",
+    "question": "Seperti apa tampilan ringkasan (summary card) yang diinginkan di bagian atas laporan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "4 kartu sejajar: Total Hadir | Tepat Waktu | Terlambat | Alpa",
+        "value": "4cards"
+      },
+      {
+        "label": "2 kartu besar: Kehadiran (Total%) | Ketidakhadiran (Alpa%)",
+        "value": "2cards"
+      },
+      {
+        "label": "Progress bar horizontal dengan label di bawah",
+        "value": "progress_bar"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "summary_cards"
+  },
+  {
+    "id": "q4",
+    "section": "🧮 Seksi 1: Rumus & Perhitungan Kehadiran (Total%, Alpa%)",
+    "question": "Apa KPI target persentase kehadiran minimal pengajar per semester?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "75%",
+        "value": "75"
+      },
+      {
+        "label": "80%",
+        "value": "80"
+      },
+      {
+        "label": "85%",
+        "value": "85"
+      },
+      {
+        "label": "90%",
+        "value": "90"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q5",
+    "section": "📊 Seksi 2: Kolom & Struktur Tabel",
+    "question": "Kolom ringkasan mana yang HARUS muncul di tabel laporan? (pilih semua)",
+    "type": "checkbox",
+    "options": [
+      {
+        "label": "Total% (persentase kehadiran)",
+        "value": "total_pct"
+      },
+      {
+        "label": "Tepat Waktu (jumlah sesi on-time)",
+        "value": "tepat_waktu"
+      },
+      {
+        "label": "Lambat / Terlambat (jumlah sesi late)",
+        "value": "terlambat"
+      },
+      {
+        "label": "Izin (jumlah izin)",
+        "value": "izin"
+      },
+      {
+        "label": "Alpa% (persentase tanpa izin)",
+        "value": "alpa"
+      },
+      {
+        "label": "Target / KPI (perbandingan vs target)",
+        "value": "target"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q6",
+    "section": "📊 Seksi 2: Kolom & Struktur Tabel",
+    "question": "Bagaimana struktur header tabel yang paling sesuai?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Header 3 baris: Nama | Kelompok Persentase (Total/Tepat/Lambat/Alpa) | Tanggal-tanggal",
+        "value": "3baris"
+      },
+      {
+        "label": "Header 2 baris: Nama | Total | Tepat | Lambat | Alpa | Tanggal...",
+        "value": "2baris"
+      },
+      {
+        "label": "Header 1 baris ringkas: Nama | Hadir% | Alpa% | Sesi...",
+        "value": "1baris"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "table_header"
+  },
+  {
+    "id": "q7",
+    "section": "📊 Seksi 2: Kolom & Struktur Tabel",
+    "question": "Bagaimana penanganan izin terhadap perhitungan Total%?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Izin mengurangi persentase (dihitung tidak hadir)",
+        "value": "izin_mengurangi"
+      },
+      {
+        "label": "Izin TIDAK mengurangi persentase (dikecualikan dari denominator)",
+        "value": "izin_dikecualikan"
+      },
+      {
+        "label": "Izin bersyarat: hanya sakit & akademik yang dikecualikan",
+        "value": "izin_bersyarat"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q8",
+    "section": "🗓 Seksi 3: Tampilan Kalender & Sel Harian",
+    "question": "Untuk sel harian 'Tepat Waktu', bagaimana tampilan yang diinginkan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Tampilkan Jam Masuk / Jam Keluar (contoh: 07:30 / 16:00), background putih/hijau",
+        "value": "split_white"
+      },
+      {
+        "label": "Tampilkan Jam Masuk / Jam Keluar dengan centang hijau",
+        "value": "split_check"
+      },
+      {
+        "label": "Hanya centang hijau tanpa jam",
+        "value": "check_only"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "day_cells"
+  },
+  {
+    "id": "q9",
+    "section": "🗓 Seksi 3: Tampilan Kalender & Sel Harian",
+    "question": "Untuk sel harian 'Terlambat', skema warna dan tampilan yang sesuai?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Background oranye + Jam Masuk / Jam Keluar (contoh: 07:45 / 16:00)",
+        "value": "orange_split"
+      },
+      {
+        "label": "Background merah muda + Jam Masuk / Jam Keluar",
+        "value": "pink_split"
+      },
+      {
+        "label": "Background kuning + label 'Terlambat' + menit",
+        "value": "yellow_label"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "day_cells"
+  },
+  {
+    "id": "q10",
+    "section": "🗓 Seksi 3: Tampilan Kalender & Sel Harian",
+    "question": "Untuk sel harian 'Izin', skema warna yang sesuai?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Background kuning + teks 'Izin'",
+        "value": "yellow_izin"
+      },
+      {
+        "label": "Background abu-abu + teks 'Izin'",
+        "value": "gray_izin"
+      },
+      {
+        "label": "Background biru muda + teks 'Izin'",
+        "value": "blue_izin"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "day_cells"
+  },
+  {
+    "id": "q11",
+    "section": "🗓 Seksi 3: Tampilan Kalender & Sel Harian",
+    "question": "Untuk sel harian 'Tidak Masuk' (tanpa izin/Alpa), skema warna yang sesuai?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Background merah + teks 'Tidak Masuk'",
+        "value": "red_tidakmasuk"
+      },
+      {
+        "label": "Background merah tua + teks 'Alpa'",
+        "value": "darkred_alpa"
+      },
+      {
+        "label": "Background merah muda + teks 'Tidak Hadir'",
+        "value": "pink_tidakhadir"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "day_cells"
+  },
+  {
+    "id": "q12",
+    "section": "📍 Seksi 4: Fitur GPS & Menit Keterlambatan",
+    "question": "Apakah lokasi GPS (koordinat check-in/check-out) perlu ditampilkan di laporan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Ya — tampilkan koordinat di sel harian",
+        "value": "gps_di_sel"
+      },
+      {
+        "label": "Ya — tampilkan di kolom terpisah",
+        "value": "gps_kolom"
+      },
+      {
+        "label": "Ya — tampilkan hanya jika di luar radius TPA (flag)",
+        "value": "gps_flag"
+      },
+      {
+        "label": "Tidak perlu ditampilkan di laporan",
+        "value": "gps_no"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q13",
+    "section": "📍 Seksi 4: Fitur GPS & Menit Keterlambatan",
+    "question": "Bagaimana informasi keterlambatan ditampilkan di sel harian?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Menit numerik: '+15 mnt' di bawah jam masuk",
+        "value": "menit_bawah"
+      },
+      {
+        "label": "Background oranye saja (tanpa teks menit)",
+        "value": "oranye_saja"
+      },
+      {
+        "label": "Jam masuk + badge '+XX menit' di pojok",
+        "value": "badge_pojok"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "late_display"
+  },
+  {
+    "id": "q14",
+    "section": "📍 Seksi 4: Fitur GPS & Menit Keterlambatan",
+    "question": "Ambang batas keterlambatan (late threshold) yang digunakan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "> 0 menit (telat 1 detik = terlambat)",
+        "value": "0"
+      },
+      {
+        "label": "> 5 menit setelah sesi dimulai",
+        "value": "5"
+      },
+      {
+        "label": "> 10 menit setelah sesi dimulai",
+        "value": "10"
+      },
+      {
+        "label": "> 15 menit setelah sesi dimulai",
+        "value": "15"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q15",
+    "section": "✅ Seksi 5: Alur Persetujuan (Approval) & Laporan Manual",
+    "question": "Apakah laporan perlu melalui proses approval sebelum final?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Ya — perlu approval berjenjang (draft → review → final)",
+        "value": "ya_approval"
+      },
+      {
+        "label": "Tidak — laporan otomatis final begitu digenerate",
+        "value": "tidak_approval"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q16",
+    "section": "✅ Seksi 5: Alur Persetujuan (Approval) & Laporan Manual",
+    "question": "Berapa level approval yang ideal?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "1 level (Admin/Pengurus langsung final)",
+        "value": "1level"
+      },
+      {
+        "label": "2 level (Admin → Ketua UAM)",
+        "value": "2level"
+      },
+      {
+        "label": "3 level (Admin → Pengurus → Ketua)",
+        "value": "3level"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q17",
+    "section": "✅ Seksi 5: Alur Persetujuan (Approval) & Laporan Manual",
+    "question": "Apakah sistem perlu mendukung pembuatan laporan manual via Excel upload?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Ya — upload Excel untuk data presensi manual",
+        "value": "upload_yes"
+      },
+      {
+        "label": "Tidak — semua data dari sistem scan QR",
+        "value": "upload_no"
+      },
+      {
+        "label": "Keduanya — sistem scan QR + fallback manual Excel",
+        "value": "both"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q18",
+    "section": "✅ Seksi 5: Alur Persetujuan (Approval) & Laporan Manual",
+    "question": "Kategori izin apa saja yang perlu diakomodasi? (pilih semua)",
+    "type": "checkbox",
+    "options": [
+      {
+        "label": "Izin Sakit (dengan surat dokter)",
+        "value": "sakit"
+      },
+      {
+        "label": "Izin Akademik (UAS, praktikum, sidang)",
+        "value": "akademik"
+      },
+      {
+        "label": "Izin Keluarga (acara penting)",
+        "value": "keluarga"
+      },
+      {
+        "label": "Izin Organisasi (kegiatan UII)",
+        "value": "organisasi"
+      },
+      {
+        "label": "Izin Darurat / Musibah",
+        "value": "darurat"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": null
+  },
+  {
+    "id": "q19",
+    "section": "📁 Seksi 6: Format Ekspor & Dashboard Visual",
+    "question": "Format ekspor laporan apa yang paling dibutuhkan? (pilih semua)",
+    "type": "checkbox",
+    "options": [
+      {
+        "label": "CSV (comma-separated)",
+        "value": "csv"
+      },
+      {
+        "label": "Excel (.xlsx)",
+        "value": "excel"
+      },
+      {
+        "label": "PDF siap cetak dengan kop surat",
+        "value": "pdf"
+      },
+      {
+        "label": "JSON (untuk integrasi sistem lain)",
+        "value": "json"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "export_buttons"
+  },
+  {
+    "id": "q20",
+    "section": "📁 Seksi 6: Format Ekspor & Dashboard Visual",
+    "question": "Elemen dashboard visual apa yang paling penting di halaman laporan? (pilih semua)",
+    "type": "checkbox",
+    "options": [
+      {
+        "label": "Filter Bulan & Tahun (dropdown)",
+        "value": "filter_bulan"
+      },
+      {
+        "label": "Filter per TPA (pilih TPA spesifik atau semua)",
+        "value": "filter_tpa"
+      },
+      {
+        "label": "Ringkasan statistik (cards: Total Hadir, Izin, Alpa)",
+        "value": "summary_cards"
+      },
+      {
+        "label": "Progress bar KPI per pengajar",
+        "value": "progress_bar"
+      },
+      {
+        "label": "Highlight / flag pengajar bermasalah (merah)",
+        "value": "flag_merah"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "dashboard_layout"
+  },
+  {
+    "id": "q21",
+    "section": "📁 Seksi 6: Format Ekspor & Dashboard Visual",
+    "question": "Bagaimana preferensi grouping tampilan laporan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "Grouping per TPA → per pengajar (seperti sekarang)",
+        "value": "tpa_pengajar"
+      },
+      {
+        "label": "Grouping per pengajar → per TPA",
+        "value": "pengajar_tpa"
+      },
+      {
+        "label": "Tabel flat (kronologis per tanggal, tanpa grouping)",
+        "value": "flat"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "grouping_toggle"
+  },
+  {
+    "id": "q22",
+    "section": "📁 Seksi 6: Format Ekspor & Dashboard Visual",
+    "question": "Seperti apa tampilan tombol ekspor (CSV/Excel/PDF) di halaman laporan?",
+    "type": "radio",
+    "required": true,
+    "options": [
+      {
+        "label": "3 tombol sejajar dengan icon: [CSV] [Excel] [PDF]",
+        "value": "3buttons"
+      },
+      {
+        "label": "1 dropdown 'Ekspor' dengan pilihan format",
+        "value": "dropdown"
+      },
+      {
+        "label": "2 tombol: [Unduh Excel] [Cetak PDF]",
+        "value": "2buttons"
+      },
+      {
+        "label": "Lainnya",
+        "value": "__lainnya__"
+      }
+    ],
+    "mockup": "export_buttons"
+  }
+];
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  updateProgress();
+  // Initialize "Lainnya" toggles
+  document.querySelectorAll('input[type="radio"][value="__lainnya__"], input[type="checkbox"][value="__lainnya__"]').forEach(input => {
+    input.addEventListener('change', toggleLainnya);
+  });
+});
+
+// ============================================================
+// "LAINNYA" TOGGLE
+// ============================================================
+function toggleLainnya(e) {
+  const input = e.target;
+  const fieldset = input.closest('fieldset');
+  const lainnyaDiv = fieldset.querySelector('.lainnya-input');
+  if (!lainnyaDiv) return;
+
+  if (input.type === 'radio') {
+    if (input.checked) {
+      lainnyaDiv.classList.add('active');
+      lainnyaDiv.querySelector('input[type="text"]')?.focus();
+    } else {
+      lainnyaDiv.classList.remove('active');
+    }
+  } else if (input.type === 'checkbox') {
+    if (input.checked) {
+      lainnyaDiv.classList.add('active');
+      lainnyaDiv.querySelector('input[type="text"]')?.focus();
+    } else {
+      lainnyaDiv.classList.remove('active');
+    }
+  }
+}
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function updateProgress() {
+  const requiredRadios = QUESTIONS.filter(q => q.type === 'radio' && q.required);
+  const answeredRadios = requiredRadios.filter(q => {
+    return document.querySelector(`input[name="${q.id}"]:checked`) !== null;
+  });
+  const total = requiredRadios.length;
+  const answered = answeredRadios.length;
+  const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressText').textContent = answered + '/' + total;
+
+  if (pct === 100) {
+    document.getElementById('footerStatus').textContent = '✅ Semua pertanyaan wajib telah dijawab — siap generate!';
+    document.getElementById('footerStatus').className = 'text-xs text-green-600 font-medium';
+  } else if (pct >= 50) {
+    document.getElementById('footerStatus').textContent = '⏳ ' + (total - answered) + ' pertanyaan wajib tersisa';
+    document.getElementById('footerStatus').className = 'text-xs text-amber-600';
+  } else {
+    document.getElementById('footerStatus').textContent = 'Silakan isi semua pertanyaan wajib (bertanda *)';
+    document.getElementById('footerStatus').className = 'text-xs text-slate-500';
+  }
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target.closest('#kuisionerForm')) updateProgress();
+});
+
+// ============================================================
+// GENERATE MARKDOWN
+// ============================================================
+function generateMarkdown() {
+  const requiredRadios = QUESTIONS.filter(q => q.type === 'radio' && q.required);
+  const unanswered = requiredRadios.filter(q => {
+    return !document.querySelector(`input[name="${q.id}"]:checked`);
+  });
+
+  if (unanswered.length > 0) {
+    showToast('⚠️ Harap jawab semua pertanyaan wajib (bertanda *) terlebih dahulu', 'error');
+    const firstUnanswered = document.getElementById('section-' + unanswered[0].id);
+    if (firstUnanswered) firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  let md = '# 📋 Ringkasan Kebutuhan Laporan Presensi UAM\n\n';
+  md += '> Hasil kuesioner wawancara HR Manager — ' + new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) + '\n';
+  md += '> Peneliti: Muhammad Nawal Haq Al Buny (23523198)\n';
+  md += '> Dosen Pembimbing: Dr. Nur Wijayaning R., S.Kom., M.Cs.\n';
+  md += '> Judul: Sistem Informasi Monitoring SDM dan Presensi Pengajar UAM\n\n';
+  md += '---\n\n';
+
+  let currentSection = '';
+  for (const q of QUESTIONS) {
+    if (q.section !== currentSection) {
+      currentSection = q.section;
+      md += '## ' + currentSection + '\n\n';
+    }
+
+    let answer = getAnswer(q);
+    md += '**' + q.id.toUpperCase() + '.** ' + q.question + '\n';
+    md += '  → ' + answer + '\n\n';
+  }
+
+  document.getElementById('markdownOutput').textContent = md;
+  document.getElementById('resultModal').classList.remove('hidden');
+  document.getElementById('resultModal').classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+
+function getAnswer(q) {
+  if (q.type === 'radio') {
+    const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+    if (!checked) return '_(tidak dijawab)_';
+    if (checked.value === '__lainnya__') {
+      const lainnyaInput = checked.closest('fieldset')?.querySelector('.lainnya-input input[type="text"]');
+      return 'Lainnya: ' + (lainnyaInput?.value || '_(tidak diisi)_');
+    }
+    const cardLabel = document.querySelector(`label[for="${checked.id}"]`);
+    if (cardLabel) {
+      const optText = cardLabel.querySelector('.option-text');
+      if (optText) return optText.textContent.trim();
+    }
+    return checked.value;
+  } else if (q.type === 'checkbox') {
+    const checked = document.querySelectorAll(`input[name="${q.id}"]:checked`);
+    if (checked.length === 0) return '_(tidak ada yang dipilih)_';
+    const labels = [];
+    checked.forEach(cb => {
+      if (cb.value === '__lainnya__') {
+        const lainnyaInput = cb.closest('fieldset')?.querySelector('.lainnya-input input[type="text"]');
+        labels.push('Lainnya: ' + (lainnyaInput?.value || '_(tidak diisi)_'));
+      } else {
+        const cardLabel = document.querySelector(`label[for="${cb.id}"]`);
+        if (cardLabel) {
+          const optText = cardLabel.querySelector('.option-text');
+          if (optText) labels.push(optText.textContent.trim());
+          else labels.push(cb.value);
+        } else {
+          labels.push(cb.value);
+        }
+      }
+    });
+    return labels.join('; ');
+  }
+  return '_(unknown type)_';
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function closeModal() {
+  document.getElementById('resultModal').classList.add('hidden');
+  document.getElementById('resultModal').classList.remove('flex');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// COPY
+// ============================================================
+async function copyMarkdown() {
+  const md = document.getElementById('markdownOutput').textContent;
+  try {
+    await navigator.clipboard.writeText(md);
+    showToast('✅ Ringkasan Markdown berhasil di-copy!', 'success');
+  } catch { fallbackCopy(md); }
+}
+
+async function copyWhatsApp() {
+  let md = document.getElementById('markdownOutput').textContent;
+  let plain = md
+    .replace(/^###?\s+/gm, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/^>\s+/gm, '')
+    .replace(/---/g, '━━━━━━━━━━━━━━━━━━━━')
+    .replace(/^\s*→\s*/gm, '  ➤ ')
+    .replace(/\n{3,}/g, '\n\n');
+  try {
+    await navigator.clipboard.writeText(plain);
+    showToast('💬 Teks WhatsApp berhasil di-copy!', 'success');
+  } catch { fallbackCopy(plain); }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.select();
+  document.execCommand('copy'); document.body.removeChild(ta);
+  showToast('✅ Teks berhasil di-copy!', 'success');
+}
+
+function printResult() {
+  const md = document.getElementById('markdownOutput').textContent;
+  const win = window.open('', '_blank', 'width=800,height=600');
+  win.document.write('<html><head><title>Ringkasan Laporan Presensi UAM</title>');
+  win.document.write('<style>body{font-family:monospace;padding:2rem;line-height:1.6;white-space:pre-wrap;color:#1e293b}</style>');
+  win.document.write('</head><body><pre>' + md + '</pre></body></html>');
+  win.document.close();
+  setTimeout(() => win.print(), 300);
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetForm() {
+  if (confirm('Reset semua jawaban?')) {
+    document.getElementById('kuisionerForm').reset();
+    document.querySelectorAll('.lainnya-input').forEach(d => d.classList.remove('active'));
+    updateProgress();
+    document.getElementById('footerStatus').textContent = 'Silakan isi semua pertanyaan wajib (bertanda *)';
+    document.getElementById('footerStatus').className = 'text-xs text-slate-500';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(message, type) {
+  const toast = document.getElementById('toast');
+  clearTimeout(toastTimer);
+  const colors = { success: 'bg-green-600 text-white', error: 'bg-red-600 text-white', info: 'bg-blue-600 text-white' };
+  toast.className = 'fixed top-4 right-4 z-[100] px-5 py-3 rounded-xl shadow-lg text-sm font-medium toast ' + (colors[type] || colors.info);
+  toast.textContent = message;
+  toast.classList.remove('hidden');
+  toastTimer = setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault(); generateMarkdown();
+  }
+});
+</script>
+
+</body>
+</html>
