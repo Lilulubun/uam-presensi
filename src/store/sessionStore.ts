@@ -88,11 +88,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     };
   },
 
-  closeSession: async (sessionId: string, location?: Coordinates, notes: string): Promise<ValidationResult> => {
+  closeSession: async (sessionId: string, location?: Coordinates, notes?: string): Promise<ValidationResult> => {
     const rpcParams: Record<string, unknown> = { 
       p_session_id: sessionId,
-      p_notes: notes 
     };
+    if (notes) rpcParams.p_notes = notes;
     if (location) {
       rpcParams.p_location = { lat: location.lat, lng: location.lng };
     }

@@ -24,6 +24,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
+import type { Coordinates } from '../../types';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 
 export default function SessionActivePage() {
@@ -65,7 +66,7 @@ export default function SessionActivePage() {
     if (!sessionId) return;
     setClosing(true);
     try {
-      let location;
+      let location: Coordinates | undefined;
       try {
         location = await getCurrentLocation();
       } catch {
