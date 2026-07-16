@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Clock, CheckCircle2, AlertCircle, LogOut, XSquare, FileText } from 'lucide-react';
+import { ArrowLeft, Users, Clock, CheckCircle2, LogOut, XSquare, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';

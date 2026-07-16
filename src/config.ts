@@ -1,9 +1,7 @@
 // Application Configuration
 export const APP_CONFIG = {
   QR_REFRESH_INTERVAL: 20000, // 20 seconds in milliseconds
-  GPS_RADIUS_TOLERANCE: 100, // 100 meters
   LATE_THRESHOLD_MINUTES: 15, // 15 minutes after t_open
-  SESSION_TIMEOUT_HOURS: 12, // Auto-mark as stale after 12 hours
 } as const;
 
 // UI Configuration

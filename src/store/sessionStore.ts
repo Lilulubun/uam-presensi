@@ -62,6 +62,32 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     };
   },
 
+  openSessionWithExpected: async (tpaId: string, location: Coordinates, expectedUserIds: string[]): Promise<ValidationResult> => {
+    const { data, error } = await supabase.rpc('open_session_with_expected', {
+      p_tpa_id: tpaId,
+      p_location: { lat: location.lat, lng: location.lng },
+      p_expected_user_ids: expectedUserIds,
+    });
+    if (error || !data) {
+      if (error?.message?.toLowerCase().includes('not authenticated')) {
+        return { valid: false, message: RPC_NOT_AUTHENTICATED_MSG };
+      }
+      return mapRpcError(error);
+    }
+    const session = toCamelCase<Session>(data);
+    set((state) => ({
+      sessions: [...state.sessions.filter((s) => s.id !== session.id), session],
+      activeSession: session,
+    }));
+    logEvent('session_opened', session.id);
+    useAttendanceStore.getState().init();
+    return {
+      valid: true,
+      message: 'Sesi berhasil dibuka dan presensi Anda telah dicatat',
+      data: session,
+    };
+  },
+
   closeSession: async (sessionId: string, location?: Coordinates, notes: string): Promise<ValidationResult> => {
     const rpcParams: Record<string, unknown> = { 
       p_session_id: sessionId,

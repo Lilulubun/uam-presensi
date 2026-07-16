@@ -70,6 +70,14 @@ test.describe('Host Session Creation', () => {
       (window as any).__simulateQRScan('TPA-001');
     });
 
+    // New flow: select expected teachers then click "Buka Sesi"
+    await expect(page.getByText(/Pilih Pengajar yang Wajib Hadir/i)).toBeVisible({ timeout: 10000 });
+    await expect.poll(async () => {
+      return await page.locator('input[type="checkbox"]').count();
+    }, { timeout: 15000, message: 'checkboxes should appear' }).toBeGreaterThanOrEqual(1);
+    await page.locator('input[type="checkbox"]').first().check();
+    await page.getByRole('button', { name: /Buka Sesi/i }).click();
+
     // Verify redirection to active session screen
     await expect(page).toHaveURL(/.*\/pengajar\/session\/.*/, { timeout: 15000 });
     await context.close();

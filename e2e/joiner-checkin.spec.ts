@@ -30,6 +30,22 @@ test.describe('Joiner Check-in Flow', () => {
   });
 
   test('should allow joiner to check in and show up on host list', async ({ browser }) => {
+    // Seed: assign both Budi (host) and Siti (joiner) to TPA-002 so the
+    // ExpectedTeacherSelector has teachers to render.
+    {
+      const url = process.env.SUPABASE_URL!;
+      const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+      const supabase = createClient(url, key, { auth: { persistSession: false } });
+      const { data: users } = await supabase.from('users').select('id, nim');
+      for (const nim of ['20521001', '20521002']) {
+        const u = users?.find((x: any) => x.nim === nim);
+        if (u) {
+          await supabase.from('pengajar_tpa').delete().eq('user_id', u.id);
+          await supabase.from('pengajar_tpa').insert({ user_id: u.id, tpa_id: 'tpa-002' });
+        }
+      }
+    }
+
     // 1. Host logs in and opens session at TPA Adz-Dzikro (TPA-002)
     const hostContext = await browser.newContext({
       permissions: ['geolocation'],
@@ -48,6 +64,14 @@ test.describe('Joiner Check-in Flow', () => {
     await hostPage.evaluate(() => {
       (window as any).__simulateQRScan('TPA-002');
     });
+
+    // New flow: select expected teachers then click "Buka Sesi"
+    await expect(hostPage.getByText(/Pilih Pengajar yang Wajib Hadir/i)).toBeVisible({ timeout: 10000 });
+    await expect.poll(async () => {
+      return await hostPage.locator('input[type="checkbox"]').count();
+    }, { timeout: 15000, message: 'checkboxes should appear' }).toBeGreaterThanOrEqual(1);
+    await hostPage.locator('input[type="checkbox"]').first().check();
+    await hostPage.getByRole('button', { name: /Buka Sesi/i }).click();
 
     // Verify host gets redirected to active session screen
     await expect(hostPage).toHaveURL(/.*\/pengajar\/session\/.*/, { timeout: 15000 });

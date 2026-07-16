@@ -264,7 +264,7 @@ describe('SessionActivePage - Expected-based Absent Logic', () => {
     })
 
     // Ani is pengajar TPA but not expected → must NOT appear
-    const absentSection = screen.getByText(/Tidak Hadir/).closest('div')
+    screen.getByText(/Tidak Hadir/).closest('div')
     expect(screen.queryByText('Ani Rahmawati')).not.toBeInTheDocument()
   })
 

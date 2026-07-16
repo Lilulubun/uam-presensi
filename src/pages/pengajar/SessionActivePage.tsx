@@ -115,7 +115,6 @@ export default function SessionActivePage() {
     : allTPAUsers.filter((u) => expectedUserIds.has(u.id) && !attendingUserIds.has(u.id));
 
   const checkedInCount = attendances.filter((a) => a.scanInTime).length;
-  const checkedOutCount = attendances.filter((a) => a.scanOutTime).length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

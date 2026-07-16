@@ -134,6 +134,7 @@ export interface SessionState {
   loading: boolean;
   init: () => Promise<void>;
   openSession: (tpaId: string, location: Coordinates) => Promise<ValidationResult>;
+  openSessionWithExpected: (tpaId: string, location: Coordinates, expectedUserIds: string[]) => Promise<ValidationResult>;
   closeSession: (sessionId: string, location?: Coordinates, notes: string) => Promise<ValidationResult>;
   forceCloseSession: (sessionId: string) => Promise<ValidationResult>;
   refreshQRToken: (sessionId: string, type: 'in' | 'out') => Promise<ValidationResult>;

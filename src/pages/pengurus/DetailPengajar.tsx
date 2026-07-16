@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ArrowLeft, Clock, CheckCircle2, FileText } from 'lucide-react';
-import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
@@ -10,7 +9,6 @@ import { formatDate, formatTime, formatMonthYear, formatDateIdShort, jakartaNow 
 export default function DetailPengajar() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
-  const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
   const users = useUsersStore((s) => s.users);
 

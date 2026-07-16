@@ -17,7 +17,6 @@ export default function DashboardPengajar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const activeSession = useSessionStore((s) => s.activeSession);
-  const allSessions = useSessionStore((s) => s.sessions);
   const allAttendances = useAttendanceStore((s) => s.attendances);
   const { locationState, nearestTPA } = useWatchLocation(true);
   const pendingIzins = useIzinStore((s) => s.myIzins.filter((i) => i.status === 'pending').length);

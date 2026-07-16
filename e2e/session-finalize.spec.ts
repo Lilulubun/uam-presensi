@@ -30,6 +30,19 @@ test.describe('Session Finalization', () => {
   });
 
   test('should require notes and successfully close the session', async ({ browser }) => {
+    // Seed: assign Budi (host) to TPA-001 so the ExpectedTeacherSelector renders.
+    {
+      const url = process.env.SUPABASE_URL!;
+      const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+      const supabase = createClient(url, key, { auth: { persistSession: false } });
+      const { data: users } = await supabase.from('users').select('id, nim');
+      const u = users?.find((x: any) => x.nim === '20521001');
+      if (u) {
+        await supabase.from('pengajar_tpa').delete().eq('user_id', u.id);
+        await supabase.from('pengajar_tpa').insert({ user_id: u.id, tpa_id: 'tpa-001' });
+      }
+    }
+
     const hostContext = await browser.newContext({
       permissions: ['geolocation'],
       geolocation: { latitude: -7.686439, longitude: 110.418313 } // TPA Al-Fath
@@ -47,6 +60,14 @@ test.describe('Session Finalization', () => {
     await hostPage.evaluate(() => {
       (window as any).__simulateQRScan('TPA-001');
     });
+
+    // New flow: select expected teachers then click "Buka Sesi"
+    await expect(hostPage.getByText(/Pilih Pengajar yang Wajib Hadir/i)).toBeVisible({ timeout: 10000 });
+    await expect.poll(async () => {
+      return await hostPage.locator('input[type="checkbox"]').count();
+    }, { timeout: 15000, message: 'checkboxes should appear' }).toBeGreaterThanOrEqual(1);
+    await hostPage.locator('input[type="checkbox"]').first().check();
+    await hostPage.getByRole('button', { name: /Buka Sesi/i }).click();
 
     // Verify redirect to session page
     await expect(hostPage).toHaveURL(/.*\/pengajar\/session\/.*/, { timeout: 15000 });
