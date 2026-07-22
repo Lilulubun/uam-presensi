@@ -83,47 +83,59 @@ export default function TPADetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate('/pengurus/dashboard')} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
+        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <div className="flex-1">
-          <h1 className="font-semibold text-lg">{tpa.name}</h1>
-          <p className="text-xs text-muted-foreground">{tpa.staticQRCode} · Radius {tpa.location.radius}m</p>
+          <h1 className="font-semibold text-[18px] tracking-tight text-[#1A1A18]">{tpa.name}</h1>
+          <p className="text-[11px] text-[#A3A39D] font-medium">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
         </div>
         {activeSession && (
-          <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-700">Aktif</span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase tracking-wider">
+            Aktif
+          </span>
         )}
       </header>
 
-      <main className="max-w-2xl mx-auto p-4 flex flex-col gap-4">
+      <main className="max-w-2xl mx-auto p-4 sm:p-6 flex flex-col gap-6">
         {activeSession && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-green-800 mb-1">Sesi Berlangsung</p>
-            <p className="text-xs text-green-700">
-              Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
-            </p>
-            <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
+          <div className="bg-white border border-[#EAEAE7] rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-[14px] font-semibold text-[#1A1A18]">Sesi Berlangsung</p>
+                <p className="text-[12px] text-[#6B6B66] mt-0.5">
+                  Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
+                </p>
+              </div>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase tracking-wider animate-pulse">
+                Live
+              </span>
+            </div>
+            
+            <div className="border border-[#EAEAE7] rounded-[20px] overflow-hidden bg-[#F7F7F5] my-4">
+              <SessionAttendees sessionId={activeSession.id} attendances={attendances} session={activeSession} />
+            </div>
 
             {isPengurus && (
               <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm" className="mt-3" disabled={forceClosing}>
-                    <LogOut className="w-4 h-4 mr-1" />
+                  <Button variant="destructive" size="sm" className="rounded-[14px] font-medium w-full sm:w-auto" disabled={forceClosing}>
+                    <LogOut className="w-4 h-4 mr-1.5" strokeWidth={1.5} />
                     {forceClosing ? 'Menutup...' : 'Tutup Sesi (Admin)'}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="rounded-[28px] border border-[#EAEAE7] bg-white">
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Tutup sesi?</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogTitle className="font-semibold text-[18px]">Tutup sesi?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-sm text-[#6B6B66]">
                       Tindakan ini akan menutup paksa sesi yang sedang berlangsung. Kehadiran semua pengajar akan difinalisasi.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleForceClose}>Tutup Sesi</AlertDialogAction>
+                  <AlertDialogFooter className="gap-2">
+                    <AlertDialogCancel className="rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5]">Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleForceClose} className="rounded-[14px] bg-red-600 text-white hover:bg-red-700">Tutup Sesi</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -131,18 +143,18 @@ export default function TPADetailPage() {
           </div>
         )}
 
-        <div>
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-[11px] font-bold text-[#6B6B66] uppercase tracking-wider">
             Riwayat Sesi ({tpaSessions.length})
           </h2>
 
           {tpaSessions.length === 0 && (
-            <div className="text-center py-10 text-sm text-muted-foreground bg-card rounded-xl">
+            <div className="text-center py-12 text-[14px] text-[#A3A39D] bg-white rounded-[32px] border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)] font-medium">
               Belum ada sesi di TPA ini
             </div>
           )}
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {tpaSessions.map((session) => {
               const sessionAttendances = attendances.filter((a) => a.sessionId === session.id);
               const presentCount = sessionAttendances.filter((a) => a.scanInTime).length;
@@ -151,49 +163,51 @@ export default function TPADetailPage() {
               const isToday = isSameDay(new Date(session.dateOpened), today);
 
               return (
-                <div key={session.id} className="bg-card rounded-xl shadow-sm overflow-hidden">
-                  <div className="px-4 py-3 border-b flex items-center justify-between gap-2">
+                <div key={session.id} className="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all">
+                  <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3 bg-[#F7F7F5]">
                     <div>
-                      <p className="text-sm font-semibold">
+                      <p className="text-[14px] font-semibold text-[#1A1A18]">
                         {isToday ? 'Hari Ini' : formatDate(new Date(session.dateOpened))}
                         {' · '}
                         {formatTime(new Date(session.dateOpened))}
                         {session.dateClosed && ` – ${formatTime(new Date(session.dateClosed))}`}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Pengajar pertama: {firstTeacher?.name ?? '(pengajar tidak ditemukan)'}
+                      <p className="text-[11px] text-[#A3A39D] font-medium mt-1">
+                        Pengajar pertama: <span className="text-[#6B6B66]">{firstTeacher?.name ?? '(tidak ditemukan)'}</span>
                       </p>
                     </div>
                     <span
-                      className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
+                      className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${
                         session.isActive 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
+                          ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' 
+                          : 'bg-[#F0F0EC] text-[#5C5C57] ring-[#EAEAE7]'
+                      } uppercase tracking-wider`}
                     >
                       {session.isActive ? 'Aktif' : 'Selesai'}
                     </span>
                   </div>
 
-                  <div className="px-4 py-2 flex gap-4 text-xs text-muted-foreground border-b">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3 h-3" /> {presentCount} hadir
+                  <div className="px-6 py-2.5 flex gap-4 text-[12px] font-medium text-[#6B6B66] border-b border-[#EAEAE7] bg-[#F7F7F5]/50">
+                    <span className="flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5" strokeWidth={1.5} /> {presentCount} hadir
                     </span>
                     {lateCount > 0 && (
-                      <span className="flex items-center gap-1 text-orange-500">
-                        <Clock className="w-3 h-3" /> {lateCount} terlambat
+                      <span className="flex items-center gap-1.5 text-orange-600">
+                        <Clock className="w-3.5 h-3.5" strokeWidth={1.5} /> {lateCount} terlambat
                       </span>
                     )}
                   </div>
 
                   {session.closeNotes && (
-                    <div className="px-4 py-2 border-b">
-                      <p className="text-xs text-muted-foreground">Catatan:</p>
-                      <p className="text-sm text-foreground mt-0.5">{session.closeNotes}</p>
+                    <div className="px-6 py-3 border-b border-[#EAEAE7]">
+                      <p className="text-[11px] text-[#A3A39D] font-medium">Catatan Sesi:</p>
+                      <p className="text-[13px] text-[#1A1A18] mt-1 italic">"{session.closeNotes}"</p>
                     </div>
                   )}
 
-                  <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
+                  <div className="bg-[#FAF8F5]">
+                    <SessionAttendees sessionId={session.id} attendances={attendances} session={session} />
+                  </div>
                 </div>
               );
             })}
@@ -248,21 +262,21 @@ function SessionAttendees({
   }, [session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
 
   if (sessionAttendances.length === 0 && absentUsers.length === 0) {
-    return <p className="px-4 py-3 text-xs text-muted-foreground">Belum ada presensi</p>;
+    return <p className="px-6 py-4 text-[13px] text-[#A3A39D] font-medium">Belum ada presensi</p>;
   }
 
   return (
-    <ul className="divide-y">
+    <ul className="divide-y divide-[#EAEAE7]">
       {sessionAttendances.map((a) => {
         const teacher = users.find((u) => u.id === a.userId);
 
         return (
-          <li key={a.id} className="px-4 py-2.5 flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold shrink-0">
+          <li key={a.id} className="px-5 py-3.5 flex items-center gap-3 hover:bg-[#F0F0EC] transition-colors">
+            <div className="w-8 h-8 rounded-full bg-[#D7FF3D] flex items-center justify-center text-[#1A1A18] text-[13px] font-bold shrink-0">
               {teacher?.name?.charAt(0) ?? '?'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">
+              <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
                 <button
                   className="hover:underline text-left"
                   onClick={() => navigate(`/pengurus/pengajar/${a.userId}`)}
@@ -270,33 +284,33 @@ function SessionAttendees({
                   {teacher?.name ?? '(pengajar tidak ditemukan)'}
                 </button>
               </p>
-              <div className="flex gap-2 text-xs text-muted-foreground">
+              <div className="flex gap-2 text-[11px] text-[#6B6B66] font-medium mt-0.5">
                 {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                 {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
               </div>
             </div>
             <div className="shrink-0 flex flex-col items-end gap-1">
               {a.isLate && (
-                <span className="text-xs text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full ring-1 ring-inset ring-amber-600/20">
                   +{a.lateMinutes}m
                 </span>
               )}
               {a.scanOutTime ? (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" strokeWidth={1.5} />
               ) : (
-                <Clock className="w-4 h-4 text-primary" />
+                <Clock className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
               )}
             </div>
           </li>
         );
       })}
       {excusedUsers.map((u) => (
-        <li key={u.id} className="px-4 py-2.5 flex items-center gap-3 bg-blue-50/50">
-          <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-semibold shrink-0">
+        <li key={u.id} className="px-5 py-3.5 flex items-center gap-3 bg-[#F7F7F5]/60 hover:bg-[#F0F0EC] transition-colors">
+          <div className="w-8 h-8 rounded-full bg-[#8B8BF0]/20 flex items-center justify-center text-[#8B8BF0] text-[13px] font-bold shrink-0">
             {u.name?.charAt(0) ?? '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
+            <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
               <button
                 className="hover:underline text-left"
                 onClick={() => navigate(`/pengurus/pengajar/${u.id}`)}
@@ -304,18 +318,18 @@ function SessionAttendees({
                 {u.name}
               </button>
             </p>
-            <p className="text-xs text-blue-600">Izin</p>
+            <p className="text-[11px] text-[#8B8BF0] font-medium">Izin</p>
           </div>
-          <FileText className="w-4 h-4 text-blue-400 shrink-0" />
+          <FileText className="w-4 h-4 text-[#8B8BF0] shrink-0" strokeWidth={1.5} />
         </li>
       ))}
       {trulyAbsentUsers.map((u) => (
-        <li key={u.id} className="px-4 py-2.5 flex items-center gap-3 bg-red-50/50">
-          <div className="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-semibold shrink-0">
+        <li key={u.id} className="px-5 py-3.5 flex items-center gap-3 bg-[#F7F7F5]/60 hover:bg-[#F0F0EC] transition-colors">
+          <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-[13px] font-bold shrink-0">
             {u.name?.charAt(0) ?? '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
+            <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
               <button
                 className="hover:underline text-left"
                 onClick={() => navigate(`/pengurus/pengajar/${u.id}`)}
@@ -323,9 +337,9 @@ function SessionAttendees({
                 {u.name}
               </button>
             </p>
-            <p className="text-xs text-red-500">Tidak hadir</p>
+            <p className="text-[11px] text-rose-600 font-medium">Tidak hadir</p>
           </div>
-          <XSquare className="w-4 h-4 text-red-400 shrink-0" />
+          <XSquare className="w-4 h-4 text-rose-400 shrink-0" strokeWidth={1.5} />
         </li>
       ))}
     </ul>
