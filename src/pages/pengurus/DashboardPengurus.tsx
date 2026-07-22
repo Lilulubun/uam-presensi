@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, AlertCircle, User, FileText, CheckCircle, XCircle, History } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
@@ -11,7 +11,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
@@ -25,7 +24,6 @@ import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
 
 export default function DashboardPengurus() {
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
@@ -121,124 +119,202 @@ export default function DashboardPengurus() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-3 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 px-2 sm:px-6 lg:px-8">
           <div>
-            <h1 className="font-bold text-lg">Monitoring Presensi</h1>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <RefreshCw className="w-3 h-3" />
-              Langsung (Realtime)
+            <h1 className="font-semibold text-[22px] tracking-tight">Monitoring Presensi</h1>
+            <p className="text-[13px] text-[#A3A39D] flex items-center gap-1.5 mt-0.5">
+              <RefreshCw className="w-3.5 h-3.5" />
+              Realtime Overview
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/pengurus/pengaturan')}>
-              <QrCode className="w-4 h-4 mr-1.5" />
+          <div className="flex items-center gap-3">
+            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/pengaturan')}>
+              <QrCode className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
               <span className="hidden sm:inline">Setup QR</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/pengurus/laporan')}>
-              <BarChart2 className="w-4 h-4 mr-1.5" />
+            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/laporan')}>
+              <BarChart2 className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
               <span className="hidden sm:inline">Laporan</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/pengurus/kelola-pengajar')}>
-              <Users className="w-4 h-4 mr-1.5" />
+            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/kelola-pengajar')}>
+              <Users className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
               <span className="hidden sm:inline">Pengajar</span>
             </Button>
-            <button onClick={() => navigate('/profile')} className="text-muted-foreground hover:text-foreground p-2">
-              <User className="w-4 h-4" />
+            
+            <div className="w-[1px] h-6 bg-[#EAEAE7] mx-1"></div>
+            
+            <button onClick={() => navigate('/profile')} className="w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+              <User className="w-4 h-4" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
-              <LogOut className="w-4 h-4" />
+            <button onClick={handleLogout} className="w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+              <LogOut className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-4 flex flex-col gap-5">
-        <p className="text-sm text-muted-foreground">Halo, {user?.name}</p>
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-12 mt-8 flex flex-col gap-8">
+        
+        {/* HERO ROW */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card A: Green Mesh */}
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.04)] bg-gradient-to-br from-[#8FE388] via-[#C8F06B] to-[#F4F08A] min-h-[180px] flex flex-col justify-between">
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+            
+            <div className="flex justify-between items-start z-10">
+              <p className="text-[13px] font-medium text-black/60 uppercase tracking-wider">Hadir Hari Ini</p>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/30 text-black/80 backdrop-blur-sm">
+                On Track
+              </span>
+            </div>
+            
+            <div className="z-10 mt-4">
+              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-black/90">
+                {todayAttendances.length}
+              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[13px] text-black/60">{lateToday.length} terlambat</span>
+              </div>
+            </div>
+            
+            {/* Dot matrix motif */}
+            <div className="absolute bottom-4 right-4 flex gap-1 opacity-20">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex flex-col gap-1">
+                  {[...Array(3)].map((_, j) => (
+                    <div key={j} className="w-1 h-1 rounded-full bg-black"></div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-primary">{activeSessions.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Sesi Aktif</p>
+          {/* Card B: Orange Mesh */}
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.04)] bg-gradient-to-br from-[#F6A15E] via-[#F2665A] to-[#F0899E] min-h-[180px] flex flex-col justify-between">
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+            
+            <div className="flex justify-between items-start z-10">
+              <p className="text-[13px] font-medium text-white/80 uppercase tracking-wider">Sesi Aktif</p>
+              {activeSessions.length > 0 && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/20 text-white backdrop-blur-sm">
+                  Live
+                </span>
+              )}
+            </div>
+            
+            <div className="z-10 mt-4">
+              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-white">
+                {activeSessions.length}
+              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[13px] text-white/70">Dari {tpas.length} Lokasi TPA</span>
+              </div>
+            </div>
+            
+            {/* Sparkline motif */}
+            <div className="absolute bottom-6 right-6 opacity-30">
+              <svg width="60" height="20" viewBox="0 0 60 20" fill="none">
+                <path d="M0 15 Q 10 5, 20 12 T 40 8 T 60 2" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" fill="none"/>
+              </svg>
+            </div>
           </div>
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-green-600">{todayAttendances.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Hadir Hari Ini</p>
-          </div>
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-orange-500">{lateToday.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Terlambat</p>
-          </div>
-          <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-            <p className="text-2xl font-bold text-blue-600">{totalThisMonth}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total Bulan Ini</p>
+
+          {/* Card C: White Glass */}
+          <div className="relative overflow-hidden rounded-[32px] p-6 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]">
+            <div className="flex justify-between items-start">
+              <p className="text-[13px] font-medium text-[#6B6B66] uppercase tracking-wider">Izin Pending</p>
+              {pendingIzins.length > 0 && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#F0F0EC] text-[#5C5C57]">
+                  Menunggu
+                </span>
+              )}
+            </div>
+            
+            <div className="mt-4">
+              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+                {pendingIzins.length}
+              </p>
+              <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>
+            </div>
+            
+            <button 
+              onClick={() => navigate('/pengurus/riwayat-izin')}
+              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-[#F7F7F5] flex items-center justify-center text-[#6B6B66] hover:bg-[#EAEAE7] hover:text-[#1A1A18] transition-colors"
+            >
+              <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
+            </button>
           </div>
         </div>
 
-        <div className="bg-card rounded-xl shadow-sm p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold">Kehadiran 7 Hari Terakhir</h2>
+        {/* CHART SECTION */}
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-6 border border-[#EAEAE7]">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <h2 className="text-[15px] font-medium tracking-tight">Tren Kehadiran (7 Hari Terakhir)</h2>
+            </div>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+              Bulan ini: {totalThisMonth} sesi
+            </span>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={weeklyChartData} barSize={24} barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={weeklyChartData} barSize={20} barGap={4}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F0F0EC" vertical={false} />
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 11, fill: '#A3A39D' }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 11, fill: '#A3A39D' }}
                 axisLine={false}
                 tickLine={false}
-                width={24}
+                width={20}
               />
               <Tooltip
                 contentStyle={{
-                  fontSize: 12,
-                  borderRadius: 8,
-                  border: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--card))',
+                  fontSize: 11,
+                  borderRadius: 16,
+                  border: '1px solid #EAEAE7',
+                  background: 'rgba(255,255,255,0.9)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
                 }}
-                cursor={{ fill: 'hsl(var(--muted))', radius: 4 }}
+                cursor={{ fill: '#F7F7F5', radius: 8 }}
               />
-              <Legend
-                iconType="circle"
-                iconSize={8}
-                wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
-              />
-              <Bar dataKey="Tepat Waktu" stackId="a" fill="#16a34a" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="Terlambat" stackId="a" fill="#f97316" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Tepat Waktu" stackId="a" fill="#6FCB6A" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="Terlambat" stackId="a" fill="#F2B84B" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
+        {/* STATUS TPA SECTION */}
         <div>
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Status TPA — {tpas.length} Lokasi
+          <h2 className="text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider mb-4 px-1">
+            Cabang TPA — {tpas.length} Lokasi
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tpas.map((tpa) => {
               const { activeSession, presentCount } = getTPAStats(tpa.id);
               return (
                 <button
                   key={tpa.id}
                   onClick={() => navigate(`/pengurus/tpa/${tpa.id}`)}
-                  className="bg-card rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-all border border-transparent hover:border-primary/20 group"
+                  className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold text-sm leading-tight group-hover:text-primary transition-colors">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-medium text-[15px] tracking-tight group-hover:text-primary transition-colors pr-16 leading-tight">
                       {tpa.name}
                     </p>
                     <span
-                      className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
+                      className={`shrink-0 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ring-1 ring-inset ${
                         activeSession
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-slate-100 text-slate-600'
+                          ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
+                          : 'bg-[#F0F0EC] text-[#5C5C57] ring-transparent'
                       }`}
                     >
                       {activeSession ? 'Aktif' : 'Tutup'}
@@ -246,18 +322,18 @@ export default function DashboardPengurus() {
                   </div>
 
                   {activeSession ? (
-                    <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                      <p className="flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        {presentCount} pengajar hadir
+                    <div className="mt-4 space-y-1.5 text-[13px] text-[#6B6B66]">
+                      <p className="flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-[#A3A39D]" strokeWidth={1.5} />
+                        <span>{presentCount} pengajar aktif</span>
                       </p>
-                      <p className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        Sejak {formatTime(new Date(activeSession.dateOpened))}
+                      <p className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#A3A39D]" strokeWidth={1.5} />
+                        <span>Sejak {formatTime(new Date(activeSession.dateOpened))}</span>
                       </p>
                     </div>
                   ) : (
-                    <p className="mt-2 text-xs text-muted-foreground">Tidak ada sesi aktif</p>
+                    <p className="mt-4 text-[13px] text-[#A3A39D]">Sesi belum dibuka hari ini</p>
                   )}
                 </button>
               );
@@ -265,58 +341,64 @@ export default function DashboardPengurus() {
           </div>
         </div>
 
-        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b flex items-center gap-2">
-            <FileText className="w-4 h-4 text-orange-500" />
-            <h2 className="text-sm font-semibold">Izin Pending</h2>
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
-              {pendingIzins.length}
-            </span>
-            <button
-              onClick={() => navigate('/pengurus/riwayat-izin')}
-              className="ml-auto text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1"
-            >
-              <History className="w-3.5 h-3.5" />
-              Riwayat
-            </button>
+        {/* IZIN PENDING SECTION */}
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#D7FF3D]" strokeWidth={1.5} />
+              <h2 className="text-[15px] font-medium tracking-tight">Izin Pending</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              {pendingIzins.length > 0 && (
+                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+                  {pendingIzins.length} menunggu
+                </span>
+              )}
+              <button
+                onClick={() => navigate('/pengurus/riwayat-izin')}
+                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1"
+              >
+                <History className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Riwayat
+              </button>
+            </div>
           </div>
           {pendingIzins.length > 0 ? (
-            <ul className="divide-y">
+            <ul className="divide-y divide-[#EAEAE7]">
               {pendingIzins.map((izin) => (
-                  <li key={izin.id} className="px-4 py-3">
-                    <div className="flex items-start justify-between gap-3">
+                  <li key={izin.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium">{izin.userName}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {formatDateIdShort(izin.startDate)}
-                          {' – '}
-                          {formatDateId(izin.endDate)}
+                        <p className="text-[14px] font-medium text-[#1A1A18]">{izin.userName}</p>
+                        <p className="text-[12px] text-[#A3A39D] mt-0.5">
+                          {formatDateIdShort(izin.startDate)} – {formatDateId(izin.endDate)}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{izin.alasan}</p>
+                        <p className="text-[12px] text-[#6B6B66] mt-1 line-clamp-2">{izin.alasan}</p>
                       </div>
                       <div className="flex gap-2 shrink-0">
                         <Button
                           size="sm"
+                          className="h-9 rounded-[12px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#C5E835] text-[12px] font-medium"
                           onClick={async () => {
                             const r = await approveIzin(izin.id);
                             if (r.valid) toast.success(r.message);
                             else toast.error(r.message);
                           }}
                         >
-                          <CheckCircle className="w-3.5 h-3.5" />
+                          <CheckCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
                           Setujui
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                          className="h-9 rounded-[12px] border-[#EAEAE7] text-[#6B6B66] hover:border-[#D7FF3D] hover:text-[#1A1A18] text-[12px] font-medium"
                           onClick={async () => {
                             const r = await rejectIzin(izin.id);
                             if (r.valid) toast.success(r.message);
                             else toast.error(r.message);
                           }}
                         >
-                          <XCircle className="w-3.5 h-3.5" />
+                          <XCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
                           Tolak
                         </Button>
                       </div>
@@ -325,112 +407,130 @@ export default function DashboardPengurus() {
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-6 text-center text-sm text-muted-foreground">Tidak ada izin pending</p>
+            <div className="px-6 py-10 text-center">
+              <FileText className="w-10 h-10 mx-auto text-[#EAEAE7] mb-2" strokeWidth={1.5} />
+              <p className="text-[13px] text-[#A3A39D]">Tidak ada izin pending</p>
+            </div>
           )}
         </div>
 
-        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b flex items-center gap-2">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <h2 className="text-sm font-semibold">Rekap Pengajar</h2>
+        {/* REKAP PENGAJAR SECTION */}
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <h2 className="text-[15px] font-medium tracking-tight">Rekap Pengajar (90 hari)</h2>
+            </div>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#F0F0EC] text-[#5C5C57]">
+              {teacherStats.length} pengajar
+            </span>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/40">
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">Pengajar</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Total</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Tepat Waktu</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground">Terlambat</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-semibold text-muted-foreground hidden md:table-cell">Status</th>
-                  <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted-foreground">Kepatuhan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
+          <div className="p-4 sm:p-6">
+            {teacherStats.length === 0 ? (
+              <div className="text-center py-10">
+                <Users className="w-12 h-12 mx-auto text-[#EAEAE7] mb-3" strokeWidth={1.5} />
+                <p className="text-[14px] text-[#6B6B66]">Belum ada data presensi 90 hari terakhir</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
                 {teacherStats.map(({ teacher, total, onTime, late, rate, status }) => (
-                  <tr key={teacher.id} className="hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold shrink-0">
-                          {teacher.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="font-medium">{teacher.name}</p>
-                          <p className="text-xs text-muted-foreground">{teacher.nim}</p>
-                        </div>
+                  <button
+                    key={teacher.id}
+                    onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}
+                    className="w-full bg-[#F7F7F5] rounded-[20px] p-4 hover:bg-[#F0F0EC] transition-colors text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8FE388] to-[#C8F06B] flex items-center justify-center text-white text-xs font-semibold shrink-0">
+                        {teacher.name.charAt(0)}
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-center font-semibold">{total}</td>
-                    <td className="px-4 py-3 text-center text-green-600">{onTime}</td>
-                    <td className="px-4 py-3 text-center text-orange-500">
-                      {late > 0 ? (
-                        <span className="flex items-center justify-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          {late}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center hidden md:table-cell">
-                      {status.isInactive ? (
-                        <span className="text-xs text-red-500 font-medium">
-                          {status.daysSince !== null ? `${status.daysSince} hr` : 'Baru'}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-green-600 font-medium">Aktif</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-primary"
-                            style={{ width: `${rate}%` }}
-                          />
+                      <div>
+                        <p className="font-medium text-[14px] text-[#1A1A18]">{teacher.name}</p>
+                        <p className="text-[11px] text-[#A3A39D]">{teacher.nim}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto">
+                      <div className="flex items-center gap-2 text-[12px]">
+                        <span className="text-[#A3A39D]">Total:</span>
+                        <span className="font-semibold text-[#1A1A18] tabular-nums">{total}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[12px]">
+                        <span className="text-[#6FCB6A] font-medium">{onTime}</span>
+                        <span className="text-[#A3A39D]">Tepat</span>
+                      </div>
+                      {late > 0 && (
+                        <div className="flex items-center gap-2 text-[12px]">
+                          <span className="text-[#F2B84B] font-medium">{late}</span>
+                          <span className="text-[#A3A39D]">Terlambat</span>
                         </div>
-                        <span className={`text-xs font-semibold tabular-nums ${rate >= 90 ? 'text-green-600' : rate >= 75 ? 'text-orange-500' : 'text-red-500'}`}>
+                      )}
+                      
+                      {/* Status Pill */}
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-inset ${
+                        status.isInactive
+                          ? 'bg-rose-50 text-rose-700 ring-rose-600/10'
+                          : 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
+                      }`}>
+                        {status.isInactive 
+                          ? (status.daysSince !== null ? `${status.daysSince} hr tidak hadir` : 'Baru tidak hadir')
+                          : 'Aktif'
+                        }
+                      </span>
+                      
+                      {/* Compliance Ring */}
+                      <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                          <circle
+                            cx="20" cy="20" r="16"
+                            stroke="#F0F0EC" strokeWidth="4" fill="none"
+                          />
+                          <circle
+                            cx="20" cy="20" r="16"
+                            stroke={rate >= 90 ? '#6FCB6A' : rate >= 75 ? '#F2B84B' : '#E8615A'}
+                            strokeWidth="4"
+                            fill="none"
+                            strokeDasharray={`${(rate / 100) * 100.5} 100.5`}
+                            strokeLinecap="round"
+                            transform="rotate(-90 20 20)"
+                            style={{ transition: 'stroke-dasharray 0.6s ease' }}
+                          />
+                        </svg>
+                        <span className={`absolute text-[10px] font-semibold tabular-nums ${rate >= 90 ? 'text-[#6FCB6A]' : rate >= 75 ? 'text-[#F2B84B]' : 'text-[#E8615A]'}`}>
                           {rate}%
                         </span>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </button>
                 ))}
-                {teacherStats.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                      Belum ada data presensi
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        {/* QUICK ACTIONS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/pengurus/laporan')}
-            className="bg-card rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-all border border-transparent hover:border-primary/20 flex items-center gap-3"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4"
           >
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-primary" />
+            <div className="w-11 h-11 rounded-[16px] bg-gradient-to-br from-[#8FE388] to-[#C8F06B] flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm font-semibold">Laporan</p>
-              <p className="text-xs text-muted-foreground">CSV / Excel</p>
+              <p className="text-[15px] font-semibold text-[#1A1A18]">Laporan</p>
+              <p className="text-[12px] text-[#A3A39D]">CSV / Excel / PDF</p>
             </div>
           </button>
           <button
             onClick={() => navigate('/pengurus/pengaturan')}
-            className="bg-card rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-all border border-transparent hover:border-primary/20 flex items-center gap-3"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4"
           >
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-              <QrCode className="w-4 h-4 text-primary" />
+            <div className="w-11 h-11 rounded-[16px] bg-gradient-to-br from-[#F6A15E] to-[#F2665A] flex items-center justify-center">
+              <QrCode className="w-5 h-5 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm font-semibold">Setup QR</p>
-              <p className="text-xs text-muted-foreground">Cetak QR statis</p>
+              <p className="text-[15px] font-semibold text-[#1A1A18]">Setup QR</p>
+              <p className="text-[12px] text-[#A3A39D]">Cetak QR statis TPA</p>
             </div>
           </button>
         </div>

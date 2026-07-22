@@ -69,46 +69,51 @@ export default function PengaturanPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3 print:hidden">
-        <button onClick={() => navigate('/pengurus/dashboard')} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 flex items-center gap-3 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] print:hidden">
+        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
-        <h1 className="font-semibold text-lg flex-1">Setup QR Statis</h1>
-        <Button variant="outline" size="sm" onClick={handlePrintAll}>
-          <Printer className="w-4 h-4 mr-1.5" />
+        <h1 className="font-semibold text-[20px] tracking-tight flex-1 text-[#1A1A18]">Setup QR Statis</h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handlePrintAll}
+          className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#6B6B66] hover:text-[#1A1A18]"
+        >
+          <Printer className="w-4 h-4 mr-1.5" strokeWidth={1.5} />
           Cetak Semua
         </Button>
       </header>
 
-      <main className="max-w-5xl mx-auto p-4">
-        <p className="text-sm text-muted-foreground mb-4 print:hidden">
+      <main className="max-w-[1440px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+        <p className="text-[13px] text-[#A3A39D] font-medium px-2 print:hidden">
           Cetak dan tempelkan QR ini di pintu masuk masing-masing TPA. QR ini bersifat permanen — tidak perlu diperbarui.
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {tpasWithQR.map((tpa) => (
             <div
               key={tpa.id}
-              className="bg-card rounded-xl shadow-sm p-4 flex flex-col items-center gap-3 text-center"
+              className="bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-5 border border-[#EAEAE7] flex flex-col items-center gap-4 text-center hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all"
             >
-              <div className="bg-white p-2 rounded-lg shadow-inner">
+              <div className="bg-[#F7F7F5] p-3 rounded-[16px] border border-[#EAEAE7]">
                 {tpa.qrDataUrl ? (
                   <img src={tpa.qrDataUrl} alt={`QR ${tpa.name}`} className="w-28 h-28 object-contain" />
                 ) : (
-                  <div className="w-28 h-28 flex items-center justify-center bg-muted rounded animate-pulse" />
+                  <div className="w-28 h-28 flex items-center justify-center bg-[#F0F0EC] rounded animate-pulse" />
                 )}
               </div>
 
               <div>
-                <p className="text-base font-semibold leading-tight">{tpa.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">{tpa.staticQRCode}</p>
+                <p className="text-[15px] font-semibold leading-tight text-[#1A1A18]">{tpa.name}</p>
+                <p className="text-[11px] text-[#A3A39D] mt-1.5 font-mono">{tpa.staticQRCode}</p>
               </div>
 
               <button
                 onClick={() => handlePrintOne(tpa)}
                 disabled={!tpa.qrDataUrl}
-                className="print:hidden text-xs text-primary underline underline-offset-2 disabled:opacity-40 disabled:no-underline"
+                className="print:hidden text-[12px] font-medium text-[#6B6B66] hover:text-[#1A1A18] underline underline-offset-2 disabled:opacity-40 disabled:no-underline"
               >
                 Cetak
               </button>

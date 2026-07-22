@@ -41,13 +41,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-card rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F4F2] p-4 font-sans text-[#1A1A18]">
+      <div className="w-full max-w-sm">
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),_0_1px_2px_rgba(0,0,0,0.02)] p-8 border border-[#EAEAE7]">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Presensi UAM</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-4xl font-light tracking-tight mb-1 text-[#1A1A18]">Presensi UAM</h1>
+            <p className="text-[#A3A39D] text-sm">
               UII Ayo Mengajar — Monitoring Presensi TPA
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2" htmlFor="identifier">
+              <label className="block text-xs font-medium mb-1.5 text-[#6B6B66]" htmlFor="identifier">
                 NIM
               </label>
               <Input
@@ -66,11 +66,12 @@ export default function LoginPage() {
                 onChange={(e) => setIdentifier(e.target.value)}
                 required
                 disabled={loading}
+                className="rounded-[14px] h-11 border-[#EAEAE7] focus:border-[#D7FF3D] focus:ring-[#D7FF3D]/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" htmlFor="password">
+              <label className="block text-xs font-medium mb-1.5 text-[#6B6B66]" htmlFor="password">
                 Password
               </label>
               <Input
@@ -81,10 +82,15 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                className="rounded-[14px] h-11 border-[#EAEAE7] focus:border-[#D7FF3D] focus:ring-[#D7FF3D]/50"
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full h-11 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#c5e835] font-semibold text-sm"
+              disabled={loading}
+            >
               {loading ? 'Memproses...' : 'Masuk'}
             </Button>
           </form>

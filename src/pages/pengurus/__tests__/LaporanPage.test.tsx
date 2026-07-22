@@ -77,7 +77,7 @@ describe('LaporanPage', () => {
 
   it('renders filter controls', async () => {
     renderComponent();
-    expect(screen.getByText('Filter')).toBeInTheDocument();
+    expect(screen.getByText('Filter Laporan')).toBeInTheDocument();
     expect(screen.getByText('Bulan')).toBeInTheDocument();
     expect(screen.getByText('Tahun')).toBeInTheDocument();
     expect(screen.getByText('Dari')).toBeInTheDocument();
@@ -96,21 +96,21 @@ describe('LaporanPage', () => {
   it('shows empty state when no data', async () => {
     renderComponent();
     await waitFor(() => {
-      expect(screen.getByText(/Tidak ada sesi di bulan ini/)).toBeInTheDocument();
+      expect(screen.getByText(/Tidak ada data presensi pada periode bulan ini/)).toBeInTheDocument();
     });
   });
 
   it('shows loading state while fetching', async () => {
     mockRpc.mockImplementation(() => new Promise(() => {})); // never resolves
     renderComponent();
-    expect(await screen.findByText('Memuat data...')).toBeInTheDocument();
+    expect(await screen.findByText('Memuat Laporan Presensi...')).toBeInTheDocument();
   });
 
   it('shows error state on RPC failure', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'DB error' } });
     renderComponent();
     await waitFor(() => {
-      expect(screen.getByText(/Gagal memuat data/)).toBeInTheDocument();
+      expect(screen.getByText(/Gagal memuat laporan/)).toBeInTheDocument();
       expect(screen.getByText(/DB error/)).toBeInTheDocument();
     });
   });
@@ -235,7 +235,7 @@ describe('LaporanPage', () => {
 
   it('shows periode text', async () => {
     renderComponent();
-    expect(screen.getByText(/Periode:/)).toBeInTheDocument();
+    expect(screen.getByText(/Periode Laporan:/)).toBeInTheDocument();
   });
 
   it('back button navigates to dashboard', async () => {
