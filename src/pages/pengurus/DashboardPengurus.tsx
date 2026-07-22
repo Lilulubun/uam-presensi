@@ -295,36 +295,44 @@ export default function DashboardPengurus() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
-              <h2 className="text-[15px] font-medium tracking-tight">Tren Kehadiran (7 Hari Terakhir)</h2>
+              <h2 className="text-[14px] font-semibold tracking-tight">Tren kehadiran (7 hari terakhir)</h2>
             </div>
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
               Bulan ini: {totalThisMonth} sesi
             </span>
           </div>
-          <ChartContainer config={chartConfig} className="h-[220px] w-full aspect-auto">
-            <LineChart data={weeklyChartData}>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="tepatWaktu" 
-                stroke="var(--color-tepatWaktu)" 
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                dot={{ r: 4, stroke: 'var(--color-tepatWaktu)', strokeWidth: 1.5, fill: '#fff' }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="terlambat" 
-                stroke="var(--color-terlambat)" 
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                dot={{ r: 4, stroke: 'var(--color-terlambat)', strokeWidth: 1.5, fill: '#fff' }}
-              />
-            </LineChart>
-          </ChartContainer>
+          {weeklyChartData.every(d => d.tepatWaktu === 0 && d.terlambat === 0) ? (
+            <div className="h-[220px] flex flex-col items-center justify-center gap-2">
+              <TrendingUp className="w-8 h-8 text-[#D0D0CB]" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#6B6B66]">Belum ada data kehadiran</p>
+              <p className="text-[12px] text-[#A3A39D]">Data akan muncul setelah sesi pertama dibuka</p>
+            </div>
+          ) : (
+            <ChartContainer config={chartConfig} className="h-[220px] w-full aspect-auto">
+              <LineChart data={weeklyChartData}>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="tepatWaktu"
+                  stroke="var(--color-tepatWaktu)"
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  dot={{ r: 4, stroke: 'var(--color-tepatWaktu)', strokeWidth: 1.5, fill: '#fff' }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="terlambat"
+                  stroke="var(--color-terlambat)"
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  dot={{ r: 4, stroke: 'var(--color-terlambat)', strokeWidth: 1.5, fill: '#fff' }}
+                />
+              </LineChart>
+            </ChartContainer>
+          )}
         </div>
 
         {/* STATUS TPA SECTION */}
