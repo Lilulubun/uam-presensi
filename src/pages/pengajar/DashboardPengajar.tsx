@@ -52,15 +52,56 @@ export default function DashboardPengajar() {
 
   const getStatusInfo = () => {
     if (!todayRecord) {
-      return { label: 'Belum melakukan presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
+      return {
+        label: 'Belum melakukan presensi',
+        sub: 'Scan QR untuk mulai',
+        badge: 'Belum Hadir',
+        textColor: 'text-[#1A1A18]',
+        icon: <QrCode className="w-6 h-6 text-[#6B6B66]" />,
+        gradient: 'bg-white border border-[#EAEAE7]',
+        badgeStyle: 'bg-[#F4F4F2] text-[#6B6B66]',
+      };
     }
     if (todayRecord.scanInTime && !todayRecord.scanOutTime) {
-      return { label: `Masuk ${formatTime(todayRecord.scanInTime)}`, color: 'text-primary', icon: <Clock className="w-5 h-5 text-primary" /> };
+      const late = todayRecord.isLate;
+      return {
+        label: `Masuk ${formatTime(todayRecord.scanInTime)}`,
+        sub: late ? `Terlambat ${todayRecord.lateMinutes} menit` : 'Tepat waktu',
+        badge: late ? 'Terlambat' : 'On Track',
+        textColor: 'text-white',
+        icon: late
+          ? <Clock className="w-6 h-6 text-white/80" />
+          : <Clock className="w-6 h-6 text-white/80" />,
+        gradient: late
+          ? 'border-0'
+          : 'border-0',
+        gradientStyle: late
+          ? { background: 'radial-gradient(circle at 30% 20%, #F2A63A, #E8823A 55%, #F2C97A)' }
+          : { background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' },
+        badgeStyle: 'bg-white/20 text-white backdrop-blur-sm',
+      };
     }
     if (todayRecord.scanInTime && todayRecord.scanOutTime) {
-      return { label: 'Presensi selesai', color: 'text-green-600', icon: <CheckCircle2 className="w-5 h-5 text-green-600" /> };
+      return {
+        label: 'Presensi selesai',
+        sub: `Keluar ${formatTime(todayRecord.scanOutTime)}`,
+        badge: 'Selesai',
+        textColor: 'text-white',
+        icon: <CheckCircle2 className="w-6 h-6 text-white/80" />,
+        gradient: 'border-0',
+        gradientStyle: { background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' },
+        badgeStyle: 'bg-white/20 text-white backdrop-blur-sm',
+      };
     }
-    return { label: 'Belum melakukan presensi', color: 'text-muted-foreground', icon: <QrCode className="w-5 h-5" /> };
+    return {
+      label: 'Belum melakukan presensi',
+      sub: 'Scan QR untuk mulai',
+      badge: 'Belum Hadir',
+      textColor: 'text-[#1A1A18]',
+      icon: <QrCode className="w-6 h-6 text-[#6B6B66]" />,
+      gradient: 'bg-white border border-[#EAEAE7]',
+      badgeStyle: 'bg-[#F4F4F2] text-[#6B6B66]',
+    };
   };
 
   const statusInfo = getStatusInfo();
@@ -86,29 +127,34 @@ export default function DashboardPengajar() {
       </header>
 
       <main className="max-w-lg mx-auto p-4 sm:p-6 pb-24 flex flex-col gap-6">
-        {/* Today's status card */}
-        <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
-          <p className="text-[13px] text-[#A3A39D] uppercase tracking-wider mb-4 font-medium">Status Hari Ini</p>
-          <div className="flex items-center gap-3">
+        {/* Today's status card — gradient hero */}
+        <div
+          className={`relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] min-h-[160px] flex flex-col justify-between ${statusInfo.gradient}`}
+          style={statusInfo.gradientStyle}
+        >
+          {/* grain overlay */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage:'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")'}} />
+          <div className="flex justify-between items-start z-10">
+            <p className={`text-[13px] font-normal ${statusInfo.textColor === 'text-white' ? 'text-white/70' : 'text-[#A3A39D]'}`}>Status Hari Ini</p>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusInfo.badgeStyle}`}>
+              {statusInfo.badge}
+            </span>
+          </div>
+          <div className="z-10 flex items-end gap-3 mt-4">
             {statusInfo.icon}
             <div>
-              <p className={`text-[15px] font-semibold ${statusInfo.color}`}>{statusInfo.label}</p>
-              {todayRecord?.isLate && (
-                <p className="text-[12px] text-amber-600 font-medium">Terlambat {todayRecord.lateMinutes} menit</p>
-              )}
+              <p className={`text-[22px] font-light leading-tight tracking-tight ${statusInfo.textColor}`}>{statusInfo.label}</p>
+              <p className={`text-[13px] mt-0.5 ${statusInfo.textColor === 'text-white' ? 'text-white/65' : 'text-[#6B6B66]'}`}>{statusInfo.sub}</p>
             </div>
           </div>
-          {todayRecord?.scanOutTime && (
-            <p className="text-[12px] text-[#6B6B66] mt-2 font-medium">
-              Keluar pukul {formatTime(todayRecord.scanOutTime)}
-            </p>
-          )}
+          {/* dot matrix */}
+          <div className="absolute bottom-0 right-0 w-24 h-24 opacity-[0.15] pointer-events-none" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)',backgroundSize:'8px 8px'}} />
         </div>
 
         {/* Monthly summary card */}
         {monthSummary.total > 0 && (
           <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-5">
               <CalendarDays className="w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
               <p className="text-[13px] font-medium text-[#A3A39D] uppercase tracking-wider">
                 Ringkasan Bulan Ini
@@ -116,16 +162,16 @@ export default function DashboardPengajar() {
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <p className="text-[28px] font-bold text-[#1A1A18]">{monthSummary.total}</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium">Hadir</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#1A1A18]">{monthSummary.total}</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Hadir</p>
               </div>
               <div>
-                <p className="text-[28px] font-bold text-emerald-600">{monthSummary.percentage}%</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium">Tepat Waktu</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-emerald-600">{monthSummary.percentage}%</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Tepat Waktu</p>
               </div>
               <div>
-                <p className="text-[28px] font-bold text-amber-600">{monthSummary.late}</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium">Terlambat</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-amber-600">{monthSummary.late}</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Terlambat</p>
               </div>
             </div>
           </div>
