@@ -49,32 +49,32 @@ export function AssignTPAModal({ open, userId, onClose }: Props) {
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <AlertDialogContent className="max-w-sm">
+      <AlertDialogContent className="max-w-sm bg-white rounded-[28px] border border-[#EAEAE7]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Atur TPA</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Atur TPA</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="px-6 py-2 space-y-2 max-h-64 overflow-y-auto">
           {tpas.map((t) => (
             <label
               key={t.id}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/40 cursor-pointer"
+              className="flex items-center gap-3 p-3 rounded-[16px] border border-[#EAEAE7] bg-[#F7F7F5] hover:bg-[#F0F0EC] cursor-pointer transition-colors"
             >
               <input
                 type="checkbox"
                 checked={assignedIds.has(t.id)}
                 onChange={() => handleToggle(t.id)}
                 disabled={saving === t.id}
-                className="rounded border-input"
+                className="w-4 h-4 rounded border-[#A3A39D] text-[#1A1A18] focus:ring-[#D7FF3D]"
               />
-              <span className="text-sm flex-1">{t.name}</span>
-              {saving === t.id && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />}
+              <span className="text-[14px] font-medium text-[#1A1A18] flex-1">{t.name}</span>
+              {saving === t.id && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#6B6B66]" strokeWidth={1.5} />}
             </label>
           ))}
         </div>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={!!saving}>Tutup</AlertDialogCancel>
+          <AlertDialogCancel disabled={!!saving} className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] w-full">Tutup</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -50,25 +50,25 @@ export function TambahPengajarModal({ open, onClose, onSuccess }: Props) {
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="max-w-md bg-white rounded-[28px] border border-[#EAEAE7]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Tambah Pengajar</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Tambah Pengajar</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="px-6 py-2 space-y-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">Nama Lengkap</label>
+            <label className="text-xs font-medium text-[#6B6B66] block mb-1.5">Nama Lengkap</label>
             <input
-              className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               placeholder="Nama pengajar"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">Email</label>
+            <label className="text-xs font-medium text-[#6B6B66] block mb-1.5">Email</label>
             <input
-              className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               placeholder="email@uii.ac.id"
               type="email"
               value={email}
@@ -76,18 +76,18 @@ export function TambahPengajarModal({ open, onClose, onSuccess }: Props) {
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">NIM</label>
+            <label className="text-xs font-medium text-[#6B6B66] block mb-1.5">NIM</label>
             <input
-              className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               placeholder="20521001"
               value={nim}
               onChange={(e) => setNim(e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">TPA</label>
+            <label className="text-xs font-medium text-[#6B6B66] block mb-1.5">TPA</label>
             <select
-              className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               value={selectedTPAs[0] ?? ''}
               onChange={(e) => setSelectedTPAs(e.target.value ? [e.target.value] : [])}
             >
@@ -99,9 +99,13 @@ export function TambahPengajarModal({ open, onClose, onSuccess }: Props) {
           </div>
         </div>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={submitting}>Batal</AlertDialogCancel>
-          <Button onClick={handleSubmit} disabled={submitting}>
+        <AlertDialogFooter className="gap-2">
+          <AlertDialogCancel disabled={submitting} className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5]">Batal</AlertDialogCancel>
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="h-11 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#cbe646] font-semibold"
+          >
             {submitting ? (
               <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> Menyimpan...</>
             ) : (

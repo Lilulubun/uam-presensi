@@ -95,34 +95,34 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
   return (
     <>
       <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-md bg-white rounded-[28px] border border-[#EAEAE7]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
+            <AlertDialogTitle className="flex items-center gap-2 font-semibold text-[18px] text-[#1A1A18]">
+              <FileText className="w-5 h-5" strokeWidth={1.5} />
               Import Pengajar (CSV)
             </AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-sm text-[#6B6B66]">
               Unggah file CSV untuk menambahkan banyak pengajar sekaligus.
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <div className="px-6 py-4 space-y-6">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Unggah file CSV untuk menambahkan banyak pengajar sekaligus.
+              <p className="text-[13px] text-[#6B6B66] font-medium">
+                Pastikan format file sudah sesuai.
               </p>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-8 text-xs text-primary"
+                className="h-8 text-[12px] text-[#D7FF3D] hover:text-[#cbe646]"
                 onClick={() => setShowInstructions(true)}
               >
-                <Info className="w-3 h-3 mr-1" />
+                <Info className="w-3 h-3 mr-1" strokeWidth={1.5} />
                 Format CSV
               </Button>
             </div>
 
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-input rounded-xl p-8 transition-colors hover:bg-muted/30">
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#EAEAE7] rounded-[24px] p-8 transition-colors hover:bg-[#F7F7F5]">
               <input
                 type="file"
                 accept=".csv"
@@ -131,22 +131,26 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
                 id="csv-upload"
               />
               <label htmlFor="csv-upload" className="cursor-pointer flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <FileText className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-full bg-[#D7FF3D]/10 flex items-center justify-center text-[#1A1A18]">
+                  <FileText className="w-6 h-6" strokeWidth={1.5} />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium">
-                    {file ? file.name : 'Klik untuk pilih file CSV'}
+                  <p className="text-[14px] font-semibold text-[#1A1A18]">
+                    {file ? file.name : 'Pilih file CSV'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Maksimal ukuran file 2MB</p>
+                  <p className="text-[12px] text-[#A3A39D] mt-1">Maksimal ukuran file 2MB</p>
                 </div>
               </label>
             </div>
           </div>
 
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={submitting}>Batal</AlertDialogCancel>
-            <Button onClick={handleImport} disabled={submitting || !file}>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={submitting} className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5]">Batal</AlertDialogCancel>
+            <Button
+              onClick={handleImport}
+              disabled={submitting || !file}
+              className="h-11 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#cbe646] font-semibold"
+            >
               {submitting ? (
                 <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> Mengimpor...</>
               ) : (
@@ -159,24 +163,24 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
 
       {showInstructions && (
         <AlertDialog open={showInstructions} onOpenChange={setShowInstructions}>
-          <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Format File CSV</AlertDialogTitle>
-            <AlertDialogDescription>
-              Gunakan format berikut untuk mengimpor data pengajar dengan benar.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+          <AlertDialogContent className="max-w-md bg-white rounded-[28px] border border-[#EAEAE7]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Format File CSV</AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-[#6B6B66]">
+                Gunakan format berikut untuk mengimpor data pengajar dengan benar.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
 
             <div className="px-6 py-4 space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-[13px] text-[#6B6B66]">
                 File CSV harus menggunakan koma (<code>,</code>) sebagai pemisah dan memiliki header di baris pertama.
               </p>
-              <div className="bg-muted rounded-lg p-3 font-mono text-xs overflow-x-auto">
+              <div className="bg-[#F7F7F5] rounded-[14px] p-4 font-mono text-[12px] overflow-x-auto border border-[#EAEAE7]">
                 <p>nama,email,nim,tpa_id</p>
                 <p>Budi Santoso,budi@uii.ac.id,20521001,tpa-001</p>
                 <p>Siti Rahayu,siti@uii.ac.id,20521002,tpa-002</p>
               </div>
-              <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-4">
+              <ul className="text-[12px] text-[#6B6B66] space-y-2 list-disc pl-4">
                 <li><strong>nama</strong>: Nama lengkap pengajar (Wajib)</li>
                 <li><strong>email</strong>: Email institusi/aktif (Wajib)</li>
                 <li><strong>nim</strong>: Nomor Induk Mengajar (Opsional)</li>
@@ -184,7 +188,7 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
               </ul>
             </div>
             <AlertDialogFooter>
-              <AlertDialogCancel>Tutup</AlertDialogCancel>
+              <AlertDialogCancel className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5]">Tutup</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

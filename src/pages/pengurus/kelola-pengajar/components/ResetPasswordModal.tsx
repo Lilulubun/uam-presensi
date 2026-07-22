@@ -52,10 +52,10 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <AlertDialogContent className="max-w-sm">
+      <AlertDialogContent className="max-w-sm bg-white rounded-[28px] border border-[#EAEAE7]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Reset Password</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Reset Password</AlertDialogTitle>
+          <AlertDialogDescription className="text-sm text-[#6B6B66]">
             Pengajar: <strong>{user?.name ?? userId}</strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -63,39 +63,42 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
         <div className="px-6 py-2 space-y-3">
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-[13px] text-[#6B6B66]"
             onClick={handleTemporaryPassword}
             disabled={loading}
           >
             {loading ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Membuat...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" strokeWidth={1.5} /> Membuat...</>
             ) : (
               '🔑 Buat Password Sementara'
             )}
           </Button>
 
           {tempPassword && (
-            <div className="bg-muted rounded-lg p-3">
-              <p className="text-xs text-muted-foreground mb-1">Password sementara (sekali lihat):</p>
+            <div className="bg-[#F7F7F5] rounded-[16px] p-4 border border-[#EAEAE7]">
+              <p className="text-[11px] text-[#A3A39D] font-medium mb-2">Password sementara (sekali lihat):</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 text-sm font-mono bg-background px-2 py-1 rounded border">
+                <code className="flex-1 text-[14px] font-mono bg-white px-3 py-1.5 rounded-[14px] border border-[#EAEAE7] text-[#1A1A18]">
                   {tempPassword}
                 </code>
                 <button
                   onClick={copyPassword}
-                  className="p-1.5 rounded hover:bg-background transition-colors"
+                  className="p-2 rounded-[14px] hover:bg-[#F0F0EC] transition-colors border border-[#EAEAE7]"
                   title="Salin"
                 >
-                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                  {copied ? <Check className="w-4 h-4 text-emerald-500" strokeWidth={1.5} /> : <Copy className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />}
                 </button>
               </div>
-              <p className="text-xs text-orange-500 mt-1">Segera kirim ke pengajar. Password ini tidak bisa ditampilkan lagi.</p>
+              <p className="text-[11px] text-amber-600 font-medium mt-2">Segera kirim ke pengajar. Password ini tidak bisa ditampilkan lagi.</p>
             </div>
           )}
         </div>
 
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => { setTempPassword(null); setCopied(false); }}>
+          <AlertDialogCancel 
+            onClick={() => { setTempPassword(null); setCopied(false); }}
+            className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] w-full"
+          >
             Tutup
           </AlertDialogCancel>
         </AlertDialogFooter>
