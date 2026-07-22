@@ -103,7 +103,7 @@ export default function DetailPengajar() {
           {monthlyReport.length > 0 && (
             <ul className="divide-y border-t">
               {monthlyReport.map((row) => {
-                const date = row.tgl;
+                const date = new Date(row.tgl);
                 return (
                   <li key={date.toISOString()} className="px-4 py-2.5 flex items-center gap-3">
                     <span className="text-sm min-w-[120px]">
