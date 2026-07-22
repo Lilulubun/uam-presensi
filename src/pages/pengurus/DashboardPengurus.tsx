@@ -307,27 +307,29 @@ export default function DashboardPengurus() {
             </div>
           </div>
 
-          {/* Card C: White Glass */}
-          <div className="relative overflow-hidden rounded-[32px] p-6 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]">
-            <div className="flex justify-between items-start">
-              <p className="text-[13px] font-medium text-[#6B6B66]">Izin pending</p>
+          {/* Card C: Blush Rose Glass */}
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 30%, #FFF1F2, #FFE4E6 50%, #FECDD3)' }}>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+
+            <div className="flex justify-between items-start z-10">
+              <p className="text-[13px] font-medium text-[#1A1A18]/65">Izin pending</p>
               {pendingIzins.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F0F0EC] text-[#5C5C57]">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#1A1A18]/10 text-[#1A1A18]">
                   Menunggu
                 </span>
               )}
             </div>
             
-            <div className="mt-4">
+            <div className="z-10 mt-4">
               <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : pendingIzins.length}
               </p>
-              <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>
+              <p className="text-[13px] text-[#1A1A18]/55 mt-1">Permintaan izin masuk</p>
             </div>
             
             <button 
               onClick={() => navigate('/pengurus/riwayat-izin')}
-              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:bg-[#F7F7F5] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out"
+              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-[#1A1A18]/5 hover:bg-[#1A1A18]/10 flex items-center justify-center text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out z-10"
             >
               <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
             </button>
