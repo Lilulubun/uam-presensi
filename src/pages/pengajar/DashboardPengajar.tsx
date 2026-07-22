@@ -66,40 +66,40 @@ export default function DashboardPengajar() {
   const statusInfo = getStatusInfo();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       {/* Header */}
-      <header className="bg-card border-b px-4 py-4">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="max-w-lg mx-auto flex justify-between items-center">
           <div>
-            <h1 className="font-bold text-lg">Presensi UAM</h1>
-            <p className="text-sm text-muted-foreground">Halo, {user?.name}</p>
+            <h1 className="font-bold text-[22px] tracking-tight">Presensi UAM</h1>
+            <p className="text-[13px] text-[#A3A39D] font-medium">Halo, {user?.name}</p>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => navigate('/profile')} className="text-muted-foreground hover:text-foreground p-2">
-              <User className="w-5 h-5" />
+            <button onClick={() => navigate('/profile')} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5]">
+              <User className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground p-2">
-              <LogOut className="w-5 h-5" />
+            <button onClick={handleLogout} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5]">
+              <LogOut className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto p-4 pb-24 flex flex-col gap-4">
+      <main className="max-w-lg mx-auto p-4 sm:p-6 pb-24 flex flex-col gap-6">
         {/* Today's status card */}
-        <div className="bg-card rounded-xl p-5 shadow-sm">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Status Hari Ini</p>
+        <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+          <p className="text-[13px] text-[#A3A39D] uppercase tracking-wider mb-4 font-medium">Status Hari Ini</p>
           <div className="flex items-center gap-3">
             {statusInfo.icon}
             <div>
-              <p className={`font-semibold ${statusInfo.color}`}>{statusInfo.label}</p>
+              <p className={`text-[15px] font-semibold ${statusInfo.color}`}>{statusInfo.label}</p>
               {todayRecord?.isLate && (
-                <p className="text-xs text-orange-500">Terlambat {todayRecord.lateMinutes} menit</p>
+                <p className="text-[12px] text-amber-600 font-medium">Terlambat {todayRecord.lateMinutes} menit</p>
               )}
             </div>
           </div>
           {todayRecord?.scanOutTime && (
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-[12px] text-[#6B6B66] mt-2 font-medium">
               Keluar pukul {formatTime(todayRecord.scanOutTime)}
             </p>
           )}
@@ -107,51 +107,51 @@ export default function DashboardPengajar() {
 
         {/* Monthly summary card */}
         {monthSummary.total > 0 && (
-          <div className="bg-card rounded-xl p-4 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <CalendarDays className="w-4 h-4 text-muted-foreground" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+            <div className="flex items-center gap-2 mb-4">
+              <CalendarDays className="w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#A3A39D] uppercase tracking-wider">
                 Ringkasan Bulan Ini
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <p className="text-lg font-bold text-primary">{monthSummary.total}</p>
-                <p className="text-xs text-muted-foreground">Hadir</p>
+                <p className="text-[28px] font-bold text-[#1A1A18]">{monthSummary.total}</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium">Hadir</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-green-600">{monthSummary.percentage}%</p>
-                <p className="text-xs text-muted-foreground">Tepat Waktu</p>
+                <p className="text-[28px] font-bold text-emerald-600">{monthSummary.percentage}%</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium">Tepat Waktu</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-orange-500">{monthSummary.late}</p>
-                <p className="text-xs text-muted-foreground">Terlambat</p>
+                <p className="text-[28px] font-bold text-amber-600">{monthSummary.late}</p>
+                <p className="text-[12px] text-[#6B6B66] font-medium">Terlambat</p>
               </div>
             </div>
           </div>
         )}
 
         {/* GPS Location Status */}
-        <div className="bg-card rounded-xl px-4 py-3 shadow-sm flex items-center gap-3">
+        <div className="bg-white rounded-[24px] px-5 py-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] flex items-center gap-3">
           <LocationStatus locationState={locationState} nearestTPA={nearestTPA} compact />
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col gap-3">
-          <Button className="w-full h-14 text-base" onClick={() => navigate('/pengajar/scan')}>
-            <ScanLine className="w-5 h-5 mr-2" />
+        <div className="flex flex-col gap-4">
+          <Button className="w-full h-16 text-[16px] font-semibold rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#cbe646]" onClick={() => navigate('/pengajar/scan')}>
+            <ScanLine className="w-5 h-5 mr-2" strokeWidth={1.5} />
             Scan QR Presensi
           </Button>
 
           <Button
             variant="outline"
-            className="w-full h-14 text-base relative"
+            className="w-full h-16 text-[16px] font-semibold rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] relative"
             onClick={() => navigate('/pengajar/izin')}
           >
-            <FileText className="w-5 h-5 mr-2" />
+            <FileText className="w-5 h-5 mr-2" strokeWidth={1.5} />
             Ajukan Izin
             {pendingIzins > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center font-bold">
+              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold ring-2 ring-white">
                 {pendingIzins}
               </span>
             )}
@@ -161,10 +161,10 @@ export default function DashboardPengajar() {
           {activeSession && (
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full h-16 text-[14px] font-semibold rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5]"
               onClick={() => navigate(`/pengajar/session/${activeSession.id}`)}
             >
-              <Clock className="w-4 h-4 mr-2" />
+              <Clock className="w-4 h-4 mr-2" strokeWidth={1.5} />
               Kelola Sesi Aktif — {getTpaById(activeSession.tpaId)?.name ?? 'TPA'}
             </Button>
           )}
@@ -172,20 +172,20 @@ export default function DashboardPengajar() {
 
         {/* Recent attendance history */}
         {recentAttendances.length > 0 && (
-          <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b flex items-center gap-2">
-              <History className="w-4 h-4 text-muted-foreground" />
-              <p className="text-sm font-medium">Riwayat Presensi</p>
+          <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center gap-2 bg-[#F7F7F5]">
+              <History className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <p className="text-[14px] font-semibold text-[#1A1A18]">Riwayat Presensi</p>
             </div>
-            <ul className="divide-y">
+            <ul className="divide-y divide-[#EAEAE7]">
               {recentAttendances.map((attendance) => (
-                  <li key={attendance.id} className="px-4 py-3">
+                  <li key={attendance.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-sm font-medium">
+                        <p className="text-[13px] font-semibold text-[#1A1A18]">
                           {attendance.scanInTime ? formatDate(attendance.scanInTime) : '—'}
                         </p>
-                        <div className="text-xs text-muted-foreground mt-0.5 flex gap-2">
+                        <div className="text-[12px] text-[#6B6B66] font-medium mt-1 flex gap-2">
                           {attendance.scanInTime && (
                             <span>Masuk {formatTime(attendance.scanInTime)}</span>
                           )}
@@ -195,11 +195,11 @@ export default function DashboardPengajar() {
                         </div>
                       </div>
                       {attendance.isLate ? (
-                        <span className="text-xs text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 uppercase">
                           Terlambat
                         </span>
                       ) : (
-                        <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase">
                           Tepat Waktu
                         </span>
                       )}
@@ -211,7 +211,7 @@ export default function DashboardPengajar() {
         )}
 
         {recentAttendances.length === 0 && (
-          <div className="text-center py-8 text-sm text-muted-foreground">
+          <div className="text-center py-10 text-[13px] text-[#A3A39D] font-medium">
             Belum ada riwayat presensi
           </div>
         )}
@@ -219,7 +219,7 @@ export default function DashboardPengajar() {
         {recentAttendances.length > 0 && (
           <button
             onClick={() => navigate('/pengajar/riwayat')}
-            className="text-sm text-primary underline underline-offset-2 text-center w-full"
+            className="text-xs text-[#6B6B66] font-medium underline underline-offset-2 text-center w-full hover:text-[#1A1A18]"
           >
             Lihat semua riwayat
           </button>

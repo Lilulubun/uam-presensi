@@ -147,13 +147,13 @@ export default function ScanPage() {
   }, [handleScan]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-20">
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] flex flex-col pb-20">
       {/* Header */}
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="text-[#6B6B66] hover:text-[#1A1A18]">
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
-        <h1 className="font-semibold text-lg flex-1">Scan QR Presensi</h1>
+        <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18] flex-1">Scan QR Presensi</h1>
       </header>
 
       <main className="flex-1 flex flex-col items-center gap-5 p-4 pt-6">
@@ -162,12 +162,12 @@ export default function ScanPage() {
           <div className={`w-full flex flex-col items-center gap-4 transition-opacity ${processing ? 'opacity-50' : 'opacity-100'}`}>
             <QRScanner onScan={handleScan} onError={handleCameraError} />
             {processing ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="flex items-center gap-2 text-[14px] text-[#6B6B66] font-medium">
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
               Memproses...
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center max-w-xs">
+            <p className="text-[14px] text-[#6B6B66] font-medium text-center max-w-xs leading-relaxed">
               Arahkan kamera ke QR TPA (statis) untuk membuka sesi, atau QR sesi aktif dari pengajar pertama untuk presensi masuk
             </p>
           )}
@@ -175,18 +175,18 @@ export default function ScanPage() {
         </PermissionPrompt>
 
         {/* GPS Location Status card */}
-        <div className="w-full max-w-sm bg-card rounded-xl shadow-sm p-4">
-          <div className="flex items-center justify-between mb-2.5">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <div className="w-full max-w-sm bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[12px] font-semibold text-[#6B6B66] uppercase tracking-wider">
               Status Lokasi
             </p>
             {locationState.status !== 'loading' && (
               <button
                 onClick={refetchLocation}
-                className="text-muted-foreground hover:text-foreground p-1 rounded"
+                className="text-[#A3A39D] hover:text-[#1A1A18] p-1.5 rounded-lg hover:bg-[#F7F7F5]"
                         title="Perbarui lokasi"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <RefreshCw className="w-3.5 h-3.5" strokeWidth={1.5} />
               </button>
             )}
           </div>
@@ -213,16 +213,16 @@ export default function ScanPage() {
         {/* Active session info banner */}
         {activeSessionInfo && (
           <div className="w-full max-w-sm">
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-              <div className="mt-0.5 shrink-0 text-blue-600">ℹ</div>
+            <div className="bg-emerald-50 border border-emerald-200 rounded-[24px] p-5 flex items-start gap-3">
+              <div className="mt-0.5 shrink-0 text-emerald-600 text-[18px] font-bold">ℹ</div>
               <div>
-                <p className="font-semibold text-blue-900 text-sm">Sudah Ada Sesi Aktif</p>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="font-semibold text-emerald-900 text-[14px]">Sudah Ada Sesi Aktif</p>
+                <p className="text-[13px] text-emerald-700 mt-1.5 leading-relaxed">
                   <strong>{activeSessionInfo.tpaName}</strong> sudah memiliki sesi. Scan QR presensi masuk dari
                   layar pengajar pertama di atas.
                 </p>
                 <button
-                  className="mt-2 text-xs text-blue-600 underline underline-offset-2"
+                  className="mt-2 text-[12px] text-emerald-600 font-medium underline underline-offset-2 hover:text-emerald-800"
                   onClick={() => setActiveSessionInfo(null)}
                 >
                   Scan ulang

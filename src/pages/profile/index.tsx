@@ -67,97 +67,101 @@ export default function ProfilePage() {
   const dashboardPath = user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard';
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate(dashboardPath)} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
+        <button onClick={() => navigate(dashboardPath)} className="text-[#6B6B66] hover:text-[#1A1A18]">
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
-        <h1 className="font-semibold text-lg flex-1">Profil Saya</h1>
+        <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18] flex-1">Profil Saya</h1>
       </header>
 
-      <main className="max-w-md mx-auto p-4 flex flex-col gap-6">
-        <div className="bg-card rounded-xl p-5 shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-semibold">
+      <main className="max-w-md mx-auto p-4 sm:p-6 flex flex-col gap-6">
+        <div className="bg-white rounded-[24px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-16 h-16 rounded-full bg-[#D7FF3D]/10 flex items-center justify-center text-[#1A1A18] text-2xl font-semibold">
               {user?.name.charAt(0)}
             </div>
             <div>
-              <p className="font-semibold text-lg">{user?.name}</p>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <p className="font-semibold text-[18px] text-[#1A1A18]">{user?.name}</p>
+              <p className="text-[14px] text-[#A3A39D] font-medium">{user?.email}</p>
             </div>
           </div>
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Role</dt>
-              <dd className="font-medium">{user?.role === 'pengajar' ? 'Pengajar' : 'Pengurus'}</dd>
+          <dl className="space-y-3 text-[14px]">
+            <div className="flex justify-between items-center">
+              <dt className="text-[#A3A39D] font-medium">Role</dt>
+              <dd className="font-semibold text-[#1A1A18]">{user?.role === 'pengajar' ? 'Pengajar' : 'Pengurus'}</dd>
             </div>
             {user?.nim && (
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">NIM</dt>
-                <dd className="font-medium">{user.nim}</dd>
+              <div className="flex justify-between items-center">
+                <dt className="text-[#A3A39D] font-medium">NIM</dt>
+                <dd className="font-semibold text-[#1A1A18]">{user.nim}</dd>
               </div>
             )}
           </dl>
         </div>
 
-        <div className="bg-card rounded-xl p-5 shadow-sm">
-          <h2 className="font-semibold mb-4">Ubah Password</h2>
-          <div className="space-y-3">
+        <div className="bg-white rounded-[24px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+          <h2 className="font-semibold text-[16px] text-[#1A1A18] mb-4">Ubah Password</h2>
+          <div className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-muted-foreground block mb-1">Password Saat Ini</label>
+              <label className="text-[12px] font-medium text-[#6B6B66] block mb-1.5">Password Saat Ini</label>
               <div className="relative">
                 <input
-                  className="w-full h-10 rounded-lg border border-input bg-background px-3 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 pr-10 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
                   type={showCurrent ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
                   onClick={() => setShowCurrent(!showCurrent)}
                 >
-                  {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showCurrent ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground block mb-1">Password Baru</label>
+              <label className="text-[12px] font-medium text-[#6B6B66] block mb-1.5">Password Baru</label>
               <div className="relative">
                 <input
-                  className="w-full h-10 rounded-lg border border-input bg-background px-3 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 pr-10 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
                   type={showNew ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
                   onClick={() => setShowNew(!showNew)}
                 >
-                  {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showNew ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground block mb-1">Konfirmasi Password Baru</label>
+              <label className="text-[12px] font-medium text-[#6B6B66] block mb-1.5">Konfirmasi Password Baru</label>
               <div className="relative">
                 <input
-                  className="w-full h-10 rounded-lg border border-input bg-background px-3 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 pr-10 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
                   type={showConfirm ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
                   onClick={() => setShowConfirm(!showConfirm)}
                 >
-                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showConfirm ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
-            <Button className="w-full" onClick={handleChangePassword} disabled={submitting}>
+            <Button 
+              className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646]"
+              onClick={handleChangePassword} 
+              disabled={submitting}
+            >
               {submitting ? (
                 <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> Menyimpan...</>
               ) : (

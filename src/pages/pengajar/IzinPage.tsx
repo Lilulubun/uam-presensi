@@ -50,52 +50,55 @@ export default function IzinPage() {
   } as const;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate('/pengajar/dashboard')} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
+        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
-        <h1 className="font-semibold text-lg">Ajukan Izin</h1>
+        <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18]">Ajukan Izin</h1>
       </header>
 
-      <main className="max-w-lg mx-auto p-4 flex flex-col gap-5">
+      <main className="max-w-lg mx-auto p-4 sm:p-6 flex flex-col gap-6">
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-card rounded-xl p-5 shadow-sm flex flex-col gap-4">
-          <p className="text-sm font-semibold flex items-center gap-2">
-            <FileText className="w-4 h-4 text-muted-foreground" />
+        <form onSubmit={handleSubmit} className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] flex flex-col gap-5">
+          <p className="text-[14px] font-semibold flex items-center gap-2 text-[#1A1A18]">
+            <FileText className="w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
             Form Izin
           </p>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Tanggal Mulai</label>
+            <label htmlFor="start-date" className="text-[12px] font-medium text-[#6B6B66]">Tanggal Mulai</label>
             <input
+              id="start-date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Tanggal Akhir</label>
+            <label htmlFor="end-date" className="text-[12px] font-medium text-[#6B6B66]">Tanggal Akhir</label>
             <input
+              id="end-date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               min={startDate}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-11 rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Alasan</label>
+            <label htmlFor="alasan" className="text-[12px] font-medium text-[#6B6B66]">Alasan</label>
             <textarea
+              id="alasan"
               value={alasan}
               onChange={(e) => setAlasan(e.target.value)}
               placeholder="Tuliskan alasan izin..."
-              className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-[14px] border border-[#EAEAE7] bg-[#F7F7F5] px-3 py-3 text-sm resize-none focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               rows={3}
               required
             />
@@ -104,45 +107,43 @@ export default function IzinPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full h-11 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646] disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
           >
-            {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {submitting && <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />}
             {submitting ? 'Mengirim...' : 'Ajukan Izin'}
           </button>
         </form>
 
         {/* Riwayat */}
-        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-muted-foreground" />
-            <p className="text-sm font-medium">Riwayat Pengajuan</p>
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center gap-2 bg-[#F7F7F5]">
+            <CalendarDays className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+            <p className="text-[14px] font-semibold text-[#1A1A18]">Riwayat Pengajuan</p>
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-5 h-5 animate-spin text-[#D7FF3D]" strokeWidth={1.5} />
             </div>
           ) : myIzins.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-muted-foreground">Belum ada pengajuan izin</p>
+            <p className="px-6 py-12 text-center text-[14px] text-[#A3A39D] font-medium">Belum ada pengajuan izin</p>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-[#EAEAE7]">
               {myIzins.map((izin) => {
                 const cfg = statusConfig[izin.status];
                 const Icon = cfg.icon;
 
                 return (
-                  <li key={izin.id} className="px-4 py-3">
-                    <div className="flex items-start justify-between gap-2">
+                  <li key={izin.id} className="px-6 py-5 hover:bg-[#F7F7F5] transition-colors">
+                    <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm font-medium">
-                          {formatDateId(izin.startDate)}
-                          {' – '}
-                          {formatDateId(izin.endDate)}
+                        <p className="text-[14px] font-semibold text-[#1A1A18]">
+                          {formatDateId(izin.startDate)} — {formatDateId(izin.endDate)}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">{izin.alasan}</p>
+                        <p className="text-[13px] text-[#6B6B66] mt-1.5 leading-relaxed">{izin.alasan}</p>
                       </div>
-                      <span className={`shrink-0 flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${cfg.bg} ${cfg.color}`}>
-                        <Icon className="w-3 h-3" />
+                      <span className={`shrink-0 flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset ${cfg.bg} ${cfg.color}`}>
+                        <Icon className="w-3 h-3" strokeWidth={2} />
                         {cfg.label}
                       </span>
                     </div>
