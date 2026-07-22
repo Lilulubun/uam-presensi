@@ -109,6 +109,25 @@ export default function DashboardPengurus() {
     }).length;
   }, [attendances]);
 
+  const metricStats = useMemo(() => {
+    const currentMonth = toJakartaMonth(new Date());
+    const monthAtt = attendances.filter((a) => {
+      const t = a.scanInTime;
+      return t && toJakartaMonth(new Date(t)) === currentMonth;
+    });
+    const lateOnes = monthAtt.filter((a) => a.isLate && a.lateMinutes);
+    const avgLate = lateOnes.length > 0
+      ? Math.round(lateOnes.reduce((s, a) => s + (a.lateMinutes ?? 0), 0) / lateOnes.length)
+      : 0;
+    const onTimeRate = monthAtt.length > 0
+      ? Math.round((monthAtt.filter((a) => !a.isLate).length / monthAtt.length) * 100)
+      : 0;
+    const activeTpaCount = tpas.filter((t) =>
+      sessions.some((s) => s.tpaId === t.id && s.isActive)
+    ).length;
+    return { avgLate, onTimeRate, activeTpaCount };
+  }, [attendances, tpas, sessions]);
+
   const teacherStats = useMemo(() => {
     const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
     const recent = attendances.filter(
@@ -287,6 +306,45 @@ export default function DashboardPengurus() {
             >
               <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
             </button>
+          </div>
+        </div>
+
+        {/* METRICS ROW */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Avg Keterlambatan */}
+          <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#6B6B66]">Rata-rata Keterlambatan</p>
+            </div>
+            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+              {metricStats.avgLate}
+            </p>
+            <p className="text-[11px] text-[#A3A39D] mt-1.5">menit (bulan ini)</p>
+          </div>
+
+          {/* On-Time Rate */}
+          <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#6B6B66]">Kehadiran Tepat Waktu</p>
+            </div>
+            <p className="text-[32px] font-light leading-none tracking-tighter text-emerald-600" style={{fontFamily: "'Doto', monospace"}}>
+              {metricStats.onTimeRate}%
+            </p>
+            <p className="text-[11px] text-[#A3A39D] mt-1.5">dari total hadir</p>
+          </div>
+
+          {/* Active TPA */}
+          <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#6B6B66]">TPA Aktif Hari Ini</p>
+            </div>
+            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+              {metricStats.activeTpaCount}
+            </p>
+            <p className="text-[11px] text-[#A3A39D] mt-1.5">dari {tpas.length} TPA</p>
           </div>
         </div>
 
