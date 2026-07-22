@@ -184,10 +184,10 @@ export default function DashboardPengurus() {
 
             <div className="w-[1px] h-6 bg-[#EAEAE7] mx-1"></div>
 
-            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
               <User className="w-4 h-4" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
               <LogOut className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
@@ -196,7 +196,7 @@ export default function DashboardPengurus() {
 
       <div className="flex">
         {/* Sidebar — lg+ only, full height, flush left */}
-        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/80">
+        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto shadow-[1px_0_0_0_#EAEAE7] bg-white/80 backdrop-blur-[20px] backdrop-saturate-[180%]">
           <nav className="flex flex-col gap-0.5">
             {sidebarNav.map(({ href, label, icon: Icon }) => {
               const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
@@ -208,7 +208,7 @@ export default function DashboardPengurus() {
                 <button
                   key={href}
                   onClick={() => navigate(href)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-[13px] font-medium transition-colors text-left w-full ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-[13px] font-medium transition-colors active:scale-[0.97] transition-transform duration-100 ease-out text-left w-full ${
                     active
                       ? 'bg-[#EAEAE7] text-[#1A1A18]'
                       : 'text-[#6B6B66] hover:bg-[#F4F4F2] hover:text-[#1A1A18]'
@@ -268,7 +268,7 @@ export default function DashboardPengurus() {
             <div className="flex justify-between items-start z-10">
               <p className="text-[13px] font-medium text-white/80">Sesi aktif</p>
               {activeSessions.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/25 text-white">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#1A1A18]/30 text-white">
                   Live
                 </span>
               )}
@@ -311,7 +311,7 @@ export default function DashboardPengurus() {
             
             <button 
               onClick={() => navigate('/pengurus/riwayat-izin')}
-              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:bg-[#F7F7F5] transition-colors"
+              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:bg-[#F7F7F5] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out"
             >
               <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
             </button>
@@ -408,13 +408,14 @@ export default function DashboardPengurus() {
             Cabang TPA — {tpas.length} lokasi
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tpas.map((tpa) => {
+            {tpas.map((tpa, idx) => {
               const { activeSession, presentCount } = getTPAStats(tpa.id);
               return (
                 <button
                   key={tpa.id}
                   onClick={() => navigate(`/pengurus/tpa/${tpa.id}`)}
-                  className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
+                  className="motion-safe:animate-fade-in-up bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
+                  style={{ animationDelay: `${idx * 40}ms`, animation: 'fadeUp 280ms cubic-bezier(0.23,1,0.32,1) forwards' }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="font-medium text-[15px] tracking-tight group-hover:text-primary transition-colors pr-16 leading-tight">
@@ -466,7 +467,7 @@ export default function DashboardPengurus() {
               )}
               <button
                 onClick={() => navigate('/pengurus/riwayat-izin')}
-                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1"
+                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1 active:scale-[0.97] transition-transform duration-100 ease-out"
               >
                 <History className="w-3.5 h-3.5" strokeWidth={1.5} />
                 Riwayat
@@ -476,7 +477,7 @@ export default function DashboardPengurus() {
           {pendingIzins.length > 0 ? (
             <ul className="divide-y divide-[#EAEAE7]">
               {pendingIzins.map((izin) => (
-                  <li key={izin.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors">
+                  <li key={izin.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <p className="text-[14px] font-medium text-[#1A1A18]">{izin.userName}</p>
@@ -551,7 +552,7 @@ export default function DashboardPengurus() {
                   <button
                     key={teacher.id}
                     onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}
-                    className="w-full bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                    className="w-full motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-[box-shadow,border-color] duration-200 active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                   >
                     <div className="flex items-center gap-3.5">
                       <div 
@@ -572,18 +573,18 @@ export default function DashboardPengurus() {
                         <span className="font-semibold text-[#1A1A18] tabular-nums">{total}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[12px]">
-                        <span className="text-[#6FCB6A] font-semibold">{onTime}</span>
+                        <span className="text-[#6FCB6A] font-semibold tabular-nums">{onTime}</span>
                         <span className="text-[#A3A39D]">Tepat</span>
                       </div>
                       {late > 0 && (
                         <div className="flex items-center gap-1.5 text-[12px]">
-                          <span className="text-[#F2B84B] font-semibold">{late}</span>
+                          <span className="text-[#F2B84B] font-semibold tabular-nums">{late}</span>
                           <span className="text-[#A3A39D]">Terlambat</span>
                         </div>
                       )}
                       
                       {/* Status Pill */}
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${
                         status.isInactive
                           ? 'bg-[#F0F0EC] text-[#5C5C57]'
                           : 'bg-[#EFFFC2] text-[#1A1A18]'
@@ -610,7 +611,7 @@ export default function DashboardPengurus() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/pengurus/laporan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
               <TrendingUp className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />
@@ -622,7 +623,7 @@ export default function DashboardPengurus() {
           </button>
           <button
             onClick={() => navigate('/pengurus/pengaturan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
               <QrCode className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />

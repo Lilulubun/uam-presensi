@@ -52,7 +52,7 @@ export default function IzinPage() {
   return (
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18]">Ajukan Izin</h1>
@@ -107,7 +107,7 @@ export default function IzinPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646] disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+            className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646] disabled:opacity-50 flex items-center justify-center gap-2 transition-all active:scale-[0.97]"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />}
             {submitting ? 'Mengirim...' : 'Ajukan Izin'}

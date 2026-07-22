@@ -116,10 +116,10 @@ export default function DashboardPengajar() {
             <p className="text-[13px] text-[#A3A39D] font-medium">Halo, {user?.name}</p>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => navigate('/profile')} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5]">
+            <button onClick={() => navigate('/profile')} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <User className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5]">
+            <button onClick={handleLogout} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <LogOut className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
@@ -225,7 +225,7 @@ export default function DashboardPengajar() {
             </div>
             <ul className="divide-y divide-[#EAEAE7]">
               {recentAttendances.map((attendance) => (
-                  <li key={attendance.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors">
+                  <li key={attendance.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out">
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-[13px] font-semibold text-[#1A1A18]">
@@ -265,7 +265,7 @@ export default function DashboardPengajar() {
         {recentAttendances.length > 0 && (
           <button
             onClick={() => navigate('/pengajar/riwayat')}
-            className="text-xs text-[#6B6B66] font-medium underline underline-offset-2 text-center w-full hover:text-[#1A1A18]"
+            className="text-xs text-[#6B6B66] font-medium underline underline-offset-2 text-center w-full hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out"
           >
             Lihat semua riwayat
           </button>

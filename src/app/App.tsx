@@ -9,6 +9,7 @@ import { useUsersStore } from '../store/userStore';
 import { useShallow } from 'zustand/react/shallow';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
+import PageTransition from './components/PageTransition';
 import LoginPage from '../pages/LoginPage';
 import DashboardPengajar from '../pages/pengajar/DashboardPengajar';
 import ScanPage from '../pages/pengajar/ScanPage';
@@ -59,7 +60,7 @@ export default function App() {
             isAuthenticated ? (
               <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
             ) : (
-              <LoginPage />
+              <PageTransition><LoginPage /></PageTransition>
             )
           }
         />
@@ -77,24 +78,24 @@ export default function App() {
         />
 
         {/* Teacher routes */}
-        <Route path="/pengajar/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><DashboardPengajar /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengajar/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><ScanPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><SessionActivePage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><KonfirmasiPresensi /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><RiwayatPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengajar/izin" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><IzinPage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/dashboard" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><DashboardPengajar /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/scan" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><ScanPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/session/:sessionId" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><SessionActivePage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/konfirmasi" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><KonfirmasiPresensi /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/riwayat" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><RiwayatPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengajar/izin" element={<ProtectedRoute allowedRoles={['pengajar']}><ErrorBoundary><PageTransition><IzinPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
 
         {/* Admin routes */}
-        <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DashboardPengurus /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><TPADetailPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/pengajar/:userId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><DetailPengajar /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><LaporanPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PengaturanPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/kelola-pengajar" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><KelolaPengajarPage /></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/pengurus/riwayat-izin" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><RiwayatIzinPengurus /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/dashboard" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><DashboardPengurus /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/tpa/:tpaId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><TPADetailPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/pengajar/:userId" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><DetailPengajar /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/laporan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><LaporanPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/pengaturan" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><PengaturanPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/kelola-pengajar" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><KelolaPengajarPage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/pengurus/riwayat-izin" element={<ProtectedRoute allowedRoles={['pengurus']}><ErrorBoundary><PageTransition><RiwayatIzinPengurus /></PageTransition></ErrorBoundary></ProtectedRoute>} />
 
         {/* Profile (both roles) */}
-        <Route path="/profile" element={<ProtectedRoute allowedRoles={['pengajar', 'pengurus']}><ErrorBoundary><ProfilePage /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute allowedRoles={['pengajar', 'pengurus']}><ErrorBoundary><PageTransition><ProfilePage /></PageTransition></ErrorBoundary></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

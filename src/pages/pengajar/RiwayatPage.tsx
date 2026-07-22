@@ -67,7 +67,7 @@ export default function RiwayatPage() {
             <ul className="divide-y divide-[#EAEAE7]">
               {attendances.map((attendance) => {
                 return (
-                  <li key={attendance.id} className="px-6 py-5 flex items-center justify-between gap-4 hover:bg-[#F7F7F5] transition-colors">
+                  <li key={attendance.id} className="px-6 py-5 flex items-center justify-between gap-4 hover:bg-[#F7F7F5] transition-colors motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="shrink-0">
                         {attendance.scanOutTime ? (
