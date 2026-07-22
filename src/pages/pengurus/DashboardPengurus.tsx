@@ -140,8 +140,8 @@ export default function DashboardPengurus() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18]">
-      <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 px-2 sm:px-6 lg:px-8">
+      <header className="bg-white/80 backdrop-blur-[20px] border-b border-[#EAEAE7] sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 lg:px-8 py-4">
           <div>
             <h1 className="font-semibold text-[22px] tracking-tight">Monitoring Presensi</h1>
             <p className="text-[13px] text-[#A3A39D] flex items-center gap-1.5 mt-0.5">
@@ -175,9 +175,9 @@ export default function DashboardPengurus() {
         </div>
       </header>
 
-      <div className="max-w-[1440px] mx-auto flex">
-        {/* Sidebar — lg+ only */}
-        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/80">
+      <div className="flex">
+        {/* Sidebar — lg+ only, full height, flush left */}
+        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/80">
           <nav className="flex flex-col gap-0.5">
             {sidebarNav.map(({ href, label, icon: Icon }) => {
               const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
@@ -199,7 +199,7 @@ export default function DashboardPengurus() {
           </nav>
         </aside>
 
-        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-10 pt-8 pb-12 flex flex-col gap-8">
+        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-10 pt-8 pb-12 flex flex-col gap-8 max-w-[1220px]">
         
         {/* HERO ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
