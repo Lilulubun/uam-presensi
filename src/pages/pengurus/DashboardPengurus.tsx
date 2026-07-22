@@ -150,25 +150,25 @@ export default function DashboardPengurus() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/pengaturan')}>
-              <QrCode className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
-              <span className="hidden sm:inline">Setup QR</span>
-            </Button>
-            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/laporan')}>
-              <BarChart2 className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
-              <span className="hidden sm:inline">Laporan</span>
-            </Button>
-            <Button variant="outline" className="h-10 rounded-[16px] border-[#EAEAE7] hover:bg-[#F7F7F5] text-[13px]" onClick={() => navigate('/pengurus/kelola-pengajar')}>
-              <Users className="w-4 h-4 mr-2 text-[#6B6B66]" strokeWidth={1.5} />
-              <span className="hidden sm:inline">Pengajar</span>
-            </Button>
-            
+            {/* Nav buttons: mobile only — sidebar handles desktop */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/pengaturan')}>
+                <QrCode className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              </Button>
+              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/laporan')}>
+                <BarChart2 className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              </Button>
+              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/kelola-pengajar')}>
+                <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              </Button>
+            </div>
+
             <div className="w-[1px] h-6 bg-[#EAEAE7] mx-1"></div>
-            
-            <button onClick={() => navigate('/profile')} className="w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+
+            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
               <User className="w-4 h-4" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
+            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors">
               <LogOut className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
