@@ -277,32 +277,32 @@ export default function DashboardPengurus() {
             />
           </div>
 
-          {/* Card B: Orange Mesh */}
-          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #F59E3A, #F6A15E 45%, #E8703F)' }}>
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+          {/* Card B: Powder Blue Mesh */}
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #BFDBFE, #BAE6FD 50%, #A5F3FC)' }}>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
 
             <div className="flex justify-between items-start z-10">
-              <p className="text-[13px] font-medium text-white/80">Sesi aktif</p>
+              <p className="text-[13px] font-medium text-[#1A1A18]/70">Sesi aktif</p>
               {activeSessions.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#1A1A18]/30 text-white">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#1A1A18]/10 text-[#1A1A18]">
                   Live
                 </span>
               )}
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-white" style={{fontFamily: "'Doto', monospace"}}>
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[13px] text-white/75">Dari {tpas.length} Lokasi TPA</span>
+                <span className="text-[13px] text-[#1A1A18]/60">Dari {tpas.length} Lokasi TPA</span>
               </div>
             </div>
 
             {/* Sparkline motif */}
             <div className="absolute bottom-6 right-6 opacity-30">
               <svg width="60" height="20" viewBox="0 0 60 20" fill="none">
-                <path d="M0 15 Q 10 5, 20 12 T 40 8 T 60 2" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" fill="none"/>
+                <path d="M0 15 Q 10 5, 20 12 T 40 8 T 60 2" stroke="#1A1A18" strokeWidth="1.5" strokeDasharray="4 2" fill="none"/>
               </svg>
             </div>
           </div>
