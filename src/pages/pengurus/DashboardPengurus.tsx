@@ -215,7 +215,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -247,7 +247,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-white">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-white" style={{fontFamily: "'Doto', monospace"}}>
                 {activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -275,7 +275,7 @@ export default function DashboardPengurus() {
             </div>
             
             <div className="mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {pendingIzins.length}
               </p>
               <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>

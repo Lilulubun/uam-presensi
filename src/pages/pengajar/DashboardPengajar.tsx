@@ -162,15 +162,15 @@ export default function DashboardPengajar() {
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#1A1A18]">{monthSummary.total}</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.total}</p>
                 <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Hadir</p>
               </div>
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-emerald-600">{monthSummary.percentage}%</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-emerald-600" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.percentage}%</p>
                 <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Tepat Waktu</p>
               </div>
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-amber-600">{monthSummary.late}</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-amber-600" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.late}</p>
                 <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Terlambat</p>
               </div>
             </div>
