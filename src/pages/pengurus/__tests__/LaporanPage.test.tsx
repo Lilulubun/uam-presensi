@@ -96,7 +96,7 @@ describe('LaporanPage', () => {
   it('shows empty state when no data', async () => {
     renderComponent();
     await waitFor(() => {
-      expect(screen.getByText(/Tidak ada sesi di periode ini/)).toBeInTheDocument();
+      expect(screen.getByText(/Tidak ada sesi di bulan ini/)).toBeInTheDocument();
     });
   });
 

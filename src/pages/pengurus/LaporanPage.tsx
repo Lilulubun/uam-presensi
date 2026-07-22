@@ -47,6 +47,7 @@ interface TeacherRow {
   cells: CellDisplay[];
   counts: TeacherCounts;
   totalHari: number;
+  statusAman: 'aman' | 'tidak aman';
 }
 
 interface TpaTable {
@@ -92,6 +93,11 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
   };
 }
 
+function isAman(hadirFisik: number, totalSesiTPA: number): 'aman' | 'tidak aman' {
+  const wajibHadir = Math.ceil(totalSesiTPA * 0.5 * 0.75);
+  return hadirFisik >= wajibHadir ? 'aman' : 'tidak aman';
+}
+
 function processData(rows: LaporanRow[]): TpaTable[] {
   const grouped = new Map<string, { name: string; rows: LaporanRow[] }>();
   const dateSet = new Map<string, Set<string>>();
@@ -110,6 +116,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
 
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
+    const totalSesiTPA = dates.length; // Important: total sessions for THIS TPA
 
     const teacherMap = new Map<string, { name: string; bestRow: Map<string, LaporanRow>; counts: TeacherCounts; totalHari: number }>();
 
@@ -150,6 +157,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
           t.counts.tidakMasuk++;
         }
       }
+      
+      const statusAman = isAman(t.counts.hadirFisik, totalSesiTPA);
 
       return {
         name: t.name,
@@ -160,6 +169,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         }),
         counts: t.counts,
         totalHari: t.totalHari,
+        statusAman,
       };
     });
 
@@ -248,7 +258,7 @@ export default function LaporanPage() {
   // Export functions
   function exportCSV() {
     if (!hasData) return;
-    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
+    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
     const csvRows = tables.flatMap((t) =>
       t.teachers.map((teacher) => [
         t.tpaName,
@@ -257,6 +267,7 @@ export default function LaporanPage() {
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        teacher.statusAman,
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -275,13 +286,14 @@ export default function LaporanPage() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
     for (const t of tables) {
-      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
+      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        teacher.statusAman,
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
           if (cell.type === 'merged') return [cell.mergedText ?? '', ''];
@@ -321,11 +333,12 @@ export default function LaporanPage() {
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
         pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        teacher.statusAman.toUpperCase(),
       ]);
 
       autoTable(doc, {
         startY: margin + 24,
-        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk']],
+        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status']],
         body,
         margin: { left: margin, right: margin },
         styles: {
@@ -482,7 +495,7 @@ export default function LaporanPage() {
         {/* Empty */}
         {!loading && !error && !hasData && (
           <div className="bg-card rounded-xl shadow-sm py-16 text-center text-sm text-muted-foreground">
-            Tidak ada sesi di periode ini. Coba ubah rentang tanggal atau filter TPA.
+            Tidak ada sesi di bulan ini.
           </div>
         )}
 
@@ -504,6 +517,9 @@ export default function LaporanPage() {
                     </th>
                     <th rowSpan={3} className="sticky left-[316px] z-10 bg-muted/50 text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[56px] border-b border-r uppercase tracking-wider">
                       Alpa
+                    </th>
+                    <th rowSpan={3} className="sticky left-[372px] z-10 bg-muted/50 text-center px-3 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap min-w-[80px] border-b border-r uppercase tracking-wider">
+                      Status
                     </th>
                     {t.dates.map((d) => (
                       <th key={d} colSpan={2} className="text-center px-2 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap border-b border-r uppercase tracking-wider">
@@ -553,6 +569,15 @@ export default function LaporanPage() {
                       </td>
                       <td className="sticky left-[316px] z-10 bg-card text-center px-2 py-2 text-xs font-medium text-red-600 border-b border-r">
                         {pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)}
+                      </td>
+                      <td className="sticky left-[372px] z-10 bg-card text-center px-3 py-2 text-xs font-medium border-b border-r">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${
+                          teacher.statusAman === 'aman' 
+                            ? 'bg-emerald-100 text-emerald-700' 
+                            : 'bg-rose-100 text-rose-700'
+                        }`}>
+                          {teacher.statusAman}
+                        </span>
                       </td>
                       {teacher.cells.map((cell, i) => {
                         if (cell.type === 'merged') {
