@@ -51,9 +51,13 @@ export default function DashboardPengurus() {
   const location = useLocation();
   const logout = useAuthStore((s) => s.logout);
   const sessions = useSessionStore((s) => s.sessions);
+  const sessionLoading = useSessionStore((s) => s.loading);
   const attendances = useAttendanceStore((s) => s.attendances);
+  const attendanceLoading = useAttendanceStore((s) => s.loading);
   const tpas = useTPAStore((s) => s.tpas);
+  const tpaLoading = useTPAStore((s) => s.loading);
   const users = useUsersStore((s) => s.users);
+  const userLoading = useUsersStore((s) => s.loading);
 
   useRealtimeSessions();
 
@@ -72,7 +76,7 @@ export default function DashboardPengurus() {
     return t && isSameDay(new Date(t), today);
   });
   const lateToday = todayAttendances.filter((a) => a.isLate);
-  const isLoading = tpas.length === 0 && users.length === 0 && sessions.length === 0;
+  const isLoading = tpaLoading || sessionLoading || attendanceLoading || userLoading;
 
   const getTPAStats = (tpaId: string) => {
     const activeSession = sessions.find((s) => s.tpaId === tpaId && s.isActive);
