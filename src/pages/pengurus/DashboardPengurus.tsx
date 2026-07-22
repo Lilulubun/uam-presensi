@@ -4,12 +4,8 @@ import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, F
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
+  LineChart,
+  Line,
   ResponsiveContainer,
 } from 'recharts';
 import { Button } from '../../app/components/ui/button';
@@ -160,22 +156,22 @@ export default function DashboardPengurus() {
         {/* HERO ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Card A: Green Mesh */}
-          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.04)] bg-gradient-to-br from-[#8FE388] via-[#C8F06B] to-[#F4F08A] min-h-[180px] flex flex-col justify-between">
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' }}>
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
             
             <div className="flex justify-between items-start z-10">
-              <p className="text-[13px] font-medium text-black/60 uppercase tracking-wider">Hadir Hari Ini</p>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/30 text-black/80 backdrop-blur-sm">
+              <p className="text-[13px] font-normal text-white/75">Hadir hari ini</p>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/20 text-white backdrop-blur-sm">
                 On Track
               </span>
             </div>
             
             <div className="z-10 mt-4">
-              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-black/90">
+              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-white">
                 {todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[13px] text-black/60">{lateToday.length} terlambat</span>
+                <span className="text-[13px] text-white/70">{lateToday.length} terlambat</span>
               </div>
             </div>
             
@@ -184,7 +180,7 @@ export default function DashboardPengurus() {
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-1">
                   {[...Array(3)].map((_, j) => (
-                    <div key={j} className="w-1 h-1 rounded-full bg-black"></div>
+                    <div key={j} className="w-1 h-1 rounded-full bg-white"></div>
                   ))}
                 </div>
               ))}
@@ -192,20 +188,20 @@ export default function DashboardPengurus() {
           </div>
 
           {/* Card B: Orange Mesh */}
-          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.04)] bg-gradient-to-br from-[#F6A15E] via-[#F2665A] to-[#F0899E] min-h-[180px] flex flex-col justify-between">
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #FFC671, #F6A15E 45%, #E8703F)' }}>
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
             
             <div className="flex justify-between items-start z-10">
-              <p className="text-[13px] font-medium text-white/80 uppercase tracking-wider">Sesi Aktif</p>
+              <p className="text-[13px] font-normal text-white/75">Sesi aktif</p>
               {activeSessions.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/20 text-white backdrop-blur-sm">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/20 text-white backdrop-blur-sm">
                   Live
                 </span>
               )}
             </div>
             
             <div className="z-10 mt-4">
-              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-white">
+              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-white">
                 {activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -226,14 +222,14 @@ export default function DashboardPengurus() {
             <div className="flex justify-between items-start">
               <p className="text-[13px] font-medium text-[#6B6B66] uppercase tracking-wider">Izin Pending</p>
               {pendingIzins.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#F0F0EC] text-[#5C5C57]">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F0F0EC] text-[#5C5C57]">
                   Menunggu
                 </span>
               )}
             </div>
             
             <div className="mt-4">
-              <p className="text-[56px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
                 {pendingIzins.length}
               </p>
               <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>
@@ -241,7 +237,7 @@ export default function DashboardPengurus() {
             
             <button 
               onClick={() => navigate('/pengurus/riwayat-izin')}
-              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-[#F7F7F5] flex items-center justify-center text-[#6B6B66] hover:bg-[#EAEAE7] hover:text-[#1A1A18] transition-colors"
+              className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:bg-[#F7F7F5] transition-colors"
             >
               <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
             </button>
@@ -260,35 +256,24 @@ export default function DashboardPengurus() {
             </span>
           </div>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={weeklyChartData} barSize={20} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F0EC" vertical={false} />
-              <XAxis
-                dataKey="day"
-                tick={{ fontSize: 11, fill: '#A3A39D' }}
-                axisLine={false}
-                tickLine={false}
+            <LineChart data={weeklyChartData}>
+              <Line 
+                type="monotone" 
+                dataKey="Tepat Waktu" 
+                stroke="#6FCB6A" 
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={{ r: 4, stroke: '#6FCB6A', strokeWidth: 1.5, fill: '#fff' }}
               />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fontSize: 11, fill: '#A3A39D' }}
-                axisLine={false}
-                tickLine={false}
-                width={20}
+              <Line 
+                type="monotone" 
+                dataKey="Terlambat" 
+                stroke="#F2B84B" 
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={{ r: 4, stroke: '#F2B84B', strokeWidth: 1.5, fill: '#fff' }}
               />
-              <Tooltip
-                contentStyle={{
-                  fontSize: 11,
-                  borderRadius: 16,
-                  border: '1px solid #EAEAE7',
-                  background: 'rgba(255,255,255,0.9)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
-                }}
-                cursor={{ fill: '#F7F7F5', radius: 8 }}
-              />
-              <Bar dataKey="Tepat Waktu" stackId="a" fill="#6FCB6A" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="Terlambat" stackId="a" fill="#F2B84B" radius={[4, 4, 0, 0]} />
-            </BarChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
 
@@ -415,122 +400,109 @@ export default function DashboardPengurus() {
         </div>
 
         {/* REKAP PENGAJAR SECTION */}
-        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
-              <h2 className="text-[15px] font-medium tracking-tight">Rekap Pengajar (90 hari)</h2>
+        <div>
+          <h2 className="text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider mb-4 px-1">
+            Rekap Pengajar (90 hari)
+          </h2>
+          {teacherStats.length === 0 ? (
+            <div className="bg-white rounded-[32px] p-10 text-center border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <Users className="w-12 h-12 mx-auto text-[#EAEAE7] mb-3" strokeWidth={1.5} />
+              <p className="text-[14px] text-[#6B6B66]">Belum ada data presensi 90 hari terakhir</p>
             </div>
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#F0F0EC] text-[#5C5C57]">
-              {teacherStats.length} pengajar
-            </span>
-          </div>
-          <div className="p-4 sm:p-6">
-            {teacherStats.length === 0 ? (
-              <div className="text-center py-10">
-                <Users className="w-12 h-12 mx-auto text-[#EAEAE7] mb-3" strokeWidth={1.5} />
-                <p className="text-[14px] text-[#6B6B66]">Belum ada data presensi 90 hari terakhir</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {teacherStats.map(({ teacher, total, onTime, late, rate, status }) => (
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {teacherStats.map(({ teacher, total, onTime, late, rate, status }, idx) => {
+                // Muted gradient palette for glossy orbs based on index
+                const orbGradients = [
+                  'radial-gradient(circle at 30% 30%, #C8F06B, #8FE388CC 60%, #00000022)', // Green-lime
+                  'radial-gradient(circle at 30% 30%, #FFC671, #F6A15ECC 60%, #00000022)', // Orange
+                  'radial-gradient(circle at 30% 30%, #7EC8E3, #5A9BE2CC 60%, #00000022)', // Blue
+                ];
+                const orbBg = orbGradients[idx % orbGradients.length];
+
+                return (
                   <button
                     key={teacher.id}
                     onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}
-                    className="w-full bg-[#F7F7F5] rounded-[20px] p-4 hover:bg-[#F0F0EC] transition-colors text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                    className="w-full bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8FE388] to-[#C8F06B] flex items-center justify-center text-white text-xs font-semibold shrink-0">
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
+                        style={{ background: orbBg }}
+                      >
                         {teacher.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-medium text-[14px] text-[#1A1A18]">{teacher.name}</p>
-                        <p className="text-[11px] text-[#A3A39D]">{teacher.nim}</p>
+                        <p className="font-semibold text-[14px] text-[#1A1A18]">{teacher.name}</p>
+                        <p className="text-[11px] text-[#A3A39D] mt-0.5">{teacher.nim}</p>
                       </div>
                     </div>
                     
-                    <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto">
-                      <div className="flex items-center gap-2 text-[12px]">
+                    <div className="flex flex-wrap items-center justify-end gap-3.5 w-full sm:w-auto">
+                      <div className="flex items-center gap-1.5 text-[12px]">
                         <span className="text-[#A3A39D]">Total:</span>
                         <span className="font-semibold text-[#1A1A18] tabular-nums">{total}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-[12px]">
-                        <span className="text-[#6FCB6A] font-medium">{onTime}</span>
+                      <div className="flex items-center gap-1.5 text-[12px]">
+                        <span className="text-[#6FCB6A] font-semibold">{onTime}</span>
                         <span className="text-[#A3A39D]">Tepat</span>
                       </div>
                       {late > 0 && (
-                        <div className="flex items-center gap-2 text-[12px]">
-                          <span className="text-[#F2B84B] font-medium">{late}</span>
+                        <div className="flex items-center gap-1.5 text-[12px]">
+                          <span className="text-[#F2B84B] font-semibold">{late}</span>
                           <span className="text-[#A3A39D]">Terlambat</span>
                         </div>
                       )}
                       
                       {/* Status Pill */}
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-inset ${
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
                         status.isInactive
-                          ? 'bg-rose-50 text-rose-700 ring-rose-600/10'
-                          : 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
+                          ? 'bg-[#F0F0EC] text-[#5C5C57]'
+                          : 'bg-[#EFFFC2] text-[#1A1A18]'
                       }`}>
                         {status.isInactive 
-                          ? (status.daysSince !== null ? `${status.daysSince} hr tidak hadir` : 'Baru tidak hadir')
+                          ? (status.daysSince !== null ? `${status.daysSince} hari tidak hadir` : 'Baru tidak hadir')
                           : 'Aktif'
                         }
                       </span>
                       
-                      {/* Compliance Ring */}
-                      <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-                        <svg width="40" height="40" viewBox="0 0 40 40">
-                          <circle
-                            cx="20" cy="20" r="16"
-                            stroke="#F0F0EC" strokeWidth="4" fill="none"
-                          />
-                          <circle
-                            cx="20" cy="20" r="16"
-                            stroke={rate >= 90 ? '#6FCB6A' : rate >= 75 ? '#F2B84B' : '#E8615A'}
-                            strokeWidth="4"
-                            fill="none"
-                            strokeDasharray={`${(rate / 100) * 100.5} 100.5`}
-                            strokeLinecap="round"
-                            transform="rotate(-90 20 20)"
-                            style={{ transition: 'stroke-dasharray 0.6s ease' }}
-                          />
-                        </svg>
-                        <span className={`absolute text-[10px] font-semibold tabular-nums ${rate >= 90 ? 'text-[#6FCB6A]' : rate >= 75 ? 'text-[#F2B84B]' : 'text-[#E8615A]'}`}>
-                          {rate}%
-                        </span>
+                      {/* Plain text rate percentage */}
+                      <div className="text-right shrink-0 min-w-[45px]">
+                        <span className="text-[14px] font-light text-[#1A1A18]">{rate}%</span>
                       </div>
                     </div>
                   </button>
-                ))}
-              </div>
-            )}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* QUICK ACTIONS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/pengurus/laporan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
-            <div className="w-11 h-11 rounded-[16px] bg-gradient-to-br from-[#8FE388] to-[#C8F06B] flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-white" strokeWidth={1.5} />
+            <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
+              <TrendingUp className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Laporan</p>
-              <p className="text-[12px] text-[#A3A39D]">CSV / Excel / PDF</p>
+              <p className="text-[12px] text-[#A3A39D] mt-0.5">CSV / Excel / PDF</p>
             </div>
           </button>
           <button
             onClick={() => navigate('/pengurus/pengaturan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
-            <div className="w-11 h-11 rounded-[16px] bg-gradient-to-br from-[#F6A15E] to-[#F2665A] flex items-center justify-center">
-              <QrCode className="w-5 h-5 text-white" strokeWidth={1.5} />
+            <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
+              <QrCode className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Setup QR</p>
-              <p className="text-[12px] text-[#A3A39D]">Cetak QR statis TPA</p>
+              <p className="text-[12px] text-[#A3A39D] mt-0.5">Cetak QR statis TPA</p>
             </div>
           </button>
         </div>

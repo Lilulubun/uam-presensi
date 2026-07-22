@@ -122,8 +122,8 @@ describe('DashboardPengurus', () => {
 
   it('shows summary stats cards', () => {
     renderComponent()
-    expect(screen.getByText('Sesi Aktif')).toBeInTheDocument()
-    expect(screen.getByText('Hadir Hari Ini')).toBeInTheDocument()
+    expect(screen.getByText(/Sesi aktif/i)).toBeInTheDocument()
+    expect(screen.getByText(/Hadir hari ini/i)).toBeInTheDocument()
     expect(screen.getByText(/terlambat/i)).toBeInTheDocument()
     expect(screen.getAllByText('Izin Pending').length).toBeGreaterThanOrEqual(1)
   })
