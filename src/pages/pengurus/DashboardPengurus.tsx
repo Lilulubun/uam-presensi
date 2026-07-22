@@ -4,9 +4,14 @@ import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, F
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '../../app/components/ui/line-chart';
+import {
   LineChart,
   Line,
-  ResponsiveContainer,
 } from 'recharts';
 import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
@@ -17,6 +22,17 @@ import { useUsersStore } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay, formatDayName, formatDateIdShort, formatDateId, toJakartaMonth } from '../../lib/date-utils';
 import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
+
+const chartConfig = {
+  tepatWaktu: {
+    label: "Tepat Waktu",
+    color: "#6FCB6A",
+  },
+  terlambat: {
+    label: "Terlambat",
+    color: "#F2B84B",
+  },
+} satisfies ChartConfig;
 
 export default function DashboardPengurus() {
   const navigate = useNavigate();
@@ -69,8 +85,8 @@ export default function DashboardPengurus() {
 
       days.push({
         day: formatDayName(d),
-        'Tepat Waktu': dayAttendances.filter((a) => !a.isLate).length,
-        Terlambat: dayAttendances.filter((a) => a.isLate).length,
+        tepatWaktu: dayAttendances.filter((a) => !a.isLate).length,
+        terlambat: dayAttendances.filter((a) => a.isLate).length,
       });
     }
     return days;
@@ -255,26 +271,30 @@ export default function DashboardPengurus() {
               Bulan ini: {totalThisMonth} sesi
             </span>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
+          <ChartContainer config={chartConfig} className="h-[220px] w-full aspect-auto">
             <LineChart data={weeklyChartData}>
-              <Line 
-                type="monotone" 
-                dataKey="Tepat Waktu" 
-                stroke="#6FCB6A" 
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                dot={{ r: 4, stroke: '#6FCB6A', strokeWidth: 1.5, fill: '#fff' }}
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
               />
               <Line 
                 type="monotone" 
-                dataKey="Terlambat" 
-                stroke="#F2B84B" 
+                dataKey="tepatWaktu" 
+                stroke="var(--color-tepatWaktu)" 
                 strokeWidth={2}
                 strokeDasharray="4 4"
-                dot={{ r: 4, stroke: '#F2B84B', strokeWidth: 1.5, fill: '#fff' }}
+                dot={{ r: 4, stroke: 'var(--color-tepatWaktu)', strokeWidth: 1.5, fill: '#fff' }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="terlambat" 
+                stroke="var(--color-terlambat)" 
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={{ r: 4, stroke: 'var(--color-terlambat)', strokeWidth: 1.5, fill: '#fff' }}
               />
             </LineChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </div>
 
         {/* STATUS TPA SECTION */}
