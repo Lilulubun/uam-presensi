@@ -200,6 +200,10 @@ export default function DashboardPengurus() {
           <nav className="flex flex-col gap-0.5">
             {sidebarNav.map(({ href, label, icon: Icon }) => {
               const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
+              const badge =
+                href === '/pengurus' ? todayAttendances.length :
+                href === '/pengurus/kelola-pengajar' ? pendingIzins.length :
+                null;
               return (
                 <button
                   key={href}
@@ -211,7 +215,12 @@ export default function DashboardPengurus() {
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                  {label}
+                  <span className="flex-1">{label}</span>
+                  {badge !== null && badge > 0 && (
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-[#D7FF3D] text-[#1A1A18] leading-none">
+                      {badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
