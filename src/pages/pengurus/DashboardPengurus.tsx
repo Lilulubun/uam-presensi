@@ -206,55 +206,55 @@ export default function DashboardPengurus() {
           {/* Card A: Green Mesh */}
           <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' }}>
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
-            
+
             <div className="flex justify-between items-start z-10">
-              <p className="text-[13px] font-normal text-white/75">Hadir hari ini</p>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/20 text-white backdrop-blur-sm">
+              <p className="text-[13px] font-medium text-[#1A1A18]/60">Hadir hari ini</p>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/60 text-[#1A1A18]">
                 On Track
               </span>
             </div>
-            
+
             <div className="z-10 mt-4">
-              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-white">
+              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
                 {todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[13px] text-white/70">{lateToday.length} terlambat</span>
+                <span className="text-[13px] text-[#1A1A18]/55">{lateToday.length} terlambat</span>
               </div>
             </div>
-            
-            {/* Dot matrix motif — CSS repeating-radial-gradient, denser than hand-coded 3x3 */}
-            <div 
-              className="absolute bottom-0 right-0 w-28 h-28 opacity-[0.18] pointer-events-none"
+
+            {/* Dot matrix motif */}
+            <div
+              className="absolute bottom-0 right-0 w-28 h-28 opacity-[0.12] pointer-events-none"
               style={{
-                backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(circle, #1A1A18 1px, transparent 1px)',
                 backgroundSize: '10px 10px'
               }}
             />
           </div>
 
           {/* Card B: Orange Mesh */}
-          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #FFC671, #F6A15E 45%, #E8703F)' }}>
+          <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #F59E3A, #F6A15E 45%, #E8703F)' }}>
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
-            
+
             <div className="flex justify-between items-start z-10">
-              <p className="text-[13px] font-normal text-white/75">Sesi aktif</p>
+              <p className="text-[13px] font-medium text-white/80">Sesi aktif</p>
               {activeSessions.length > 0 && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/20 text-white backdrop-blur-sm">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/25 text-white">
                   Live
                 </span>
               )}
             </div>
-            
+
             <div className="z-10 mt-4">
               <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-white">
                 {activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[13px] text-white/70">Dari {tpas.length} Lokasi TPA</span>
+                <span className="text-[13px] text-white/75">Dari {tpas.length} Lokasi TPA</span>
               </div>
             </div>
-            
+
             {/* Sparkline motif */}
             <div className="absolute bottom-6 right-6 opacity-30">
               <svg width="60" height="20" viewBox="0 0 60 20" fill="none">
