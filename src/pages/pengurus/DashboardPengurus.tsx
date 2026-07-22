@@ -266,7 +266,7 @@ export default function DashboardPengurus() {
           {/* Card C: White Glass */}
           <div className="relative overflow-hidden rounded-[32px] p-6 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]">
             <div className="flex justify-between items-start">
-              <p className="text-[13px] font-medium text-[#6B6B66] uppercase tracking-wider">Izin Pending</p>
+              <p className="text-[13px] font-medium text-[#6B6B66]">Izin pending</p>
               {pendingIzins.length > 0 && (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F0F0EC] text-[#5C5C57]">
                   Menunggu
@@ -329,8 +329,8 @@ export default function DashboardPengurus() {
 
         {/* STATUS TPA SECTION */}
         <div>
-          <h2 className="text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider mb-4 px-1">
-            Cabang TPA — {tpas.length} Lokasi
+          <h2 className="text-[13px] font-semibold text-[#6B6B66] mb-4 px-1">
+            Cabang TPA — {tpas.length} lokasi
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tpas.map((tpa) => {
@@ -443,21 +443,23 @@ export default function DashboardPengurus() {
             </ul>
           ) : (
             <div className="px-6 py-10 text-center">
-              <FileText className="w-10 h-10 mx-auto text-[#EAEAE7] mb-2" strokeWidth={1.5} />
-              <p className="text-[13px] text-[#A3A39D]">Tidak ada izin pending</p>
+              <FileText className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#6B6B66]">Tidak ada izin pending</p>
+              <p className="text-[12px] text-[#A3A39D] mt-1">Semua izin sudah diproses</p>
             </div>
           )}
         </div>
 
         {/* REKAP PENGAJAR SECTION */}
         <div>
-          <h2 className="text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider mb-4 px-1">
-            Rekap Pengajar (90 hari)
+          <h2 className="text-[13px] font-semibold text-[#6B6B66] mb-4 px-1">
+            Rekap pengajar (90 hari)
           </h2>
           {teacherStats.length === 0 ? (
             <div className="bg-white rounded-[32px] p-10 text-center border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-              <Users className="w-12 h-12 mx-auto text-[#EAEAE7] mb-3" strokeWidth={1.5} />
-              <p className="text-[14px] text-[#6B6B66]">Belum ada data presensi 90 hari terakhir</p>
+              <Users className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#6B6B66]">Belum ada data presensi</p>
+              <p className="text-[12px] text-[#A3A39D] mt-1">Data akan muncul setelah 90 hari pertama</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
