@@ -23,6 +23,7 @@ import { useUsersStore } from '../../store/userStore';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
 import { formatTime, isSameDay, formatDayName, formatDateIdShort, formatDateId, toJakartaMonth } from '../../lib/date-utils';
 import { computeInactiveAlert } from '../../lib/computeInactiveAlert';
+import { AvatarOrb } from '../../lib/avatar-orb';
 
 const chartConfig = {
   tepatWaktu: {
@@ -608,14 +609,6 @@ export default function DashboardPengurus() {
           ) : (
             <div className="flex flex-col gap-2.5">
               {teacherStats.map(({ teacher, total, onTime, late, rate, status }, idx) => {
-                // Muted gradient palette for glossy orbs based on index
-                const orbGradients = [
-                  'radial-gradient(circle at 30% 30%, #C8F06B, #8FE388CC 60%, #00000022)', // Green-lime
-                  'radial-gradient(circle at 30% 30%, #FFC671, #F6A15ECC 60%, #00000022)', // Orange
-                  'radial-gradient(circle at 30% 30%, #7EC8E3, #5A9BE2CC 60%, #00000022)', // Blue
-                ];
-                const orbBg = orbGradients[idx % orbGradients.length];
-
                 return (
                   <button
                     key={teacher.id}
@@ -623,12 +616,7 @@ export default function DashboardPengurus() {
                     className="w-full motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-[box-shadow,border-color] duration-200 active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                   >
                     <div className="flex items-center gap-3.5">
-                      <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
-                        style={{ background: orbBg }}
-                      >
-                        {teacher.name.charAt(0)}
-                      </div>
+                      <AvatarOrb name={teacher.name} size="md" />
                       <div>
                         <p className="font-semibold text-[14px] text-[#1A1A18]">{teacher.name}</p>
                         <p className="text-[11px] text-[#A3A39D] mt-0.5">{teacher.nim}</p>

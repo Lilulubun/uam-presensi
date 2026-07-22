@@ -9,6 +9,7 @@ import { supabase } from '../../../lib/supabase';
 import { TambahPengajarModal } from './components/TambahPengajarModal';
 import { BulkTambahPengajarModal } from './components/BulkTambahPengajarModal';
 import { AssignTPAModal } from './components/AssignTPAModal';
+import { AvatarOrb } from '../../../lib/avatar-orb';
 
 export default function KelolaPengajarPage() {
   const navigate = useNavigate();
@@ -166,9 +167,7 @@ export default function KelolaPengajarPage() {
                   <tr key={user.id} className="hover:bg-[#F7F7F5] transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#D7FF3D] flex items-center justify-center text-[#1A1A18] text-[13px] font-bold shrink-0">
-                          {user.name.charAt(0)}
-                        </div>
+                        <AvatarOrb name={user.name} size="sm" />
                         <p className="font-semibold text-[#1A1A18] text-[13px]">{user.name}</p>
                       </div>
                     </td>

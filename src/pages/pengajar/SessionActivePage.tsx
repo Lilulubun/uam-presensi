@@ -23,6 +23,7 @@ import { useAttendanceStore } from '../../store/attendanceStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
+import { AvatarOrb } from '../../lib/avatar-orb';
 import { formatTime, formatDateTime } from '../../lib/date-utils';
 import type { Coordinates } from '../../types';
 import { useRealtimeSessions } from '../../app/hooks/useRealtimeSessions';
@@ -196,9 +197,7 @@ export default function SessionActivePage() {
                   (pengajarByTPA[session.tpaId] ?? []).find((u) => u.id === attendance.userId);
                 return (
                   <li key={attendance.id} className="px-6 py-5 flex items-center gap-3 hover:bg-[#F7F7F5] transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-[#D7FF3D]/10 flex items-center justify-center text-[#1A1A18] text-sm font-semibold">
-                      {teacher?.name?.charAt(0) ?? '?'}
-                    </div>
+                    <AvatarOrb name={teacher?.name ?? '?'} size="md" />
                     <div className="flex-1 min-w-0">
                       <p className="text-[14px] font-semibold text-[#1A1A18] truncate">
                         {teacher?.name ?? '(pengajar tidak ditemukan)'}
@@ -240,9 +239,7 @@ export default function SessionActivePage() {
             <ul className="divide-y divide-rose-200">
               {absentUsers.map((u) => (
                 <li key={u.id} className="px-6 py-5 flex items-center gap-3 hover:bg-rose-100 transition-colors">
-                  <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 text-sm font-semibold">
-                    {u.name?.charAt(0) ?? '?'}
-                  </div>
+                  <AvatarOrb name={u.name ?? '?'} size="md" />
                   <div className="flex-1 min-w-0">
                     <p className="text-[14px] font-semibold text-rose-700 truncate">{u.name}</p>
                     {u.nim && (
@@ -274,9 +271,7 @@ export default function SessionActivePage() {
                 <ul className="divide-y divide-stone-200 border-t border-stone-200">
                   {nonExpectedAttendees.map((u) => (
                     <li key={u.id} className="px-6 py-5 flex items-center gap-3 hover:bg-stone-100 transition-colors">
-                      <div className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 text-sm font-semibold">
-                        {u.name?.charAt(0) ?? '?'}
-                      </div>
+                      <AvatarOrb name={u.name ?? '?'} size="md" />
                       <div className="flex-1 min-w-0">
                         <p className="text-[14px] font-semibold text-stone-700 truncate">{u.name}</p>
                       </div>

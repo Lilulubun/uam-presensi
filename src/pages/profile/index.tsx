@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '../../app/components/ui/button';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
+import { AvatarOrb } from '../../lib/avatar-orb';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -78,9 +79,7 @@ export default function ProfilePage() {
       <main className="max-w-md mx-auto p-4 sm:p-6 flex flex-col gap-6">
         <div className="bg-white rounded-[24px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
           <div className="flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-full bg-[#D7FF3D]/10 flex items-center justify-center text-[#1A1A18] text-2xl font-semibold">
-              {user?.name.charAt(0)}
-            </div>
+            <AvatarOrb name={user?.name ?? 'User'} size="lg" />
             <div>
               <p className="font-semibold text-[18px] text-[#1A1A18]">{user?.name}</p>
               <p className="text-[14px] text-[#A3A39D] font-medium">{user?.email}</p>

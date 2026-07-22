@@ -10,6 +10,7 @@ import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
 import { formatDateTime, formatTime, formatDate, isSameDay, toJakartaDate } from '../../lib/date-utils';
 import { logEvent } from '../../lib/log-event';
+import { AvatarOrb } from '../../lib/avatar-orb';
 import { Button } from '../../app/components/ui/button';
 import {
   AlertDialog,
@@ -272,9 +273,7 @@ function SessionAttendees({
 
         return (
           <li key={a.id} className="px-5 py-3.5 flex items-center gap-3 hover:bg-[#F0F0EC] transition-colors">
-            <div className="w-8 h-8 rounded-full bg-[#D7FF3D] flex items-center justify-center text-[#1A1A18] text-[13px] font-bold shrink-0">
-              {teacher?.name?.charAt(0) ?? '?'}
-            </div>
+            <AvatarOrb name={teacher?.name ?? '?'} size="sm" />
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
                 <button
@@ -306,9 +305,7 @@ function SessionAttendees({
       })}
       {excusedUsers.map((u) => (
         <li key={u.id} className="px-5 py-3.5 flex items-center gap-3 bg-[#F7F7F5]/60 hover:bg-[#F0F0EC] transition-colors">
-          <div className="w-8 h-8 rounded-full bg-[#8B8BF0]/20 flex items-center justify-center text-[#8B8BF0] text-[13px] font-bold shrink-0">
-            {u.name?.charAt(0) ?? '?'}
-          </div>
+          <AvatarOrb name={u.name ?? '?'} size="sm" />
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
               <button
@@ -325,9 +322,7 @@ function SessionAttendees({
       ))}
       {trulyAbsentUsers.map((u) => (
         <li key={u.id} className="px-5 py-3.5 flex items-center gap-3 bg-[#F7F7F5]/60 hover:bg-[#F0F0EC] transition-colors">
-          <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-[13px] font-bold shrink-0">
-            {u.name?.charAt(0) ?? '?'}
-          </div>
+          <AvatarOrb name={u.name ?? '?'} size="sm" />
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold text-[#1A1A18] truncate">
               <button
