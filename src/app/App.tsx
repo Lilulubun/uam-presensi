@@ -31,17 +31,33 @@ export default function App() {
 
   useEffect(() => {
     const safe = <T,>(p: Promise<T>) => p.catch((e) => console.error('store init:', e));
-    Promise.all([
-      safe(useAuthStore.getState().init()),
-      safe(useTPAStore.getState().init()),
-      safe(useSessionStore.getState().init()),
-      safe(useAttendanceStore.getState().init()),
-      safe(useUsersStore.getState().init()),
-    ]).then(() => setStoresReady(true));
+    // Auth harus selesai dulu sebelum store lain di-fetch
+    // karena semua tabel pakai RLS auth.role() = 'authenticated'
+    safe(useAuthStore.getState().init()).then(() =>
+      Promise.all([
+        safe(useTPAStore.getState().init()),
+        safe(useSessionStore.getState().init()),
+        safe(useAttendanceStore.getState().init()),
+        safe(useUsersStore.getState().init()),
+      ])
+    ).then(() => setStoresReady(true));
   }, []);
   const { isAuthenticated, user } = useAuthStore(
     useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
   );
+
+  // Re-fetch semua store data setiap kali isAuthenticated berubah jadi true
+  // (login baru, session restore, atau tab refocus setelah logout-login)
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const safe = <T,>(p: Promise<T>) => p.catch((e) => console.error('store refresh:', e));
+    Promise.all([
+      safe(useTPAStore.getState().init()),
+      safe(useSessionStore.getState().init()),
+      safe(useAttendanceStore.getState().init()),
+      safe(useUsersStore.getState().init()),
+    ]);
+  }, [isAuthenticated]);
 
   return (
     <BrowserRouter>
