@@ -215,7 +215,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
                 {todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -247,7 +247,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-white">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-white">
                 {activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -275,7 +275,7 @@ export default function DashboardPengurus() {
             </div>
             
             <div className="mt-4">
-              <p className="text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
+              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]">
                 {pendingIzins.length}
               </p>
               <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>
@@ -292,12 +292,12 @@ export default function DashboardPengurus() {
 
         {/* CHART SECTION */}
         <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-6 border border-[#EAEAE7]">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+          <div className="flex items-start justify-between mb-6 gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <TrendingUp className="w-4 h-4 text-[#6B6B66] shrink-0" strokeWidth={1.5} />
               <h2 className="text-[14px] font-semibold tracking-tight">Tren kehadiran (7 hari terakhir)</h2>
             </div>
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30 shrink-0 whitespace-nowrap">
               Bulan ini: {totalThisMonth} sesi
             </span>
           </div>
@@ -418,7 +418,7 @@ export default function DashboardPengurus() {
                         </p>
                         <p className="text-[12px] text-[#6B6B66] mt-1 line-clamp-2">{izin.alasan}</p>
                       </div>
-                      <div className="flex gap-2 shrink-0">
+                      <div className="flex flex-wrap gap-2 shrink-0">
                         <Button
                           size="sm"
                           className="h-9 rounded-[12px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#C5E835] text-[12px] font-medium"
