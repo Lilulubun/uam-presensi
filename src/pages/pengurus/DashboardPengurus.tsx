@@ -177,8 +177,8 @@ export default function DashboardPengurus() {
 
       <div className="max-w-[1440px] mx-auto flex">
         {/* Sidebar — lg+ only */}
-        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-8 px-3 pb-12 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/50">
-          <nav className="flex flex-col gap-1">
+        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/80">
+          <nav className="flex flex-col gap-0.5">
             {sidebarNav.map(({ href, label, icon: Icon }) => {
               const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
               return (
@@ -187,8 +187,8 @@ export default function DashboardPengurus() {
                   onClick={() => navigate(href)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-[13px] font-medium transition-colors text-left w-full ${
                     active
-                      ? 'bg-[#F4F4F2] text-[#1A1A18]'
-                      : 'text-[#6B6B66] hover:bg-[#F7F7F5] hover:text-[#1A1A18]'
+                      ? 'bg-[#EAEAE7] text-[#1A1A18]'
+                      : 'text-[#6B6B66] hover:bg-[#F4F4F2] hover:text-[#1A1A18]'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
