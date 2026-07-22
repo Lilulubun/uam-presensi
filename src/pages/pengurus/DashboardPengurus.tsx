@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
@@ -14,6 +14,7 @@ import {
   Line,
 } from 'recharts';
 import { Button } from '../../app/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../app/components/ui/alert-dialog';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
@@ -41,6 +42,10 @@ const sidebarNav = [
   { href: '/pengurus/pengaturan', label: 'Setup QR', icon: QrCode },
 ];
 
+function SkeletonPulse({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded-[8px] bg-[#1A1A18]/10 ${className}`} />;
+}
+
 export default function DashboardPengurus() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,6 +58,7 @@ export default function DashboardPengurus() {
   useRealtimeSessions();
 
   const { pendingIzins, approveIzin, rejectIzin, fetchPendingIzins } = useIzinStore();
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPendingIzins();
@@ -66,6 +72,7 @@ export default function DashboardPengurus() {
     return t && isSameDay(new Date(t), today);
   });
   const lateToday = todayAttendances.filter((a) => a.isLate);
+  const isLoading = tpas.length === 0 && users.length === 0 && sessions.length === 0;
 
   const getTPAStats = (tpaId: string) => {
     const activeSession = sessions.find((s) => s.tpaId === tpaId && s.isActive);
@@ -171,6 +178,11 @@ export default function DashboardPengurus() {
           <div className="flex items-center gap-3">
             {/* Nav buttons: mobile only — sidebar handles desktop */}
             <div className="flex items-center gap-2 lg:hidden">
+              {location.pathname !== '/pengurus' && (
+                <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus')}>
+                  <Home className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                </Button>
+              )}
               <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/pengaturan')}>
                 <QrCode className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
               </Button>
@@ -244,10 +256,10 @@ export default function DashboardPengurus() {
 
             <div className="z-10 mt-4">
               <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
-                {todayAttendances.length}
+                {isLoading ? <SkeletonPulse className="w-16 h-10 mt-1" /> : todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[13px] text-[#1A1A18]/55">{lateToday.length} terlambat</span>
+                {isLoading ? <SkeletonPulse className="w-20 h-3.5" /> : <span className="text-[13px] text-[#1A1A18]/55">{lateToday.length} terlambat</span>}
               </div>
             </div>
 
@@ -276,7 +288,7 @@ export default function DashboardPengurus() {
 
             <div className="z-10 mt-4">
               <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-white" style={{fontFamily: "'Doto', monospace"}}>
-                {activeSessions.length}
+                {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[13px] text-white/75">Dari {tpas.length} Lokasi TPA</span>
@@ -304,7 +316,7 @@ export default function DashboardPengurus() {
             
             <div className="mt-4">
               <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
-                {pendingIzins.length}
+                {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : pendingIzins.length}
               </p>
               <p className="text-[13px] text-[#A3A39D] mt-1">Permintaan izin masuk</p>
             </div>
@@ -316,6 +328,127 @@ export default function DashboardPengurus() {
               <TrendingUp className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
+        </div>
+
+        {/* IZIN PENDING SECTION */}
+        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#D7FF3D]" strokeWidth={1.5} />
+              <h2 className="text-[15px] font-medium tracking-tight">Izin Pending</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              {pendingIzins.length > 0 && (
+                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+                  {pendingIzins.length} menunggu
+                </span>
+              )}
+              <button
+                onClick={() => navigate('/pengurus/riwayat-izin')}
+                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1 active:scale-[0.97] transition-transform duration-100 ease-out"
+              >
+                <History className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Riwayat
+              </button>
+            </div>
+          </div>
+          {pendingIzins.length > 0 ? (
+            <ul className="divide-y divide-[#EAEAE7]">
+              {pendingIzins.map((izin) => (
+                  <li key={izin.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[14px] font-medium text-[#1A1A18]">{izin.userName}</p>
+                        <p className="text-[12px] text-[#A3A39D] mt-0.5">
+                          {formatDateIdShort(izin.startDate)} – {formatDateId(izin.endDate)}
+                        </p>
+                        <p className="text-[12px] text-[#6B6B66] mt-1 line-clamp-2">{izin.alasan}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 shrink-0">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              className="h-9 rounded-[12px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#C5E835] text-[12px] font-medium"
+                              disabled={processingId !== null}
+                            >
+                              <CheckCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
+                              Setujui
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Setujui izin?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Izin dari {izin.userName} akan disetujui. Tindakan ini tidak dapat dibatalkan.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel disabled={processingId !== null}>Batal</AlertDialogCancel>
+                              <AlertDialogAction
+                                disabled={processingId !== null}
+                                onClick={async () => {
+                                  setProcessingId(izin.id);
+                                  const r = await approveIzin(izin.id);
+                                  setProcessingId(null);
+                                  if (r.valid) toast.success(r.message);
+                                  else toast.error(r.message);
+                                }}
+                              >
+                                Setujui
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-9 rounded-[12px] border-[#EAEAE7] text-[#6B6B66] hover:border-[#D7FF3D] hover:text-[#1A1A18] text-[12px] font-medium"
+                              disabled={processingId !== null}
+                            >
+                              <XCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
+                              Tolak
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Tolak izin ini?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Izin dari {izin.userName} akan ditolak. Tindakan ini tidak dapat dibatalkan.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel disabled={processingId !== null}>Batal</AlertDialogCancel>
+                              <AlertDialogAction
+                                disabled={processingId !== null}
+                                className="bg-rose-500 hover:bg-rose-600 text-white"
+                                onClick={async () => {
+                                  setProcessingId(izin.id);
+                                  const r = await rejectIzin(izin.id);
+                                  setProcessingId(null);
+                                  if (r.valid) toast.success(r.message);
+                                  else toast.error(r.message);
+                                }}
+                              >
+                                Tolak
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="px-6 py-10 text-center">
+              <FileText className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#6B6B66]">Tidak ada izin pending</p>
+              <p className="text-[12px] text-[#A3A39D] mt-1">Semua izin sudah diproses</p>
+            </div>
+          )}
         </div>
 
         {/* METRICS ROW */}
@@ -418,18 +551,21 @@ export default function DashboardPengurus() {
                   style={{ animationDelay: `${idx * 40}ms`, animation: 'fadeUp 280ms cubic-bezier(0.23,1,0.32,1) forwards' }}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="font-medium text-[15px] tracking-tight group-hover:text-primary transition-colors pr-16 leading-tight">
+                    <p className="font-medium text-[15px] tracking-tight group-hover:text-primary transition-colors leading-tight">
                       {tpa.name}
                     </p>
-                    <span
-                      className={`shrink-0 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ring-1 ring-inset ${
-                        activeSession
-                          ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
-                          : 'bg-[#F0F0EC] text-[#5C5C57] ring-transparent'
-                      }`}
-                    >
-                      {activeSession ? 'Aktif' : 'Tutup'}
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span
+                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ring-1 ring-inset ${
+                          activeSession
+                            ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
+                            : 'bg-[#F0F0EC] text-[#5C5C57] ring-transparent'
+                        }`}
+                      >
+                        {activeSession ? 'Aktif' : 'Tutup'}
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-[#A3A39D] group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" strokeWidth={1.5} />
+                    </div>
                   </div>
 
                   {activeSession ? (
@@ -450,80 +586,6 @@ export default function DashboardPengurus() {
               );
             })}
           </div>
-        </div>
-
-        {/* IZIN PENDING SECTION */}
-        <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#D7FF3D]" strokeWidth={1.5} />
-              <h2 className="text-[15px] font-medium tracking-tight">Izin Pending</h2>
-            </div>
-            <div className="flex items-center gap-3">
-              {pendingIzins.length > 0 && (
-                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
-                  {pendingIzins.length} menunggu
-                </span>
-              )}
-              <button
-                onClick={() => navigate('/pengurus/riwayat-izin')}
-                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1 active:scale-[0.97] transition-transform duration-100 ease-out"
-              >
-                <History className="w-3.5 h-3.5" strokeWidth={1.5} />
-                Riwayat
-              </button>
-            </div>
-          </div>
-          {pendingIzins.length > 0 ? (
-            <ul className="divide-y divide-[#EAEAE7]">
-              {pendingIzins.map((izin) => (
-                  <li key={izin.id} className="px-6 py-4 hover:bg-[#F7F7F5] transition-colors motion-safe:starting:opacity-0 motion-safe:starting:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:duration-200 motion-safe:ease-out">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-medium text-[#1A1A18]">{izin.userName}</p>
-                        <p className="text-[12px] text-[#A3A39D] mt-0.5">
-                          {formatDateIdShort(izin.startDate)} – {formatDateId(izin.endDate)}
-                        </p>
-                        <p className="text-[12px] text-[#6B6B66] mt-1 line-clamp-2">{izin.alasan}</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 shrink-0">
-                        <Button
-                          size="sm"
-                          className="h-9 rounded-[12px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#C5E835] text-[12px] font-medium"
-                          onClick={async () => {
-                            const r = await approveIzin(izin.id);
-                            if (r.valid) toast.success(r.message);
-                            else toast.error(r.message);
-                          }}
-                        >
-                          <CheckCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
-                          Setujui
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-9 rounded-[12px] border-[#EAEAE7] text-[#6B6B66] hover:border-[#D7FF3D] hover:text-[#1A1A18] text-[12px] font-medium"
-                          onClick={async () => {
-                            const r = await rejectIzin(izin.id);
-                            if (r.valid) toast.success(r.message);
-                            else toast.error(r.message);
-                          }}
-                        >
-                          <XCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
-                          Tolak
-                        </Button>
-                      </div>
-                    </div>
-                  </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="px-6 py-10 text-center">
-              <FileText className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
-              <p className="text-[13px] font-medium text-[#6B6B66]">Tidak ada izin pending</p>
-              <p className="text-[12px] text-[#A3A39D] mt-1">Semua izin sudah diproses</p>
-            </div>
-          )}
         </div>
 
         {/* REKAP PENGAJAR SECTION */}
