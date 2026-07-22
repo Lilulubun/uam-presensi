@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
@@ -34,8 +34,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const sidebarNav = [
+  { href: '/pengurus', label: 'Dashboard', icon: BarChart2 },
+  { href: '/pengurus/kelola-pengajar', label: 'Pengajar', icon: Users },
+  { href: '/pengurus/laporan', label: 'Laporan', icon: FileText },
+  { href: '/pengurus/pengaturan', label: 'Setup QR', icon: QrCode },
+];
+
 export default function DashboardPengurus() {
   const navigate = useNavigate();
+  const location = useLocation();
   const logout = useAuthStore((s) => s.logout);
   const sessions = useSessionStore((s) => s.sessions);
   const attendances = useAttendanceStore((s) => s.attendances);
@@ -131,7 +139,7 @@ export default function DashboardPengurus() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18]">
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 px-2 sm:px-6 lg:px-8">
           <div>
@@ -167,13 +175,37 @@ export default function DashboardPengurus() {
         </div>
       </header>
 
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-12 mt-8 flex flex-col gap-8">
+      <div className="max-w-[1440px] mx-auto flex">
+        {/* Sidebar — lg+ only */}
+        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-8 px-3 pb-12 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto border-r border-[#EAEAE7] bg-white/50">
+          <nav className="flex flex-col gap-1">
+            {sidebarNav.map(({ href, label, icon: Icon }) => {
+              const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
+              return (
+                <button
+                  key={href}
+                  onClick={() => navigate(href)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-[13px] font-medium transition-colors text-left w-full ${
+                    active
+                      ? 'bg-[#F4F4F2] text-[#1A1A18]'
+                      : 'text-[#6B6B66] hover:bg-[#F7F7F5] hover:text-[#1A1A18]'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                  {label}
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-10 pt-8 pb-12 flex flex-col gap-8">
         
         {/* HERO ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Card A: Green Mesh */}
           <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' }}>
-            <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
             
             <div className="flex justify-between items-start z-10">
               <p className="text-[13px] font-normal text-white/75">Hadir hari ini</p>
@@ -191,21 +223,19 @@ export default function DashboardPengurus() {
               </div>
             </div>
             
-            {/* Dot matrix motif */}
-            <div className="absolute bottom-4 right-4 flex gap-1 opacity-20">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-1">
-                  {[...Array(3)].map((_, j) => (
-                    <div key={j} className="w-1 h-1 rounded-full bg-white"></div>
-                  ))}
-                </div>
-              ))}
-            </div>
+            {/* Dot matrix motif — CSS repeating-radial-gradient, denser than hand-coded 3x3 */}
+            <div 
+              className="absolute bottom-0 right-0 w-28 h-28 opacity-[0.18] pointer-events-none"
+              style={{
+                backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                backgroundSize: '10px 10px'
+              }}
+            />
           </div>
 
           {/* Card B: Orange Mesh */}
           <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[180px] flex flex-col justify-between border border-[#EAEAE7]" style={{ background: 'radial-gradient(circle at 70% 20%, #FFC671, #F6A15E 45%, #E8703F)' }}>
-            <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")'}}></div>
             
             <div className="flex justify-between items-start z-10">
               <p className="text-[13px] font-normal text-white/75">Sesi aktif</p>
@@ -527,6 +557,7 @@ export default function DashboardPengurus() {
           </button>
         </div>
       </main>
+      </div>
     </div>
   );
 }
