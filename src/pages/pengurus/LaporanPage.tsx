@@ -622,24 +622,24 @@ export default function LaporanPage() {
               {/* Bento Grid Agregat */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
                 <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
-                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Pengajar</p>
-                  <p className="text-[26px] font-light text-[#1A1A18] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalPengajar}</p>
+                  <p className="text-[10px] font-semibold text-[#7A7A75]">Total Pengajar</p>
+                  <p className="text-[26px] font-bold text-[#1A1A18] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalPengajar}</p>
                 </div>
                 <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
-                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Avg Kehadiran</p>
-                  <p className="text-[26px] font-light text-[#5B9C64] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgKehadiran}%</p>
+                  <p className="text-[10px] font-semibold text-[#7A7A75]">Avg Kehadiran</p>
+                  <p className="text-[26px] font-bold text-[#5B9C64] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgKehadiran}%</p>
                 </div>
                 <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
-                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Izin</p>
-                  <p className="text-[26px] font-light text-[#8DB5D8] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalIzin}</p>
+                  <p className="text-[10px] font-semibold text-[#7A7A75]">Total Izin</p>
+                  <p className="text-[26px] font-bold text-[#8DB5D8] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalIzin}</p>
                 </div>
                 <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
-                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Alpa</p>
-                  <p className="text-[26px] font-light text-[#D4787C] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalAlpa}</p>
+                  <p className="text-[10px] font-semibold text-[#7A7A75]">Total Alpa</p>
+                  <p className="text-[26px] font-bold text-[#D4787C] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalAlpa}</p>
                 </div>
                 <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7] col-span-2 sm:col-span-1">
-                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Avg Terlambat</p>
-                  <p className="text-[26px] font-light text-[#D9A06B] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgTerlambat}m</p>
+                  <p className="text-[10px] font-semibold text-[#7A7A75]">Avg Terlambat</p>
+                  <p className="text-[26px] font-bold text-[#D9A06B] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgTerlambat}m</p>
                 </div>
               </div>
 
@@ -649,42 +649,42 @@ export default function LaporanPage() {
                   <table className="min-w-full border-separate border-spacing-0">
                     <thead>
                       <tr className="bg-[#F7F7F5]">
-                        <th rowSpan={3} className="sticky left-0 z-10 bg-[#F7F7F5] text-left px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={3} className="sticky left-0 z-10 bg-[#F7F7F5] text-left px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Nama
                         </th>
-                        <th colSpan={5} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th colSpan={5} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Rekapitulasi Kehadiran
                         </th>
-                        <th rowSpan={3} className="text-center px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={3} className="text-center px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Status
                         </th>
                         {t.dates.map((d) => (
-                          <th key={d} colSpan={2} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          <th key={d} colSpan={2} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                             {formatShortDate(d)}
                           </th>
                         ))}
                       </tr>
                       <tr className="bg-[#F7F7F5]">
-                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           %
                         </th>
-                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Tepat
                         </th>
-                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Lambat
                         </th>
-                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Izin
                         </th>
-                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                           Alpa
                         </th>
                         {t.dates.flatMap((d) => [
-                          <th key={`${d}-in`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          <th key={`${d}-in`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                             Masuk
                           </th>,
-                          <th key={`${d}-out`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          <th key={`${d}-out`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] ">
                             Keluar
                           </th>,
                         ])}
@@ -720,7 +720,7 @@ export default function LaporanPage() {
                             {teacher.counts.tidakMasuk} hari <span className="text-[10px] text-[#D4787C]/70 font-semibold">({pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})</span>
                           </td>
                           <td className="text-center px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7]">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold  ring-1 ring-inset ${
                               teacher.statusAman === 'Memenuhi Target' 
                                 ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
                                 : teacher.statusAman === 'Belum Ada Sesi'
