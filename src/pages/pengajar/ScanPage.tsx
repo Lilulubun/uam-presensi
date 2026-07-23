@@ -177,13 +177,13 @@ export default function ScanPage() {
         {/* GPS Location Status card */}
         <div className="w-full max-w-sm bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] p-5">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[12px] font-semibold text-[#6B6B66] uppercase tracking-wider">
+            <p className="text-[12px] font-semibold text-[#6B6B66]">
               Status Lokasi
             </p>
             {locationState.status !== 'loading' && (
               <button
                 onClick={refetchLocation}
-                className="text-[#A3A39D] hover:text-[#1A1A18] p-1.5 rounded-lg hover:bg-[#F7F7F5]"
+                className="text-[#7A7A75] hover:text-[#1A1A18] p-1.5 rounded-lg hover:bg-[#F7F7F5]"
                         title="Perbarui lokasi"
               >
                 <RefreshCw className="w-3.5 h-3.5" strokeWidth={1.5} />

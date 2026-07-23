@@ -87,7 +87,7 @@ export default function PengaturanPage() {
       </header>
 
       <main className="max-w-[1440px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
-        <p className="text-[13px] text-[#A3A39D] font-medium px-2 print:hidden">
+        <p className="text-[13px] text-[#7A7A75] font-medium px-2 print:hidden">
           Cetak dan tempelkan QR ini di pintu masuk masing-masing TPA. QR ini bersifat permanen — tidak perlu diperbarui.
         </p>
 
@@ -107,7 +107,7 @@ export default function PengaturanPage() {
 
               <div>
                 <p className="text-[15px] font-semibold leading-tight text-[#1A1A18]">{tpa.name}</p>
-                <p className="text-[11px] text-[#A3A39D] mt-1.5 font-mono">{tpa.staticQRCode}</p>
+                <p className="text-[11px] text-[#7A7A75] mt-1.5 font-mono">{tpa.staticQRCode}</p>
               </div>
 
               <button

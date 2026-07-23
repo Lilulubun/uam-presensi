@@ -59,7 +59,7 @@ export default function RiwayatPage() {
 
         {/* List */}
         {attendances.length === 0 ? (
-          <div className="text-center py-16 text-[14px] text-[#A3A39D] font-medium bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+          <div className="text-center py-16 text-[14px] text-[#7A7A75] font-medium bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
             Belum ada riwayat presensi
           </div>
         ) : (

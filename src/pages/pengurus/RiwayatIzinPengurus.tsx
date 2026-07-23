@@ -30,7 +30,7 @@ export default function RiwayatIzinPengurus() {
       <main className="max-w-2xl mx-auto p-4 sm:p-6">
         {allIzins.length === 0 ? (
           <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-12 text-center border border-[#EAEAE7]">
-            <FileText className="w-10 h-10 mx-auto text-[#A3A39D] mb-3" strokeWidth={1.5} />
+            <FileText className="w-10 h-10 mx-auto text-[#7A7A75] mb-3" strokeWidth={1.5} />
             <p className="text-[14px] text-[#6B6B66] font-medium">Belum ada pengajuan izin</p>
           </div>
         ) : (
@@ -44,7 +44,7 @@ export default function RiwayatIzinPengurus() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <User className="w-3.5 h-3.5 text-[#A3A39D] shrink-0" strokeWidth={1.5} />
+                        <User className="w-3.5 h-3.5 text-[#7A7A75] shrink-0" strokeWidth={1.5} />
                         <p className="text-[14px] font-semibold text-[#1A1A18]">{izin.userName}</p>
                       </div>
                       <p className="text-[12px] text-[#6B6B66] mt-1.5 font-medium">
@@ -52,7 +52,7 @@ export default function RiwayatIzinPengurus() {
                       </p>
                       <p className="text-[13px] text-[#6B6B66] mt-2 leading-relaxed line-clamp-2">{izin.alasan}</p>
                       {izin.reviewedByName && (
-                        <p className="text-[11px] text-[#A3A39D] mt-2">
+                        <p className="text-[11px] text-[#7A7A75] mt-2">
                           Oleh: {izin.reviewedByName}
                           {izin.reviewedAt && ` • ${formatDateId(izin.reviewedAt)}`}
                         </p>

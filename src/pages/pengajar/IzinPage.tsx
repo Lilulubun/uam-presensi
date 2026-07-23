@@ -62,7 +62,7 @@ export default function IzinPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] flex flex-col gap-5">
           <p className="text-[14px] font-semibold flex items-center gap-2 text-[#1A1A18]">
-            <FileText className="w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
+            <FileText className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
             Form Izin
           </p>
 
@@ -126,7 +126,7 @@ export default function IzinPage() {
               <Loader2 className="w-5 h-5 animate-spin text-[#D7FF3D]" strokeWidth={1.5} />
             </div>
           ) : myIzins.length === 0 ? (
-            <p className="px-6 py-12 text-center text-[14px] text-[#A3A39D] font-medium">Belum ada pengajuan izin</p>
+            <p className="px-6 py-12 text-center text-[14px] text-[#7A7A75] font-medium">Belum ada pengajuan izin</p>
           ) : (
             <ul className="divide-y divide-[#EAEAE7]">
               {myIzins.map((izin) => {

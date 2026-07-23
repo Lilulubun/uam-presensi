@@ -47,7 +47,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-light tracking-tight mb-1 text-[#1A1A18]">Presensi UAM</h1>
-            <p className="text-[#A3A39D] text-sm">
+            <p className="text-[#7A7A75] text-sm">
               UII Ayo Mengajar — Monitoring Presensi TPA
             </p>
           </div>

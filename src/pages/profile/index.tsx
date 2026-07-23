@@ -82,17 +82,17 @@ export default function ProfilePage() {
             <AvatarOrb name={user?.name ?? 'User'} size="lg" />
             <div>
               <p className="font-semibold text-[18px] text-[#1A1A18]">{user?.name}</p>
-              <p className="text-[14px] text-[#A3A39D] font-medium">{user?.email}</p>
+              <p className="text-[14px] text-[#7A7A75] font-medium">{user?.email}</p>
             </div>
           </div>
           <dl className="space-y-3 text-[14px]">
             <div className="flex justify-between items-center">
-              <dt className="text-[#A3A39D] font-medium">Role</dt>
+              <dt className="text-[#7A7A75] font-medium">Role</dt>
               <dd className="font-semibold text-[#1A1A18]">{user?.role === 'pengajar' ? 'Pengajar' : 'Pengurus'}</dd>
             </div>
             {user?.nim && (
               <div className="flex justify-between items-center">
-                <dt className="text-[#A3A39D] font-medium">NIM</dt>
+                <dt className="text-[#7A7A75] font-medium">NIM</dt>
                 <dd className="font-semibold text-[#1A1A18]">{user.nim}</dd>
               </div>
             )}
@@ -113,7 +113,7 @@ export default function ProfilePage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A7A75] hover:text-[#1A1A18]"
                   onClick={() => setShowCurrent(!showCurrent)}
                 >
                   {showCurrent ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A7A75] hover:text-[#1A1A18]"
                   onClick={() => setShowNew(!showNew)}
                 >
                   {showNew ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A3A39D] hover:text-[#1A1A18]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A7A75] hover:text-[#1A1A18]"
                   onClick={() => setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
