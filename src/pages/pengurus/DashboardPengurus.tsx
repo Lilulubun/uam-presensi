@@ -211,7 +211,7 @@ export default function DashboardPengurus() {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex max-w-[1440px] mx-auto">
         {/* Sidebar — lg+ only, full height, flush left */}
         <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto shadow-[1px_0_0_0_#EAEAE7] bg-white/80 backdrop-blur-[20px] backdrop-saturate-[180%]">
           <nav className="flex flex-col gap-0.5">
@@ -244,7 +244,7 @@ export default function DashboardPengurus() {
           </nav>
         </aside>
 
-        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-10 pt-8 pb-12 flex flex-col gap-8 max-w-[1220px]">
+        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-10 pt-8 pb-12 flex flex-col gap-8">
         
         {/* HERO ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
