@@ -29,11 +29,11 @@ import { AvatarOrb } from '../../lib/avatar-orb';
 const chartConfig = {
   tepatWaktu: {
     label: "Tepat Waktu",
-    color: "#6FCB6A",
+    color: "#5B9C64",
   },
   terlambat: {
     label: "Terlambat",
-    color: "#F2B84B",
+    color: "#D9A06B",
   },
 } satisfies ChartConfig;
 
@@ -177,7 +177,7 @@ export default function DashboardPengurus() {
         <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 lg:px-8 py-4">
           <div>
             <h1 className="font-semibold text-[22px] tracking-tight">Monitoring Presensi</h1>
-            <p className="text-[13px] text-[#A3A39D] flex items-center gap-1.5 mt-0.5">
+            <p className="text-[13px] text-[#7A7A75] flex items-center gap-1.5 mt-0.5">
               <RefreshCw className="w-3.5 h-3.5" />
               Realtime Overview
             </p>
@@ -223,7 +223,7 @@ export default function DashboardPengurus() {
                   <p className="font-semibold text-[14px] text-[#1A1A18] truncate">
                     {useAuthStore.getState().user?.name}
                   </p>
-                  <p className="text-[11px] text-[#A3A39D] truncate">
+                  <p className="text-[11px] text-[#7A7A75] truncate">
                     {useAuthStore.getState().user?.email}
                   </p>
                 </div>
@@ -341,7 +341,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+              <p className="text-[40px] sm:text-[52px] font-bold leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {isLoading ? <SkeletonPulse className="w-16 h-10 mt-1" /> : todayAttendances.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -373,7 +373,7 @@ export default function DashboardPengurus() {
             </div>
 
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+              <p className="text-[40px] sm:text-[52px] font-bold leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : activeSessions.length}
               </p>
               <div className="flex items-center gap-2 mt-1">
@@ -403,7 +403,7 @@ export default function DashboardPengurus() {
             </div>
             
             <div className="z-10 mt-4">
-              <p className="text-[40px] sm:text-[52px] font-light leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+              <p className="text-[40px] sm:text-[52px] font-bold leading-[1.1] tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
                 {isLoading ? <SkeletonPulse className="w-10 h-10 mt-1" /> : pendingIzins.length}
               </p>
               <p className="text-[13px] text-[#1A1A18]/55 mt-1">Permintaan izin masuk</p>
@@ -447,7 +447,7 @@ export default function DashboardPengurus() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <p className="text-[14px] font-medium text-[#1A1A18]">{izin.userName}</p>
-                        <p className="text-[12px] text-[#A3A39D] mt-0.5">
+                        <p className="text-[12px] text-[#7A7A75] mt-0.5">
                           {formatDateIdShort(izin.startDate)} – {formatDateId(izin.endDate)}
                         </p>
                         <p className="text-[12px] text-[#7A7A75] mt-1 line-clamp-2">{izin.alasan}</p>
@@ -511,7 +511,7 @@ export default function DashboardPengurus() {
                               <AlertDialogCancel disabled={processingId !== null}>Batal</AlertDialogCancel>
                               <AlertDialogAction
                                 disabled={processingId !== null}
-                                className="bg-[#FDF1F2]0 hover:bg-[#D4787C] text-white"
+                                className="bg-[#FDF1F2] text-[#D4787C] hover:bg-[#D4787C] hover:text-white"
                                 onClick={async () => {
                                   setProcessingId(izin.id);
                                   const r = await rejectIzin(izin.id);
@@ -532,9 +532,9 @@ export default function DashboardPengurus() {
             </ul>
           ) : (
             <div className="px-6 py-10 text-center">
-              <FileText className="w-8 h-8 mx-auto text-[#A3A39D] mb-3" strokeWidth={1.5} />
+              <FileText className="w-8 h-8 mx-auto text-[#7A7A75] mb-3" strokeWidth={1.5} />
               <p className="text-[13px] font-medium text-[#7A7A75]">Tidak ada izin pending</p>
-              <p className="text-[12px] text-[#A3A39D] mt-1">Semua izin sudah diproses</p>
+              <p className="text-[12px] text-[#7A7A75] mt-1">Semua izin sudah diproses</p>
             </div>
           )}
         </div>
@@ -547,10 +547,10 @@ export default function DashboardPengurus() {
               <Clock className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[12px] font-semibold text-[#7A7A75]">Rata-rata Keterlambatan</p>
             </div>
-            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+            <p className="text-[32px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.avgLate}
             </p>
-            <p className="text-[11px] text-[#A3A39D] mt-1.5">menit (bulan ini)</p>
+            <p className="text-[11px] text-[#7A7A75] mt-1.5">menit (bulan ini)</p>
           </div>
 
           {/* On-Time Rate */}
@@ -559,10 +559,10 @@ export default function DashboardPengurus() {
               <TrendingUp className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[12px] font-semibold text-[#7A7A75]">Kehadiran Tepat Waktu</p>
             </div>
-            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+            <p className="text-[32px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.onTimeRate}%
             </p>
-            <p className="text-[11px] text-[#A3A39D] mt-1.5">dari total hadir</p>
+            <p className="text-[11px] text-[#7A7A75] mt-1.5">dari total hadir</p>
           </div>
 
           {/* Active TPA */}
@@ -571,10 +571,10 @@ export default function DashboardPengurus() {
               <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[12px] font-semibold text-[#7A7A75]">TPA Aktif Hari Ini</p>
             </div>
-            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
+            <p className="text-[32px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.activeTpaCount}
             </p>
-            <p className="text-[11px] text-[#A3A39D] mt-1.5">dari {tpas.length} TPA</p>
+            <p className="text-[11px] text-[#7A7A75] mt-1.5">dari {tpas.length} TPA</p>
           </div>
         </div>
 
@@ -591,9 +591,9 @@ export default function DashboardPengurus() {
           </div>
           {weeklyChartData.every(d => d.tepatWaktu === 0 && d.terlambat === 0) ? (
             <div className="h-[220px] flex flex-col items-center justify-center gap-2">
-              <TrendingUp className="w-8 h-8 text-[#A3A39D]" strokeWidth={1.5} />
+              <TrendingUp className="w-8 h-8 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[13px] font-medium text-[#7A7A75]">Belum ada data kehadiran</p>
-              <p className="text-[12px] text-[#A3A39D]">Data akan muncul setelah sesi pertama dibuka</p>
+              <p className="text-[12px] text-[#7A7A75]">Data akan muncul setelah sesi pertama dibuka</p>
             </div>
           ) : (
             <ChartContainer config={chartConfig} className="h-[220px] w-full aspect-auto">
@@ -636,7 +636,7 @@ export default function DashboardPengurus() {
                   key={tpa.id}
                   onClick={() => navigate(`/pengurus/tpa/${tpa.id}`)}
                   className="motion-safe:animate-fade-in-up bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
-                  style={{ animationDelay: `${idx * 40}ms`, animation: 'fadeUp 280ms cubic-bezier(0.23,1,0.32,1) forwards' }}
+                  style={{ animationDelay: `${idx * 40}ms` }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="font-medium text-[15px] tracking-tight group-hover:text-primary transition-colors leading-tight">
@@ -652,23 +652,23 @@ export default function DashboardPengurus() {
                       >
                         {activeSession ? 'Aktif' : 'Tutup'}
                       </span>
-                      <ChevronRight className="w-4 h-4 text-[#A3A39D] group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" strokeWidth={1.5} />
+                      <ChevronRight className="w-4 h-4 text-[#7A7A75] group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" strokeWidth={1.5} />
                     </div>
                   </div>
 
                   {activeSession ? (
                     <div className="mt-4 space-y-1.5 text-[13px] text-[#7A7A75]">
                       <p className="flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-[#A3A39D]" strokeWidth={1.5} />
+                        <Users className="w-3.5 h-3.5 text-[#7A7A75]" strokeWidth={1.5} />
                         <span>{presentCount} pengajar aktif</span>
                       </p>
                       <p className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#A3A39D]" strokeWidth={1.5} />
+                        <Clock className="w-3.5 h-3.5 text-[#7A7A75]" strokeWidth={1.5} />
                         <span>Sejak {formatTime(new Date(activeSession.dateOpened))}</span>
                       </p>
                     </div>
                   ) : (
-                    <p className="mt-4 text-[13px] text-[#A3A39D]">Sesi belum dibuka hari ini</p>
+                    <p className="mt-4 text-[13px] text-[#7A7A75]">Sesi belum dibuka hari ini</p>
                   )}
                 </button>
               );
@@ -683,9 +683,9 @@ export default function DashboardPengurus() {
           </h2>
           {teacherStats.length === 0 ? (
             <div className="bg-white rounded-[32px] p-10 text-center border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-              <Users className="w-8 h-8 mx-auto text-[#A3A39D] mb-3" strokeWidth={1.5} />
+              <Users className="w-8 h-8 mx-auto text-[#7A7A75] mb-3" strokeWidth={1.5} />
               <p className="text-[13px] font-medium text-[#7A7A75]">Belum ada data presensi</p>
-              <p className="text-[12px] text-[#A3A39D] mt-1">Data akan muncul setelah 90 hari pertama</p>
+              <p className="text-[12px] text-[#7A7A75] mt-1">Data akan muncul setelah 90 hari pertama</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
@@ -700,23 +700,23 @@ export default function DashboardPengurus() {
                       <AvatarOrb name={teacher.name} size="md" />
                       <div>
                         <p className="font-semibold text-[14px] text-[#1A1A18]">{teacher.name}</p>
-                        <p className="text-[11px] text-[#A3A39D] mt-0.5">{teacher.nim}</p>
+                        <p className="text-[11px] text-[#7A7A75] mt-0.5">{teacher.nim}</p>
                       </div>
                     </div>
                     
                     <div className="flex flex-wrap items-center justify-end gap-3.5 w-full sm:w-auto">
                       <div className="flex items-center gap-1.5 text-[12px]">
-                        <span className="text-[#A3A39D]">Total:</span>
+                        <span className="text-[#7A7A75]">Total:</span>
                         <span className="font-semibold text-[#1A1A18] tabular-nums">{total}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[12px]">
-                        <span className="text-[#6FCB6A] font-semibold tabular-nums">{onTime}</span>
-                        <span className="text-[#A3A39D]">Tepat</span>
+                        <span className="text-[#5B9C64] font-semibold tabular-nums">{onTime}</span>
+                        <span className="text-[#7A7A75]">Tepat</span>
                       </div>
                       {late > 0 && (
                         <div className="flex items-center gap-1.5 text-[12px]">
-                          <span className="text-[#F2B84B] font-semibold tabular-nums">{late}</span>
-                          <span className="text-[#A3A39D]">Terlambat</span>
+                          <span className="text-[#D9A06B] font-semibold tabular-nums">{late}</span>
+                          <span className="text-[#7A7A75]">Terlambat</span>
                         </div>
                       )}
                       
@@ -755,7 +755,7 @@ export default function DashboardPengurus() {
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Laporan</p>
-              <p className="text-[12px] text-[#A3A39D] mt-0.5">CSV / Excel / PDF</p>
+              <p className="text-[12px] text-[#7A7A75] mt-0.5">CSV / Excel / PDF</p>
             </div>
           </button>
           <button
@@ -767,7 +767,7 @@ export default function DashboardPengurus() {
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Setup QR</p>
-              <p className="text-[12px] text-[#A3A39D] mt-0.5">Cetak QR statis TPA</p>
+              <p className="text-[12px] text-[#7A7A75] mt-0.5">Cetak QR statis TPA</p>
             </div>
           </button>
         </div>
