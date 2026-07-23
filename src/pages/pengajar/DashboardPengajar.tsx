@@ -10,7 +10,23 @@ import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay, jakartaNow } from '../../lib/date-utils';
 import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
 import { useIzinStore } from '../../store/izinStore';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useUsersStore } from '../../store/userStore';
+
+// Day indices: 0 = Minggu, 1 = Senin, 2 = Selasa, 3 = Rabu, 4 = Kamis, 5 = Jumat, 6 = Sabtu
+const TPA_SCHEDULES: Record<string, number[]> = {
+  'TPA Ulil Albab': [2, 4, 5],
+  'TPA AS-SHOLIHIN': [2, 4, 5],
+  'AZ-ZAHRA': [1, 2, 3, 4],
+  'AL-MUHTADIN': [1, 2, 3, 4, 5],
+  'AL-IMAN': [1, 2, 3, 4, 5],
+  'AL-FATH': [2, 3, 5],
+  'AL-HIDAYAH TANJUNG SARI': [4, 5, 6],
+  'AL-JAMI': [1, 2, 3, 5],
+  'AL-HIDAYAH BESI': [2, 6],
+  'TPA Ananda': [1, 2, 3, 4, 5],
+  'TPA Adz-dzikro': [2, 4, 6],
+};
 
 export default function DashboardPengajar() {
   const navigate = useNavigate();
@@ -21,9 +37,14 @@ export default function DashboardPengajar() {
   const { locationState, nearestTPA } = useWatchLocation(true);
   const pendingIzins = useIzinStore((s) => s.myIzins.filter((i) => i.status === 'pending').length);
   const fetchMyIzins = useIzinStore((s) => s.fetchMyIzins);
+  const loadUserTPAs = useUsersStore((s) => s.loadUserTPAs);
+  const userTPAs = useUsersStore((s) => s.userTPAs.filter((ut) => ut.userId === user?.id));
 
   useEffect(() => {
     fetchMyIzins();
+    if (user?.id) {
+      loadUserTPAs(user.id);
+    }
   }, []);
 
   const today = new Date();
@@ -36,9 +57,40 @@ export default function DashboardPengajar() {
 
   const todayRecord = todayAttendances[0] ?? null;
 
+  const currentDay = today.getDay();
+  const hasScheduleToday = useMemo(() => {
+    if (userTPAs.length === 0) return true; // Default true jika relasi TPA belum di-set
+    return userTPAs.some((ut) => {
+      const cleanName = ut.tpaName ? ut.tpaName.trim() : '';
+      const sched = TPA_SCHEDULES[cleanName];
+      return sched ? sched.includes(currentDay) : true;
+    });
+  }, [userTPAs, currentDay]);
+
   const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
   const { year: jkYear, month: jkMonth } = jakartaNow();
   const monthSummary = computeMonthlySummary(myAttendances, jkYear, jkMonth + 1);
+
+  // Target + Status calculations
+  const currentMonthAttendances = myAttendances.filter((a) => {
+    const scanTime = a.scanInTime ?? a.scanOutTime;
+    if (!scanTime) return false;
+    const date = new Date(scanTime);
+    return date.getFullYear() === jkYear && (date.getMonth() + 1) === (jkMonth + 1);
+  });
+
+  const totalSesiBulanIni = currentMonthAttendances.length;
+  const totalHadirBulanIni = currentMonthAttendances.filter((a) => a.scanInTime).length;
+  const totalIzinBulanIni = currentMonthAttendances.filter((a) => a.isIzin).length;
+
+  const wajibHadirBulanIni = Math.ceil(totalSesiBulanIni * 0.5 * 0.75);
+
+  const statusAmanBulanIni =
+    totalSesiBulanIni === 0
+      ? 'Belum Ada Sesi'
+      : totalHadirBulanIni >= wajibHadirBulanIni
+        ? 'Memenuhi Target'
+        : 'Belum Memenuhi';
 
   const recentAttendances = allAttendances
     .filter((a) => a.userId === user?.id && a.scanInTime)
@@ -51,6 +103,17 @@ export default function DashboardPengajar() {
   };
 
   const getStatusInfo = () => {
+    if (!todayRecord && !hasScheduleToday) {
+      return {
+        label: 'Tidak ada jadwal mengajar',
+        sub: 'TPA libur hari ini',
+        badge: 'Libur',
+        textColor: 'text-[#7A7A75]',
+        icon: <CalendarDays className="w-6 h-6 text-[#A3A39D]" strokeWidth={1.5} />,
+        gradient: 'bg-white border border-[#EAEAE7]',
+        badgeStyle: 'bg-[#F4F4F2] text-[#7A7A75]',
+      };
+    }
     if (!todayRecord) {
       return {
         label: 'Belum melakukan presensi',
@@ -149,6 +212,51 @@ export default function DashboardPengajar() {
           </div>
           {/* dot matrix */}
           <div className="absolute bottom-0 right-0 w-24 h-24 opacity-[0.15] pointer-events-none" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)',backgroundSize:'8px 8px'}} />
+        </div>
+
+        {/* Target + Status Card */}
+        <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Wajib Hadir</p>
+              <p className="text-[34px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{wajibHadirBulanIni}</p>
+              <p className="text-[11px] text-[#A3A39D] mt-1">dari {totalSesiBulanIni} sesi</p>
+            </div>
+            <div className="text-center border-x border-[#EAEAE7]">
+              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Izin</p>
+              <p className="text-[34px] font-light leading-none tracking-tighter text-[#8DB5D8]" style={{fontFamily: "'Doto', monospace"}}>{totalIzinBulanIni}</p>
+              <p className="text-[11px] text-[#A3A39D] mt-1">hari bulan ini</p>
+            </div>
+            <div className="text-center flex flex-col justify-between items-center">
+              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Status</p>
+              <div className="mt-1.5">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
+                  statusAmanBulanIni === 'Memenuhi Target'
+                    ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
+                    : statusAmanBulanIni === 'Belum Ada Sesi'
+                    ? 'bg-stone-50 text-stone-700 ring-stone-600/20'
+                    : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
+                }`}>
+                  {statusAmanBulanIni}
+                </span>
+              </div>
+              <p className="text-[11px] text-[#A3A39D] mt-1.5">{totalHadirBulanIni} hadir / {totalSesiBulanIni - totalIzinBulanIni} aktif</p>
+            </div>
+          </div>
+          {totalSesiBulanIni > 0 && (
+            <div className="mt-4 pt-3 border-t border-[#EAEAE7]">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] text-[#7A7A75] font-medium">Progres Kehadiran</span>
+                <span className="text-[11px] font-semibold text-[#5B9C64]">{totalHadirBulanIni}/{wajibHadirBulanIni} sesi</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-[#EAEAE7] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-[#5B9C64] transition-all duration-300"
+                  style={{ width: `${Math.min(100, (totalHadirBulanIni / Math.max(1, wajibHadirBulanIni)) * 100)}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Monthly summary card */}
