@@ -18,7 +18,7 @@ export default function DetailPengajar() {
 
   if (!teacher) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F4F2]">
         <div className="text-center">
           <p className="text-[#7A7A75]">Pengajar tidak ditemukan</p>
           <button onClick={() => navigate('/pengurus/dashboard')} className="mt-4 text-primary text-sm underline">
@@ -71,26 +71,33 @@ export default function DetailPengajar() {
     ? Math.round(lateRecords.reduce((s, a) => s + (a.lateMinutes ?? 0), 0) / lateRecords.length)
     : 0;
 
+  // Noise texture SVG (shared across gradient cards)
+  const noiseSvg = 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")';
+
   return (
-    <div className="min-h-screen bg-[#F7F7F5]">
-      <header className="bg-white border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-[#7A7A75] hover:text-[#1A1A18]">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="flex-1">
-          <h1 className="font-semibold text-lg">{teacher.name}</h1>
-          <p className="text-xs text-[#7A7A75]">{teacher.email}{teacher.nim ? ` · ${teacher.nim}` : ''}</p>
+    <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18]">
+      {/* Header — glassmorphism, match DashboardPengurus */}
+      <header className="bg-white/80 backdrop-blur-[20px] border-b border-[#EAEAE7] sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="text-[#7A7A75] hover:text-[#1A1A18]">
+            <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+          <div className="flex-1">
+            <h1 className="font-semibold text-[18px] tracking-tight">{teacher.name}</h1>
+            <p className="text-[13px] text-[#7A7A75]">{teacher.email}{teacher.nim ? ` · ${teacher.nim}` : ''}</p>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto p-4 flex flex-col gap-4">
-        {/* Filter Bulan/Tahun (Kontrol Utama di Paling Atas) */}
-        <div className="flex items-center gap-2 bg-white p-3 rounded-[20px] border border-[#EAEAE7] shadow-sm">
-          <span className="text-[12px] font-medium text-[#7A7A75] ml-1">Periode:</span>
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 flex flex-col gap-6">
+
+        {/* Filter Periode */}
+        <div className="flex items-center gap-3">
+          <span className="text-[13px] font-medium text-[#7A7A75]">Periode:</span>
           <select
             value={monthFilter}
             onChange={(e) => setMonthFilter(Number(e.target.value))}
-            className="text-[13px] font-medium border border-[#EAEAE7] rounded-[12px] px-2.5 py-1.5 bg-white focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
+            className="text-[14px] font-medium border border-[#EAEAE7] rounded-[14px] px-3 py-2 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)] focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
           >
             {MONTHS.map((m, i) => (
               <option key={i} value={i + 1}>{m}</option>
@@ -99,7 +106,7 @@ export default function DetailPengajar() {
           <select
             value={yearFilter}
             onChange={(e) => setYearFilter(Number(e.target.value))}
-            className="text-[13px] font-medium border border-[#EAEAE7] rounded-[12px] px-2.5 py-1.5 bg-white focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
+            className="text-[14px] font-medium border border-[#EAEAE7] rounded-[14px] px-3 py-2 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)] focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
           >
             {[jkYear, jkYear - 1, jkYear - 2].map((y) => (
               <option key={y} value={y}>{y}</option>
@@ -107,149 +114,173 @@ export default function DetailPengajar() {
           </select>
         </div>
 
-        {/* Target & Status Bulan Ini — Bento Metrics Card */}
-        <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
-            <p className="text-[12px] font-semibold text-[#7A7A75] uppercase tracking-wider">
-              Target & Status — {MONTHS[monthFilter - 1]} {yearFilter}
-            </p>
+        {/* Target & Status — Gradient Hero Card */}
+        <div className="relative overflow-hidden rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] min-h-[220px] flex flex-col justify-between border border-[#EAEAE7]"
+          style={{ background: 'radial-gradient(circle at 30% 20%, #C8F06B, #8FE388 55%, #F4F08A)' }}
+        >
+          {/* Noise texture */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage: noiseSvg}}></div>
+
+          {/* Heading */}
+          <div className="flex justify-between items-start z-10">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#1A1A18]/60" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#1A1A18]/60">
+                Target & Status — {MONTHS[monthFilter - 1]} {yearFilter}
+              </p>
+            </div>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ring-1 ring-inset ${
+              statusAmanBulanIni === 'Memenuhi Target'
+                ? 'bg-white/60 text-[#1A1A18] ring-white/30'
+                : statusAmanBulanIni === 'Belum Ada Sesi'
+                ? 'bg-white/60 text-[#7A7A75] ring-white/30'
+                : 'bg-white/60 text-[#D4787C] ring-white/30'
+            }`}>
+              {statusAmanBulanIni}
+            </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Kehadiran</p>
-              <p className="text-[34px] font-bold leading-none tracking-tighter text-[#1A1A18]">{pctKehadiran}%</p>
-              <p className="text-[11px] text-[#7A7A75] mt-1">{hadirCount} dari {totalHariAktif} aktif</p>
+          {/* Hero numbers — Doto font */}
+          <div className="z-10 mt-4 flex items-end gap-6">
+            <div>
+              <p className="text-[11px] font-semibold text-[#1A1A18]/50 uppercase tracking-wider mb-0.5">Kehadiran</p>
+              <p className="text-[48px] sm:text-[64px] font-bold leading-[1.05] tracking-tighter text-[#1A1A18]"
+                style={{fontFamily: "'Doto', monospace"}}>
+                {pctKehadiran}%
+              </p>
+              <p className="text-[13px] text-[#1A1A18]/55">{hadirCount} dari {totalHariAktif} hari aktif</p>
             </div>
-            <div className="text-center border-x border-[#EAEAE7]">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Wajib Hadir</p>
-              <p className="text-[34px] font-bold leading-none tracking-tighter text-[#1A1A18]">{wajibHadirBulanIni}</p>
-              <p className="text-[11px] text-[#7A7A75] mt-1">dari {totalSesiBulanIni} sesi</p>
-            </div>
-            <div className="text-center flex flex-col items-center justify-between">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Status</p>
-              <div className="mt-1">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
-                  statusAmanBulanIni === 'Memenuhi Target'
-                    ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
-                    : statusAmanBulanIni === 'Belum Ada Sesi'
-                    ? 'bg-stone-50 text-stone-700 ring-stone-600/20'
-                    : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
-                }`}>
-                  {statusAmanBulanIni}
-                </span>
-              </div>
-              <p className="text-[11px] text-[#7A7A75] mt-1.5">Izin: {izinCount} hari</p>
+            <div className="border-l border-[#1A1A18]/15 pl-6">
+              <p className="text-[11px] font-semibold text-[#1A1A18]/50 uppercase tracking-wider mb-0.5">Wajib Hadir</p>
+              <p className="text-[48px] sm:text-[64px] font-bold leading-[1.05] tracking-tighter text-[#1A1A18]"
+                style={{fontFamily: "'Doto', monospace"}}>
+                {wajibHadirBulanIni}
+              </p>
+              <p className="text-[13px] text-[#1A1A18]/55">dari {totalSesiBulanIni} sesi · Izin {izinCount} hari</p>
             </div>
           </div>
 
+          {/* Progress bar */}
           {totalSesiBulanIni > 0 && (
-            <div className="border-t border-[#EAEAE7] pt-3">
+            <div className="z-10 mt-4 pt-3 border-t border-[#1A1A18]/10">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] text-[#7A7A75] font-medium">Progres kehadiran</span>
-                <span className="text-[11px] font-semibold text-[#5B9C64]">{hadirCount}/{wajibHadirBulanIni} sesi</span>
+                <span className="text-[12px] font-medium text-[#1A1A18]/50">Progres kehadiran</span>
+                <span className="text-[12px] font-bold text-[#1A1A18]/70">{hadirCount}/{wajibHadirBulanIni} sesi</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-[#EAEAE7] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-[#1A1A18]/10 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#5B9C64] transition-all duration-300"
+                  className="h-full rounded-full bg-[#1A1A18]/30 transition-all duration-300"
                   style={{ width: `${Math.min(100, (hadirCount / Math.max(1, wajibHadirBulanIni)) * 100)}%` }}
                 ></div>
               </div>
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#EAEAE7]">
-            <span className="text-[12px] text-[#7A7A75]">Rata-rata terlambat</span>
-            <span className="text-[14px] font-bold text-[#D9A06B]">{avgLateMin} <span className="text-[11px] text-[#7A7A75] font-normal">menit</span></span>
+          {/* Avg late */}
+          <div className="z-10 flex items-center gap-2 mt-4 pt-3 border-t border-[#1A1A18]/10">
+            <Clock className="w-3.5 h-3.5 text-[#1A1A18]/50" strokeWidth={1.5} />
+            <span className="text-[12px] text-[#1A1A18]/55">Rata-rata terlambat</span>
+            <span className="text-[15px] font-bold text-[#1A1A18]/80 ml-auto">{avgLateMin} <span className="text-[12px] font-normal text-[#1A1A18]/50">menit</span></span>
           </div>
+
+          {/* Dot matrix motif — bottom right */}
+          <div
+            className="absolute bottom-0 right-0 w-32 h-32 opacity-[0.08] pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #1A1A18 1px, transparent 1px)',
+              backgroundSize: '10px 10px'
+            }}
+          />
         </div>
 
-        {/* Status Bulanan */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-[#EAEAE7]">
-          <div className="px-4 py-3 border-b flex items-center gap-2 bg-[#F7F7F5]">
-            <FileText className="w-4 h-4 text-[#7A7A75]" />
-            <p className="text-sm font-medium">Status Bulanan</p>
-            <span className="ml-auto text-xs text-[#7A7A75]">
-              {MONTHS[monthFilter - 1]} {yearFilter}
-            </span>
+        {/* Status Bulanan + All-Time Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          {/* Status Bulanan */}
+          <div className="bg-white rounded-[32px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
+              <p className="text-[13px] font-semibold text-[#1A1A18]">Status Bulanan</p>
+              <span className="ml-auto text-[12px] text-[#7A7A75]">
+                {MONTHS[monthFilter - 1]} {yearFilter}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-[20px] bg-[#EDF5EE]">
+                <p className="text-[28px] font-bold text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>{hadirCount}</p>
+                <p className="text-[11px] font-medium text-[#5B9C64] mt-0.5">Hadir</p>
+              </div>
+              <div className="text-center p-3 rounded-[20px] bg-[#EDF3F8]">
+                <p className="text-[28px] font-bold text-[#8DB5D8]" style={{fontFamily: "'Doto', monospace"}}>{izinCount}</p>
+                <p className="text-[11px] font-medium text-[#8DB5D8] mt-0.5">Izin</p>
+              </div>
+              <div className="text-center p-3 rounded-[20px] bg-[#FDF1F2]">
+                <p className="text-[28px] font-bold text-[#D4787C]" style={{fontFamily: "'Doto', monospace"}}>{tidakMasukCount}</p>
+                <p className="text-[11px] font-medium text-[#D4787C] mt-0.5">Tidak Masuk</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 p-3">
-            <div className="text-center p-2 rounded-lg bg-[#EDF5EE]">
-              <p className="text-lg font-bold text-[#5B9C64]">{hadirCount}</p>
-              <p className="text-xs text-[#5B9C64]">Hadir</p>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-[#EDF3F8]">
-              <p className="text-lg font-bold text-[#8DB5D8]">{izinCount}</p>
-              <p className="text-xs text-blue-700">Izin</p>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-[#FDF1F2]">
-              <p className="text-lg font-bold text-[#D4787C]">{tidakMasukCount}</p>
-              <p className="text-xs text-[#D4787C]">Tidak Masuk</p>
-            </div>
-          </div>
-        </div>
+          {/* Summary All-Time */}
+          <div className="bg-white rounded-[32px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+            <p className="text-[13px] font-semibold text-[#1A1A18] mb-4">Akumulasi Seluruh Waktu</p>
 
-        {/* Summary All-Time */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-[#EAEAE7]">
-          <div className="px-4 py-3 border-b bg-[#F7F7F5]">
-            <p className="text-sm font-medium">Akumulasi Seluruh Waktu (All-Time)</p>
-          </div>
-          <div className="grid grid-cols-3 gap-2 p-3">
-            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
-              <p className="text-lg font-bold text-[#1A1A18]">{total}</p>
-              <p className="text-xs text-[#7A7A75] mt-0.5">Total Hadir</p>
-            </div>
-            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
-              <p className="text-lg font-bold text-[#5B9C64]">{onTime}</p>
-              <p className="text-xs text-[#7A7A75] mt-0.5">Tepat Waktu</p>
-            </div>
-            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
-              <p className="text-lg font-bold text-[#D9A06B]">{late}</p>
-              <p className="text-xs text-[#7A7A75] mt-0.5">Terlambat</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-[20px] bg-[#F4F4F2]">
+                <p className="text-[28px] font-bold text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{total}</p>
+                <p className="text-[11px] font-medium text-[#7A7A75] mt-0.5">Total Hadir</p>
+              </div>
+              <div className="text-center p-3 rounded-[20px] bg-[#EDF5EE]">
+                <p className="text-[28px] font-bold text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>{onTime}</p>
+                <p className="text-[11px] font-medium text-[#5B9C64] mt-0.5">Tepat Waktu</p>
+              </div>
+              <div className="text-center p-3 rounded-[20px] bg-[#FDF4ED]">
+                <p className="text-[28px] font-bold text-[#D9A06B]" style={{fontFamily: "'Doto', monospace"}}>{late}</p>
+                <p className="text-[11px] font-medium text-[#D9A06B] mt-0.5">Terlambat</p>
+              </div>
             </div>
           </div>
+
         </div>
 
         {/* Riwayat Presensi Harian */}
-        {filteredAttendances.length === 0 ? (
-          <div className="text-center py-16 text-[13px] text-[#7A7A75] bg-white rounded-[24px] border border-[#EAEAE7]">
-            Belum ada riwayat presensi di {MONTHS[monthFilter - 1]} {yearFilter}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {filteredAttendances.map((a) => {
-              return (
-                <div key={a.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3">
-                  <div className="shrink-0">
-                    {a.scanOutTime ? (
-                      <CheckCircle2 className="w-5 h-5 text-[#5B9C64]" />
-                    ) : (
-                      <Clock className="w-5 h-5 text-primary" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">
-                      {a.scanInTime ? formatDate(new Date(a.scanInTime)) : '—'}
-                    </p>
-                    <div className="flex gap-3 text-xs text-[#7A7A75] mt-0.5">
-                      {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
-                      {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    {a.isLate && (
-                      <span className="text-xs text-[#D9A06B] bg-[#FDF4ED] px-1.5 py-0.5 rounded">
-                        +{a.lateMinutes}m
-                      </span>
-                    )}
+        <div className="flex flex-col gap-3">
+          {filteredAttendances.length === 0 ? (
+            <div className="text-center py-16 text-[14px] text-[#7A7A75] bg-white rounded-[24px] border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              Belum ada riwayat presensi di {MONTHS[monthFilter - 1]} {yearFilter}
+            </div>
+          ) : (
+            filteredAttendances.map((a) => (
+              <div key={a.id} className="bg-white rounded-[24px] p-4 flex items-center gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
+                <div className="shrink-0">
+                  {a.scanOutTime ? (
+                    <CheckCircle2 className="w-5 h-5 text-[#5B9C64]" strokeWidth={1.5} />
+                  ) : (
+                    <Clock className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-medium text-[#1A1A18]">
+                    {a.scanInTime ? formatDate(new Date(a.scanInTime)) : '—'}
+                  </p>
+                  <div className="flex gap-3 text-[12px] text-[#7A7A75] mt-0.5">
+                    {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
+                    {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <div className="shrink-0 text-right">
+                  {a.isLate && (
+                    <span className="text-[12px] font-semibold text-[#D9A06B] bg-[#FDF4ED] px-2 py-1 rounded-[10px]">
+                      +{a.lateMinutes}m
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
       </main>
     </div>
   );
