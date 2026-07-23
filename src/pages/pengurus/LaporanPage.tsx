@@ -305,8 +305,7 @@ export default function LaporanPage() {
         const matchesStatus =
           statusFilter === '' ? true :
           statusFilter === 'aman' ? teacher.statusAman === 'Memenuhi Target' :
-          statusFilter === 'tidak-aman' ? teacher.statusAman === 'Belum Memenuhi' :
-          statusFilter === 'no-session' ? teacher.statusAman === 'Belum Ada Sesi' : true;
+          statusFilter === 'tidak-aman' ? teacher.statusAman === 'Belum Memenuhi' : true;
 
         return matchesName && matchesStatus;
       });
@@ -580,7 +579,6 @@ export default function LaporanPage() {
                 <option value="">Semua Status</option>
                 <option value="aman">Memenuhi Target</option>
                 <option value="tidak-aman">Belum Memenuhi</option>
-                <option value="no-session">Belum Ada Sesi</option>
               </select>
             </div>
           </div>
