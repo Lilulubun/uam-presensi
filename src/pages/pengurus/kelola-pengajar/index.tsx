@@ -134,7 +134,7 @@ export default function KelolaPengajarPage() {
         {/* Search + filter bar */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
             <input
               className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-[#EAEAE7] bg-white text-sm focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
               placeholder="Cari nama, NIM, atau email..."
@@ -187,7 +187,7 @@ export default function KelolaPengajarPage() {
             <p className="text-[13px] font-medium text-[#6B6B66]">
               {search ? 'Tidak ada pengajar yang cocok' : 'Belum ada pengajar'}
             </p>
-            <p className="text-[12px] text-[#A3A39D]">
+            <p className="text-[12px] text-[#7A7A75]">
               {search ? 'Coba kata kunci lain atau ubah filter TPA' : 'Tambahkan pengajar untuk memulai'}
             </p>
           </div>
@@ -313,7 +313,7 @@ export default function KelolaPengajarPage() {
                                 </span>
                               ))
                             ) : (
-                              <span className="text-[12px] text-[#A3A39D]">—</span>
+                              <span className="text-[12px] text-[#7A7A75]">—</span>
                             )}
                           </div>
                         </td>

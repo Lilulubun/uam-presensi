@@ -181,7 +181,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         cells: dates.map((d) => cells.get(d) ?? {
           type: 'merged' as const,
           mergedText: '-',
-          mergedClass: 'text-[#A3A39D]',
+          mergedClass: 'text-[#7A7A75]',
         }),
         counts: t.counts,
         totalHari: t.totalHari,
@@ -603,7 +603,7 @@ export default function LaporanPage() {
 
         {/* Empty */}
         {!loading && !error && !hasData && (
-          <div className="bg-white rounded-[32px] border border-[#EAEAE7] py-16 text-center shadow-[0_4px_24px_rgba(0,0,0,0.04)] text-[#A3A39D]">
+          <div className="bg-white rounded-[32px] border border-[#EAEAE7] py-16 text-center shadow-[0_4px_24px_rgba(0,0,0,0.04)] text-[#7A7A75]">
             Tidak ada data presensi pada periode bulan ini.
           </div>
         )}
@@ -714,7 +714,7 @@ export default function LaporanPage() {
                             {teacher.counts.terlambat}
                           </td>
                           <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#8DB5D8] font-medium tabular-nums bg-[#EDF3F8]/20">
-                            {teacher.counts.izin} hari <span className="text-[10px] text-[#A3A39D] font-normal">({pct(teacher.counts.izin, teacher.totalHari)})</span>
+                            {teacher.counts.izin} hari <span className="text-[10px] text-[#7A7A75] font-normal">({pct(teacher.counts.izin, teacher.totalHari)})</span>
                           </td>
                           <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#D4787C] font-semibold tabular-nums bg-[#FDF1F2]/20">
                             {teacher.counts.tidakMasuk} hari <span className="text-[10px] text-[#D4787C]/70 font-semibold">({pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})</span>

@@ -138,7 +138,7 @@ export function BulkTambahPengajarModal({ open, onClose, onSuccess }: Props) {
                   <p className="text-[14px] font-semibold text-[#1A1A18]">
                     {file ? file.name : 'Pilih file CSV'}
                   </p>
-                  <p className="text-[12px] text-[#A3A39D] mt-1">Maksimal ukuran file 2MB</p>
+                  <p className="text-[12px] text-[#7A7A75] mt-1">Maksimal ukuran file 2MB</p>
                 </div>
               </label>
             </div>

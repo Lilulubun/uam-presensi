@@ -76,7 +76,7 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
 
           {tempPassword && (
             <div className="bg-[#F7F7F5] rounded-[16px] p-4 border border-[#EAEAE7]">
-              <p className="text-[11px] text-[#A3A39D] font-medium mb-2">Password sementara (sekali lihat):</p>
+              <p className="text-[11px] text-[#7A7A75] font-medium mb-2">Password sementara (sekali lihat):</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 text-[14px] font-mono bg-white px-3 py-1.5 rounded-[14px] border border-[#EAEAE7] text-[#1A1A18]">
                   {tempPassword}
