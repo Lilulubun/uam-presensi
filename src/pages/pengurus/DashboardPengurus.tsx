@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Home } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Home, Menu } from 'lucide-react';
+import Sheet from '../../app/components/ui/sheet';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
 import {
@@ -64,6 +65,7 @@ export default function DashboardPengurus() {
 
   const { pendingIzins, approveIzin, rejectIzin, fetchPendingIzins } = useIzinStore();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     fetchPendingIzins();
@@ -180,35 +182,114 @@ export default function DashboardPengurus() {
               Realtime Overview
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Nav buttons: mobile only — sidebar handles desktop */}
-            <div className="flex items-center gap-2 lg:hidden">
-              {location.pathname !== '/pengurus' && (
-                <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus')}>
-                  <Home className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
-                </Button>
-              )}
-              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/pengaturan')}>
-                <QrCode className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
-              </Button>
-              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/laporan')}>
-                <BarChart2 className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
-              </Button>
-              <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/kelola-pengajar')}>
-                <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
-              </Button>
+          <div className="flex items-center gap-2">
+            {/* Desktop Header Nav: Profile & Logout */}
+            <div className="hidden lg:flex items-center gap-2">
+              <button 
+                onClick={() => navigate('/profile')} 
+                className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out"
+                title="Profil Saya"
+              >
+                <User className="w-4 h-4" strokeWidth={1.5} />
+              </button>
+              <button 
+                onClick={handleLogout} 
+                className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out"
+                title="Keluar"
+              >
+                <LogOut className="w-4 h-4" strokeWidth={1.5} />
+              </button>
             </div>
 
-            <div className="w-[1px] h-6 bg-[#EAEAE7] mx-1"></div>
-
-            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
-              <User className="w-4 h-4" strokeWidth={1.5} />
-            </button>
-            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
-              <LogOut className="w-4 h-4" strokeWidth={1.5} />
+            {/* Mobile Menu Button — lg:hidden */}
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="lg:hidden w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out"
+              aria-label="Menu"
+            >
+              <Menu className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Sheet */}
+        <Sheet open={menuOpen} onClose={() => setMenuOpen(false)}>
+          <div className="flex flex-col h-full justify-between">
+            <div className="space-y-6">
+              {/* Profile Card */}
+              <div className="flex items-center gap-3.5 p-1">
+                <AvatarOrb name={useAuthStore.getState().user?.name ?? 'Pengurus'} size="md" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-[14px] text-[#1A1A18] truncate">
+                    {useAuthStore.getState().user?.name}
+                  </p>
+                  <p className="text-[11px] text-[#A3A39D] truncate">
+                    {useAuthStore.getState().user?.email}
+                  </p>
+                </div>
+              </div>
+
+              <div className="h-[1px] bg-[#EAEAE7]"></div>
+
+              {/* Navigation Items */}
+              <nav className="flex flex-col gap-1">
+                {sidebarNav.map(({ href, label, icon: Icon }) => {
+                  const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
+                  const badge =
+                    href === '/pengurus' ? todayAttendances.length :
+                    href === '/pengurus/kelola-pengajar' ? pendingIzins.length :
+                    null;
+                  return (
+                    <button
+                      key={href}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        navigate(href);
+                      }}
+                      className={`flex items-center gap-3 px-3.5 py-3 rounded-[16px] text-[14px] font-medium transition-colors active:scale-[0.97] transition-transform duration-100 ease-out text-left w-full ${
+                        active
+                          ? 'bg-[#EAEAE7] text-[#1A1A18]'
+                          : 'text-[#7A7A75] hover:bg-[#F4F4F2] hover:text-[#1A1A18]'
+                      }`}
+                    >
+                      <Icon className="w-4.5 h-4.5 shrink-0" strokeWidth={1.5} />
+                      <span className="flex-1">{label}</span>
+                      {badge !== null && badge > 0 && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FFF1F2] text-[#D4787C] ring-1 ring-inset ring-[#D4787C]/20 leading-none">
+                          {badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Logout Footer Button */}
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/profile');
+                }}
+                className="flex items-center gap-3 px-3.5 py-3 rounded-[16px] text-[14px] font-medium text-[#7A7A75] hover:bg-[#F4F4F2] hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out text-left w-full"
+              >
+                <User className="w-4.5 h-4.5" strokeWidth={1.5} />
+                <span>Lihat Profil</span>
+              </button>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className="flex items-center gap-3 px-3.5 py-3 rounded-[16px] text-[14px] font-medium text-[#D4787C] hover:bg-[#FDF1F2] active:scale-[0.97] transition-transform duration-100 ease-out text-left w-full"
+              >
+                <LogOut className="w-4.5 h-4.5" strokeWidth={1.5} />
+                <span>Keluar</span>
+              </button>
+            </div>
+          </div>
+        </Sheet>
       </header>
 
       <div className="flex max-w-[1440px] mx-auto gap-6">
