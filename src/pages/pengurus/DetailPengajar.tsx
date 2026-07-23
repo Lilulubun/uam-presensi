@@ -143,7 +143,7 @@ export default function DetailPengajar() {
           {/* Hero numbers — Doto font */}
           <div className="z-10 mt-4 flex items-end gap-6">
             <div>
-              <p className="text-[11px] font-semibold text-[#1A1A18]/50 uppercase tracking-wider mb-0.5">Kehadiran</p>
+              <p className="text-[11px] font-semibold text-[#1A1A18]/50 mb-0.5">Kehadiran</p>
               <p className="text-[48px] sm:text-[64px] font-bold leading-[1.05] tracking-tighter text-[#1A1A18]"
                 style={{fontFamily: "'Doto', monospace"}}>
                 {pctKehadiran}%
@@ -151,7 +151,7 @@ export default function DetailPengajar() {
               <p className="text-[13px] text-[#1A1A18]/55">{hadirCount} dari {totalHariAktif} hari aktif</p>
             </div>
             <div className="border-l border-[#1A1A18]/15 pl-6">
-              <p className="text-[11px] font-semibold text-[#1A1A18]/50 uppercase tracking-wider mb-0.5">Wajib Hadir</p>
+              <p className="text-[11px] font-semibold text-[#1A1A18]/50 mb-0.5">Wajib Hadir</p>
               <p className="text-[48px] sm:text-[64px] font-bold leading-[1.05] tracking-tighter text-[#1A1A18]"
                 style={{fontFamily: "'Doto', monospace"}}>
                 {wajibHadirBulanIni}
