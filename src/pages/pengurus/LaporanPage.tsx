@@ -42,18 +42,27 @@ interface TeacherCounts {
   tidakMasuk: number;
 }
 
+interface TpaStatsAgregat {
+  totalPengajar: number;
+  avgKehadiran: number;
+  totalIzin: number;
+  totalAlpa: number;
+  avgTerlambat: number;
+}
+
 interface TeacherRow {
   name: string;
   cells: CellDisplay[];
   counts: TeacherCounts;
   totalHari: number;
-  statusAman: 'Memenuhi Target' | 'Belum Memenuhi';
+  statusAman: 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi';
 }
 
 interface TpaTable {
   tpaName: string;
   dates: string[];
   teachers: TeacherRow[];
+  stats: TpaStatsAgregat;
 }
 
 function getCellDisplay(row: LaporanRow): CellDisplay {
@@ -93,7 +102,8 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
   };
 }
 
-function isAman(hadirFisik: number, totalSesiTPA: number): 'Memenuhi Target' | 'Belum Memenuhi' {
+function isAman(hadirFisik: number, totalSesiTPA: number): 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi' {
+  if (totalSesiTPA === 0) return 'Belum Ada Sesi';
   const wajibHadir = Math.ceil(totalSesiTPA * 0.5 * 0.75);
   return hadirFisik >= wajibHadir ? 'Memenuhi Target' : 'Belum Memenuhi';
 }
@@ -117,6 +127,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
     const totalSesiTPA = dates.length; // Important: total sessions for THIS TPA
+    let tpaTotalLateMinutes = 0;
+    let tpaTotalLateCount = 0;
 
     const teacherMap = new Map<string, { name: string; bestRow: Map<string, LaporanRow>; counts: TeacherCounts; totalHari: number }>();
 
@@ -147,6 +159,8 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         if (row.scanInTime) {
           if (row.isLate) {
             t.counts.terlambat++;
+            tpaTotalLateMinutes += row.lateMinutes ?? 0;
+            tpaTotalLateCount++;
           } else {
             t.counts.tepatWaktu++;
           }
@@ -173,7 +187,35 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       };
     });
 
-    tables.push({ tpaName: group.name, dates, teachers });
+    // Hitung rata-rata keaktifan semua guru di TPA ini
+    const totalTeachers = teachers.length;
+    let sumKehadiranPct = 0;
+    let totalIzinAll = 0;
+    let totalAlpaAll = 0;
+
+    teachers.forEach((tr) => {
+      const denom = tr.totalHari - tr.counts.izin;
+      const actPct = denom > 0 ? (tr.counts.hadirFisik / denom) : 0;
+      sumKehadiranPct += actPct;
+      totalIzinAll += tr.counts.izin;
+      totalAlpaAll += tr.counts.tidakMasuk;
+    });
+
+    const avgKehadiran = totalTeachers > 0 ? Math.round((sumKehadiranPct / totalTeachers) * 100) : 0;
+    const avgTerlambat = tpaTotalLateCount > 0 ? Math.round((tpaTotalLateMinutes / tpaTotalLateCount) * 10) / 10 : 0;
+
+    tables.push({
+      tpaName: group.name,
+      dates,
+      teachers,
+      stats: {
+        totalPengajar: totalTeachers,
+        avgKehadiran,
+        totalIzin: totalIzinAll,
+        totalAlpa: totalAlpaAll,
+        avgTerlambat,
+      }
+    });
   }
 
   return tables;
@@ -211,6 +253,8 @@ export default function LaporanPage() {
   const [monthFilter, setMonthFilter] = useState(CURRENT_MONTH);
   const [yearFilter, setYearFilter] = useState(CURRENT_YEAR);
   const [tpaFilter, setTpaFilter] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [data, setData] = useState<LaporanRow[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -251,22 +295,40 @@ export default function LaporanPage() {
     return () => { cancelled = true; };
   }, [dateFrom, dateTo, tpaFilter]);
 
-  const tables = useMemo(() => (data ? processData(data) : []), [data]);
+  const filteredTables = useMemo(() => {
+    if (!data) return [];
+    const processed = processData(data);
 
-  const hasData = tables.length > 0 && tables.some((t) => t.teachers.length > 0);
+    return processed.map((t) => {
+      const filteredTeachers = t.teachers.filter((teacher) => {
+        const matchesName = teacher.name.toLowerCase().includes(searchFilter.toLowerCase());
+        const matchesStatus =
+          statusFilter === '' ? true :
+          statusFilter === 'aman' ? teacher.statusAman === 'Memenuhi Target' :
+          statusFilter === 'tidak-aman' ? teacher.statusAman === 'Belum Memenuhi' :
+          statusFilter === 'no-session' ? teacher.statusAman === 'Belum Ada Sesi' : true;
+
+        return matchesName && matchesStatus;
+      });
+      return { ...t, teachers: filteredTeachers };
+    }).filter((t) => t.teachers.length > 0);
+  }, [data, searchFilter, statusFilter]);
+
+  const hasData = filteredTables.length > 0 && filteredTables.some((t) => t.teachers.length > 0);
 
   // Export functions
   function exportCSV() {
     if (!hasData) return;
-    const headers = ['TPA', 'Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status', ...tables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
-    const csvRows = tables.flatMap((t) =>
+    const headers = ['TPA', 'Nama', '%', 'Tepat Waktu', 'Terlambat', 'Izin', 'Alpa', 'Status', ...filteredTables.flatMap((t) => t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`]))];
+    const csvRows = filteredTables.flatMap((t) =>
       t.teachers.map((teacher) => [
         t.tpaName,
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        `${teacher.counts.izin} hari (${pct(teacher.counts.izin, teacher.totalHari)})`,
+        `${teacher.counts.tidakMasuk} hari (${pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})`,
         teacher.statusAman,
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -285,14 +347,15 @@ export default function LaporanPage() {
   function exportExcel() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
-    for (const t of tables) {
-      const headers = ['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
+    for (const t of filteredTables) {
+      const headers = ['Nama', '%', 'Tepat Waktu', 'Terlambat', 'Izin', 'Alpa', 'Status', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [
         teacher.name,
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        `${teacher.counts.izin} hari (${pct(teacher.counts.izin, teacher.totalHari)})`,
+        `${teacher.counts.tidakMasuk} hari (${pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})`,
         teacher.statusAman,
         ...t.dates.flatMap((d) => {
           const cell = teacher.cells[t.dates.indexOf(d)];
@@ -314,7 +377,7 @@ export default function LaporanPage() {
     const fromFormatted = formatDate(dateFrom);
     const toFormatted = formatDate(dateTo);
 
-    tables.forEach((t, idx) => {
+    filteredTables.forEach((t, idx) => {
       if (idx > 0) doc.addPage();
 
       doc.setFont('helvetica', 'bold');
@@ -332,13 +395,14 @@ export default function LaporanPage() {
         totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin),
         teacher.counts.tepatWaktu,
         teacher.counts.terlambat,
-        pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin),
+        `${teacher.counts.izin} hari (${pct(teacher.counts.izin, teacher.totalHari)})`,
+        `${teacher.counts.tidakMasuk} hari (${pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})`,
         teacher.statusAman.toUpperCase(),
       ]);
 
       autoTable(doc, {
         startY: margin + 24,
-        head: [['Nama', 'Total', 'Tepat Waktu', 'Terlambat', 'Tidak Masuk', 'Status']],
+        head: [['Nama', '%', 'Tepat Waktu', 'Terlambat', 'Izin', 'Alpa', 'Status']],
         body,
         margin: { left: margin, right: margin },
         styles: {
@@ -460,38 +524,65 @@ export default function LaporanPage() {
         </div>
 
         {/* Info bar + export */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-4 border border-[#EAEAE7]">
-          <p className="text-[13px] text-[#7A7A75] font-medium px-2">
-            Periode Laporan: <span className="text-[#1A1A18]">{formatDate(dateFrom)}</span> – <span className="text-[#1A1A18]">{formatDate(dateTo)}</span>
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportCSV}
-              disabled={!hasData}
-              className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
-            >
-              <FileText className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> CSV
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportExcel}
-              disabled={!hasData}
-              className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> Excel
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportPDF}
-              disabled={!hasData}
-              className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
-            >
-              <FileDown className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> PDF
-            </Button>
+        <div className="flex flex-col gap-4 bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-4 border border-[#EAEAE7]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <p className="text-[13px] text-[#7A7A75] font-medium px-2">
+              Periode Laporan: <span className="text-[#1A1A18]">{formatDate(dateFrom)}</span> – <span className="text-[#1A1A18]">{formatDate(dateTo)}</span>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportCSV}
+                disabled={!hasData}
+                className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
+              >
+                <FileText className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportExcel}
+                disabled={!hasData}
+                className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> Excel
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportPDF}
+                disabled={!hasData}
+                className="rounded-[12px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
+              >
+                <FileDown className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} /> PDF
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+              <label className="text-xs font-medium text-[#7A7A75]">Cari Pengajar</label>
+              <input
+                type="text"
+                placeholder="Cari nama pengajar..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="text-sm border border-[#EAEAE7] rounded-[14px] px-3 py-2.5 bg-[#F7F7F5] focus:outline-none focus:border-[#D7FF3D] focus:ring-1 focus:ring-[#D7FF3D]/50"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5 min-w-[160px]">
+              <label className="text-xs font-medium text-[#7A7A75]">Status Keaktifan</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="text-sm border border-[#EAEAE7] rounded-[14px] px-3 py-2.5 bg-[#F7F7F5] focus:outline-none focus:border-[#D7FF3D]"
+              >
+                <option value="">Semua Status</option>
+                <option value="aman">Memenuhi Target</option>
+                <option value="tidak-aman">Belum Memenuhi</option>
+                <option value="no-session">Belum Ada Sesi</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -518,108 +609,147 @@ export default function LaporanPage() {
         )}
 
         {/* Tables */}
-        {!loading && !error && hasData && tables.map((t) => (
-          <section key={t.tpaName} className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#EAEAE7] bg-[#F7F7F5]">
-              <h2 className="font-semibold text-[15px] tracking-tight text-[#1A1A18]">{t.tpaName}</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-0">
-                <thead>
-                  <tr className="bg-[#F7F7F5]">
-                    <th rowSpan={3} className="sticky left-0性能 z-10 bg-[#F7F7F5] text-left px-4 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap min-w-[160px] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Nama
-                    </th>
-                    <th colSpan={3} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Persentase
-                    </th>
-                    <th rowSpan={3} className="sticky left-[316px] z-10 bg-[#F7F7F5] text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap min-w-[56px] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Alpa
-                    </th>
-                    <th rowSpan={3} className="sticky left-[372px] z-10 bg-[#F7F7F5] text-center px-4 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap min-w-[80px] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Status
-                    </th>
-                    {t.dates.map((d) => (
-                      <th key={d} colSpan={2} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                        {formatShortDate(d)}
-                      </th>
-                    ))}
-                  </tr>
-                  <tr className="bg-[#F7F7F5]">
-                    <th rowSpan={2} className="sticky left-[160px] z-10 bg-[#F7F7F5] text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap min-w-[48px] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Total
-                    </th>
-                    <th colSpan={2} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] whitespace-nowrap border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Masuk
-                    </th>
-                    {t.dates.flatMap((d) => [
-                      <th key={`${d}-in`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                        Masuk
-                      </th>,
-                      <th key={`${d}-out`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                        Keluar
-                      </th>,
-                    ])}
-                  </tr>
-                  <tr className="bg-[#F7F7F5]">
-                    <th className="sticky left-[208px] z-10 bg-[#F7F7F5] text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Tepat<br />Waktu
-                    </th>
-                    <th className="sticky left-[260px] z-10 bg-[#F7F7F5] text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
-                      Lambat
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#EAEAE7]">
-                  {t.teachers.map((teacher) => (
-                    <tr key={teacher.name} className="hover:bg-[#F7F7F5] transition-colors">
-                      <td className="sticky left-0 z-10 bg-white text-left px-4 py-3 text-[13px] font-medium min-w-[160px] border-b border-r border-[#EAEAE7] text-[#1A1A18]">
-                        {teacher.name}
-                      </td>
-                      <td className="sticky left-[160px] z-10 bg-white text-center px-3 py-3 text-[13px] font-semibold tabular-nums border-b border-r border-[#EAEAE7] text-[#1A1A18]">
-                        {totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin)}
-                      </td>
-                      <td className="sticky left-[208px] z-10 bg-white text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#7A7A75] tabular-nums">
-                        {teacher.counts.tepatWaktu}
-                      </td>
-                      <td className="sticky left-[260px] z-10 bg-white text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#7A7A75] tabular-nums">
-                        {teacher.counts.terlambat}
-                      </td>
-                      <td className="sticky left-[316px] z-10 bg-white text-center px-3 py-3 text-[13px] font-medium text-[#D4787C] border-b border-r border-[#EAEAE7] tabular-nums">
-                        {pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)}
-                      </td>
-                      <td className="sticky left-[372px] z-10 bg-white text-center px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7]">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
-                          teacher.statusAman === 'Memenuhi Target' 
-                            ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
-                            : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
-                        }`}>
-                          {teacher.statusAman}
-                        </span>
-                      </td>
-                      {teacher.cells.map((cell, i) => {
-                        if (cell.type === 'merged') {
-                          return (
-                            <td key={i} colSpan={2} className={`text-center px-3 py-3 text-[12px] border-b border-r border-[#EAEAE7] font-medium ${cell.mergedClass ?? ''}`}>
-                              {cell.mergedText}
-                            </td>
-                          );
-                        }
-                        return (
-                          <>
-                            <td key={`${i}-in`} className={`text-center px-3 py-3 text-[12px] tabular-nums border-b border-r border-[#EAEAE7] ${cell.masukClass ?? ''}`}>
-                              {cell.masukText}
-                            </td>
-                            <td key={`${i}-out`} className={`text-center px-3 py-3 text-[12px] tabular-nums border-b border-r border-[#EAEAE7] ${cell.keluarClass ?? ''}`}>
-                              {cell.keluarText}
-                            </td>
-                          </>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {!loading && !error && hasData && filteredTables.map((t) => (
+          <section key={t.tpaName} className="space-y-4">
+            <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] p-6">
+              <div className="flex items-center justify-between border-b border-[#EAEAE7] pb-4 mb-5">
+                <h2 className="font-semibold text-[16px] tracking-tight text-[#1A1A18]">{t.tpaName}</h2>
+                <span className="text-[11px] text-[#7A7A75] font-semibold bg-[#F7F7F5] px-3 py-1 rounded-full border border-[#EAEAE7]">
+                  Wajib Masuk: {t.dates.length > 0 ? Math.ceil(t.dates.length * 0.5 * 0.75) : 0} Sesi
+                </span>
+              </div>
+
+              {/* Bento Grid Agregat */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+                <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
+                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Pengajar</p>
+                  <p className="text-[26px] font-light text-[#1A1A18] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalPengajar}</p>
+                </div>
+                <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
+                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Avg Kehadiran</p>
+                  <p className="text-[26px] font-light text-[#5B9C64] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgKehadiran}%</p>
+                </div>
+                <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
+                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Izin</p>
+                  <p className="text-[26px] font-light text-[#8DB5D8] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalIzin}</p>
+                </div>
+                <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7]">
+                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Total Alpa</p>
+                  <p className="text-[26px] font-light text-[#D4787C] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.totalAlpa}</p>
+                </div>
+                <div className="bg-[#F7F7F5] rounded-[20px] p-4 border border-[#EAEAE7] col-span-2 sm:col-span-1">
+                  <p className="text-[10px] font-semibold text-[#7A7A75] uppercase tracking-wider">Avg Terlambat</p>
+                  <p className="text-[26px] font-light text-[#D9A06B] mt-1 tabular-nums" style={{fontFamily: "'Doto', monospace"}}>{t.stats.avgTerlambat}m</p>
+                </div>
+              </div>
+
+              {/* Table Wrapper */}
+              <div className="border border-[#EAEAE7] rounded-[24px] overflow-hidden">
+                <div className="overflow-x-auto custom-scrollbar">
+                  <table className="min-w-full border-separate border-spacing-0">
+                    <thead>
+                      <tr className="bg-[#F7F7F5]">
+                        <th rowSpan={3} className="sticky left-0 z-10 bg-[#F7F7F5] text-left px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Nama
+                        </th>
+                        <th colSpan={5} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Rekapitulasi Kehadiran
+                        </th>
+                        <th rowSpan={3} className="text-center px-4 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Status
+                        </th>
+                        {t.dates.map((d) => (
+                          <th key={d} colSpan={2} className="text-center px-3 py-3 text-[11px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                            {formatShortDate(d)}
+                          </th>
+                        ))}
+                      </tr>
+                      <tr className="bg-[#F7F7F5]">
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          %
+                        </th>
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Tepat
+                        </th>
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Lambat
+                        </th>
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Izin
+                        </th>
+                        <th rowSpan={2} className="text-center px-3 py-3 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                          Alpa
+                        </th>
+                        {t.dates.flatMap((d) => [
+                          <th key={`${d}-in`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                            Masuk
+                          </th>,
+                          <th key={`${d}-out`} rowSpan={2} className="text-center px-3 py-2 text-[10px] font-semibold text-[#7A7A75] border-b border-r border-[#EAEAE7] uppercase tracking-wider">
+                            Keluar
+                          </th>,
+                        ])}
+                      </tr>
+                      <tr className="bg-[#F7F7F5]">
+                        {/* No extra cells needed — all spanned by rowSpan={2} above */}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#EAEAE7]">
+                      {t.teachers.map((teacher) => (
+                        <tr key={teacher.name} className="hover:bg-[#F7F7F5] transition-colors">
+                          <td className="sticky left-0 z-10 bg-white text-left px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7] text-[#1A1A18]">
+                            {teacher.name}
+                          </td>
+                          <td className="text-center px-3 py-3 text-[13px] font-semibold tabular-nums border-b border-r border-[#EAEAE7] text-[#1A1A18]">
+                            {totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin)}
+                          </td>
+                          <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#7A7A75] tabular-nums">
+                            {teacher.counts.tepatWaktu}
+                          </td>
+                          <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#7A7A75] tabular-nums">
+                            {teacher.counts.terlambat}
+                          </td>
+                          <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#8DB5D8] font-medium tabular-nums bg-[#EDF3F8]/20">
+                            {teacher.counts.izin} hari <span className="text-[10px] text-[#A3A39D] font-normal">({pct(teacher.counts.izin, teacher.totalHari)})</span>
+                          </td>
+                          <td className="text-center px-3 py-3 text-[13px] border-b border-r border-[#EAEAE7] text-[#D4787C] font-semibold tabular-nums bg-[#FDF1F2]/20">
+                            {teacher.counts.tidakMasuk} hari <span className="text-[10px] text-[#D4787C]/70 font-semibold">({pct(teacher.counts.tidakMasuk, teacher.totalHari - teacher.counts.izin)})</span>
+                          </td>
+                          <td className="text-center px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7]">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
+                              teacher.statusAman === 'Memenuhi Target' 
+                                ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
+                                : teacher.statusAman === 'Belum Ada Sesi'
+                                ? 'bg-stone-50 text-stone-700 ring-stone-600/20'
+                                : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
+                            }`}>
+                              {teacher.statusAman}
+                            </span>
+                          </td>
+                          {teacher.cells.map((cell, i) => {
+                            if (cell.type === 'merged') {
+                              return (
+                                <td key={i} colSpan={2} className={`text-center px-3 py-3 text-[12px] border-b border-r border-[#EAEAE7] font-medium ${cell.mergedClass ?? ''}`}>
+                                  {cell.mergedText}
+                                </td>
+                              );
+                            }
+                            return (
+                              <>
+                                <td key={`${i}-in`} className={`text-center px-3 py-3 text-[12px] tabular-nums border-b border-r border-[#EAEAE7] ${cell.masukClass ?? ''}`}>
+                                  {cell.masukText}
+                                </td>
+                                <td key={`${i}-out`} className={`text-center px-3 py-3 text-[12px] tabular-nums border-b border-r border-[#EAEAE7] ${cell.keluarClass ?? ''}`}>
+                                  {cell.keluarText}
+                                </td>
+                              </>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </section>
         ))}
