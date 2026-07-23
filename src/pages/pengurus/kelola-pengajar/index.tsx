@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, UserPlus, FileText, Trash2 } from 'lucide-react';
+import { ArrowLeft, Search, User, UserPlus, FileText, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../../../app/components/ui/button';
 import { useUsersStore } from '../../../store/userStore';
@@ -199,6 +199,14 @@ export default function KelolaPengajarPage() {
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/pengurus/pengajar/${user.id}`)}
+                          className="text-[#1A1A18] hover:text-[#D7FF3D] h-8 w-8 p-0"
+                        >
+                          <User className="w-4 h-4" strokeWidth={1.5} />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"

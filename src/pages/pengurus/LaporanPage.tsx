@@ -51,6 +51,7 @@ interface TpaStatsAgregat {
 }
 
 interface TeacherRow {
+  id: string;
   name: string;
   cells: CellDisplay[];
   counts: TeacherCounts;
@@ -149,7 +150,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       }
     }
 
-    const teachers = Array.from(teacherMap.values()).map((t) => {
+    const teachers = Array.from(teacherMap.entries()).map(([teacherId, t]) => {
       const cells = new Map<string, CellDisplay>();
 
       for (const [tgl, row] of t.bestRow) {
@@ -175,6 +176,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
       const statusAman = isAman(t.counts.hadirFisik, totalSesiTPA);
 
       return {
+        id: teacherId,
         name: t.name,
         cells: dates.map((d) => cells.get(d) ?? {
           type: 'merged' as const,
@@ -693,9 +695,14 @@ export default function LaporanPage() {
                     </thead>
                     <tbody className="divide-y divide-[#EAEAE7]">
                       {t.teachers.map((teacher) => (
-                        <tr key={teacher.name} className="hover:bg-[#F7F7F5] transition-colors">
-                          <td className="sticky left-0 z-10 bg-white text-left px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7] text-[#1A1A18]">
-                            {teacher.name}
+                        <tr key={teacher.id} className="hover:bg-[#F7F7F5] transition-colors">
+                          <td className="sticky left-0 z-10 bg-white text-left px-4 py-3 text-[13px] font-medium border-b border-r border-[#EAEAE7]">
+                            <button
+                              onClick={() => navigate(`/pengurus/pengajar/${teacher.id}`)}
+                              className="text-[#1A1A18] hover:text-[#D7FF3D] hover:underline transition-colors cursor-pointer text-left"
+                            >
+                              {teacher.name}
+                            </button>
                           </td>
                           <td className="text-center px-3 py-3 text-[13px] font-semibold tabular-nums border-b border-r border-[#EAEAE7] text-[#1A1A18]">
                             {totalPct(teacher.counts.hadirFisik, teacher.totalHari, teacher.counts.izin)}
