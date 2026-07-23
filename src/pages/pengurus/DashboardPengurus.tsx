@@ -341,12 +341,12 @@ export default function DashboardPengurus() {
         <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden">
           <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#D7FF3D]" strokeWidth={1.5} />
+              <FileText className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <h2 className="text-[15px] font-medium tracking-tight">Izin Pending</h2>
             </div>
             <div className="flex items-center gap-3">
               {pendingIzins.length > 0 && (
-                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30">
+                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#FFF1F2] text-[#D4787C] ring-1 ring-inset ring-[#D4787C]/20">
                   {pendingIzins.length} menunggu
                 </span>
               )}
@@ -478,7 +478,7 @@ export default function DashboardPengurus() {
               <TrendingUp className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[12px] font-semibold text-[#7A7A75]">Kehadiran Tepat Waktu</p>
             </div>
-            <p className="text-[32px] font-light leading-none tracking-tighter text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>
+            <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.onTimeRate}%
             </p>
             <p className="text-[11px] text-[#A3A39D] mt-1.5">dari total hadir</p>
@@ -504,7 +504,7 @@ export default function DashboardPengurus() {
               <TrendingUp className="w-4 h-4 text-[#7A7A75] shrink-0" strokeWidth={1.5} />
               <h2 className="text-[14px] font-semibold tracking-tight">Tren kehadiran (7 hari terakhir)</h2>
             </div>
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30 shrink-0 whitespace-nowrap">
+            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 shrink-0 whitespace-nowrap">
               Bulan ini: {totalThisMonth} sesi
             </span>
           </div>
