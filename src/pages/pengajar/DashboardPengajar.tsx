@@ -38,7 +38,8 @@ export default function DashboardPengajar() {
   const pendingIzins = useIzinStore((s) => s.myIzins.filter((i) => i.status === 'pending').length);
   const fetchMyIzins = useIzinStore((s) => s.fetchMyIzins);
   const loadUserTPAs = useUsersStore((s) => s.loadUserTPAs);
-  const userTPAs = useUsersStore((s) => s.userTPAs.filter((ut) => ut.userId === user?.id));
+  const allUserTPAs = useUsersStore((s) => s.userTPAs);
+  const userTPAs = allUserTPAs.filter((ut) => ut.userId === user?.id);
 
   useEffect(() => {
     fetchMyIzins();
