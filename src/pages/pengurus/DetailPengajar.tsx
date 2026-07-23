@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, CheckCircle2, FileText, TrendingUp } from 'lucide-rea
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
-import { formatDate, formatTime, formatMonthYear, formatDateIdShort, jakartaNow } from '../../lib/date-utils';
+import { formatDate, formatTime, formatDateIdShort, jakartaNow } from '../../lib/date-utils';
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
@@ -34,7 +34,6 @@ export default function DetailPengajar() {
   const onTime = myAttendances.filter((a) => !a.isLate).length;
   const late = myAttendances.filter((a) => a.isLate).length;
 
-  const now = new Date();
   const { monthlyReport, fetchMonthlyReport } = useIzinStore();
 
   const { year: jkYear, month: jkMonth } = jakartaNow();
@@ -85,6 +84,29 @@ export default function DetailPengajar() {
       </header>
 
       <main className="max-w-lg mx-auto p-4 flex flex-col gap-4">
+        {/* Filter Bulan/Tahun (Kontrol Utama di Paling Atas) */}
+        <div className="flex items-center gap-2 bg-white p-3 rounded-[20px] border border-[#EAEAE7] shadow-sm">
+          <span className="text-[12px] font-medium text-[#7A7A75] ml-1">Periode:</span>
+          <select
+            value={monthFilter}
+            onChange={(e) => setMonthFilter(Number(e.target.value))}
+            className="text-[13px] font-medium border border-[#EAEAE7] rounded-[12px] px-2.5 py-1.5 bg-white focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
+          >
+            {MONTHS.map((m, i) => (
+              <option key={i} value={i + 1}>{m}</option>
+            ))}
+          </select>
+          <select
+            value={yearFilter}
+            onChange={(e) => setYearFilter(Number(e.target.value))}
+            className="text-[13px] font-medium border border-[#EAEAE7] rounded-[12px] px-2.5 py-1.5 bg-white focus:outline-none focus:border-[#D7FF3D] cursor-pointer"
+          >
+            {[jkYear, jkYear - 1, jkYear - 2].map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Target & Status Bulan Ini — Bento Metrics Card */}
         <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
           <div className="flex items-center gap-2 mb-4">
@@ -144,12 +166,12 @@ export default function DetailPengajar() {
         </div>
 
         {/* Status Bulanan */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b flex items-center gap-2">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-[#EAEAE7]">
+          <div className="px-4 py-3 border-b flex items-center gap-2 bg-[#F7F7F5]">
             <FileText className="w-4 h-4 text-[#7A7A75]" />
             <p className="text-sm font-medium">Status Bulanan</p>
             <span className="ml-auto text-xs text-[#7A7A75]">
-              {formatMonthYear(now)}
+              {MONTHS[monthFilter - 1]} {yearFilter}
             </span>
           </div>
 
@@ -170,41 +192,24 @@ export default function DetailPengajar() {
         </div>
 
         {/* Summary All-Time */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold">{total}</p>
-            <p className="text-xs text-[#7A7A75] mt-0.5">Total</p>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-[#EAEAE7]">
+          <div className="px-4 py-3 border-b bg-[#F7F7F5]">
+            <p className="text-sm font-medium">Akumulasi Seluruh Waktu (All-Time)</p>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold text-[#5B9C64]">{onTime}</p>
-            <p className="text-xs text-[#7A7A75] mt-0.5">Tepat</p>
+          <div className="grid grid-cols-3 gap-2 p-3">
+            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
+              <p className="text-lg font-bold text-[#1A1A18]">{total}</p>
+              <p className="text-xs text-[#7A7A75] mt-0.5">Total Hadir</p>
+            </div>
+            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
+              <p className="text-lg font-bold text-[#5B9C64]">{onTime}</p>
+              <p className="text-xs text-[#7A7A75] mt-0.5">Tepat Waktu</p>
+            </div>
+            <div className="bg-[#F7F7F5] rounded-xl p-3 text-center">
+              <p className="text-lg font-bold text-[#D9A06B]">{late}</p>
+              <p className="text-xs text-[#7A7A75] mt-0.5">Terlambat</p>
+            </div>
           </div>
-          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold text-[#D9A06B]">{late}</p>
-            <p className="text-xs text-[#7A7A75] mt-0.5">Telat</p>
-          </div>
-        </div>
-
-        {/* Filter Bulan/Tahun */}
-        <div className="flex items-center gap-2">
-          <select
-            value={monthFilter}
-            onChange={(e) => setMonthFilter(Number(e.target.value))}
-            className="text-[13px] border border-[#EAEAE7] rounded-[14px] px-3 py-2 bg-white focus:outline-none focus:border-[#D7FF3D]"
-          >
-            {MONTHS.map((m, i) => (
-              <option key={i} value={i + 1}>{m}</option>
-            ))}
-          </select>
-          <select
-            value={yearFilter}
-            onChange={(e) => setYearFilter(Number(e.target.value))}
-            className="text-[13px] border border-[#EAEAE7] rounded-[14px] px-3 py-2 bg-white focus:outline-none focus:border-[#D7FF3D]"
-          >
-            {[jkYear, jkYear - 1, jkYear - 2].map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
         </div>
 
         {/* Riwayat Presensi Harian */}
