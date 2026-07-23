@@ -47,7 +47,7 @@ export default function TPADetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#A3A39D]">TPA tidak ditemukan</p>
+          <p className="text-[#7A7A75]">TPA tidak ditemukan</p>
           <button onClick={() => navigate('/pengurus/dashboard')} className="mt-4 text-primary text-sm underline">
             Kembali
           </button>
@@ -91,10 +91,10 @@ export default function TPADetailPage() {
         </button>
         <div className="flex-1">
           <h1 className="font-semibold text-[18px] tracking-tight text-[#1A1A18]">{tpa.name}</h1>
-          <p className="text-[11px] text-[#A3A39D] font-medium">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
+          <p className="text-[11px] text-[#7A7A75] font-medium">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
         </div>
         {activeSession && (
-          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase tracking-wider">
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20">
             Aktif
           </span>
         )}
@@ -110,7 +110,7 @@ export default function TPADetailPage() {
                   Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
                 </p>
               </div>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase tracking-wider animate-pulse">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 animate-pulse">
                 Live
               </span>
             </div>
@@ -145,12 +145,12 @@ export default function TPADetailPage() {
         )}
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-[11px] font-bold text-[#7A7A75] uppercase tracking-wider">
+          <h2 className="text-[13px] font-semibold text-[#6B6B66]">
             Riwayat Sesi ({tpaSessions.length})
           </h2>
 
           {tpaSessions.length === 0 && (
-            <div className="text-center py-12 text-[14px] text-[#A3A39D] bg-white rounded-[32px] border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)] font-medium">
+            <div className="text-center py-12 text-[14px] text-[#7A7A75] bg-white rounded-[32px] border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)] font-medium">
               Belum ada sesi di TPA ini
             </div>
           )}
@@ -173,7 +173,7 @@ export default function TPADetailPage() {
                         {formatTime(new Date(session.dateOpened))}
                         {session.dateClosed && ` – ${formatTime(new Date(session.dateClosed))}`}
                       </p>
-                      <p className="text-[11px] text-[#A3A39D] font-medium mt-1">
+                      <p className="text-[11px] text-[#7A7A75] font-medium mt-1">
                         Pengajar pertama: <span className="text-[#7A7A75]">{firstTeacher?.name ?? '(tidak ditemukan)'}</span>
                       </p>
                     </div>
@@ -182,7 +182,7 @@ export default function TPADetailPage() {
                         session.isActive 
                           ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
                           : 'bg-[#F0F0EC] text-[#5C5C57] ring-[#EAEAE7]'
-                      } uppercase tracking-wider`}
+                      }`}
                     >
                       {session.isActive ? 'Aktif' : 'Selesai'}
                     </span>
@@ -201,7 +201,7 @@ export default function TPADetailPage() {
 
                   {session.closeNotes && (
                     <div className="px-6 py-3 border-b border-[#EAEAE7]">
-                      <p className="text-[11px] text-[#A3A39D] font-medium">Catatan Sesi:</p>
+                      <p className="text-[11px] text-[#7A7A75] font-medium">Catatan Sesi:</p>
                       <p className="text-[13px] text-[#1A1A18] mt-1 italic">"{session.closeNotes}"</p>
                     </div>
                   )}
@@ -263,7 +263,7 @@ function SessionAttendees({
   }, [session.tpaId, pengajarByTPA, fetchPengajarByTPA]);
 
   if (sessionAttendances.length === 0 && absentUsers.length === 0) {
-    return <p className="px-6 py-4 text-[13px] text-[#A3A39D] font-medium">Belum ada presensi</p>;
+    return <p className="px-6 py-4 text-[13px] text-[#7A7A75] font-medium">Belum ada presensi</p>;
   }
 
   return (
