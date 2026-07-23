@@ -211,9 +211,10 @@ export default function DashboardPengurus() {
             </button>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Navigation Sheet */}
-        <Sheet open={menuOpen} onClose={() => setMenuOpen(false)}>
+      {/* Mobile Navigation Sheet */}
+      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)}>
           <div className="flex flex-col h-full justify-between">
             <div className="space-y-6">
               {/* Profile Card */}
@@ -290,7 +291,6 @@ export default function DashboardPengurus() {
             </div>
           </div>
         </Sheet>
-      </header>
 
       <div className="flex max-w-[1440px] mx-auto gap-6">
         {/* Sidebar — lg+ only, floating bento card that follows scroll */}
