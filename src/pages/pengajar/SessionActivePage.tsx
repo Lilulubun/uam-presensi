@@ -130,7 +130,7 @@ export default function SessionActivePage() {
         </button>
         <div className="flex-1">
           <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18]">{tpa?.name ?? 'Sesi Aktif'}</h1>
-          <p className="text-[12px] text-[#A3A39D] font-medium mt-0.5">
+          <p className="text-[12px] text-[#7A7A75] font-medium mt-0.5">
             Dibuka {session.dateOpened ? formatDateTime(session.dateOpened) : '—'}
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function SessionActivePage() {
             session.isActive
               ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
               : 'bg-[#F7F7F5] text-[#7A7A75] ring-[#7A7A75]/20'
-          } uppercase tracking-wide`}
+          }`}
         >
           {session.isActive ? 'Aktif' : 'Ditutup'}
         </span>
@@ -165,7 +165,7 @@ export default function SessionActivePage() {
             </p>
             {session.closeNotes && (
               <div className="mt-4 pt-4 border-t border-[#5B9C64]/30 w-full">
-                <p className="text-[12px] font-semibold text-[#5B9C64] uppercase tracking-wider mb-1">Materi TPA:</p>
+                <p className="text-[12px] font-semibold text-[#5B9C64] mb-1">Materi TPA:</p>
                 <p className="text-[14px] text-[#5B9C64] italic">"{session.closeNotes}"</p>
               </div>
             )}
@@ -202,7 +202,7 @@ export default function SessionActivePage() {
                       <p className="text-[14px] font-semibold text-[#1A1A18] truncate">
                         {teacher?.name ?? '(pengajar tidak ditemukan)'}
                         {attendance.userId === session.firstTeacherId && (
-                          <span className="ml-2 text-[11px] text-[#A3A39D] font-medium">(Pertama)</span>
+                          <span className="ml-2 text-[11px] text-[#7A7A75] font-medium">(Pertama)</span>
                         )}
                       </p>
                       <div className="flex gap-3 text-[12px] text-[#7A7A75] font-medium mt-1">
