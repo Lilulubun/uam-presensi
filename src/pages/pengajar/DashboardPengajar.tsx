@@ -110,7 +110,7 @@ export default function DashboardPengajar() {
         sub: 'TPA libur hari ini',
         badge: 'Libur',
         textColor: 'text-[#7A7A75]',
-        icon: <CalendarDays className="w-6 h-6 text-[#A3A39D]" strokeWidth={1.5} />,
+        icon: <CalendarDays className="w-6 h-6 text-[#7A7A75]" strokeWidth={1.5} />,
         gradient: 'bg-white border border-[#EAEAE7]',
         badgeStyle: 'bg-[#F4F4F2] text-[#7A7A75]',
       };
@@ -177,7 +177,7 @@ export default function DashboardPengajar() {
         <div className="max-w-lg mx-auto flex justify-between items-center">
           <div>
             <h1 className="font-bold text-[22px] tracking-tight">Presensi UAM</h1>
-            <p className="text-[13px] text-[#A3A39D] font-medium">Halo, {user?.name}</p>
+            <p className="text-[13px] text-[#7A7A75] font-medium">Halo, {user?.name}</p>
           </div>
           <div className="flex items-center gap-1">
             <button onClick={() => navigate('/profile')} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
@@ -199,7 +199,7 @@ export default function DashboardPengajar() {
           {/* grain overlay */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{backgroundImage:'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")'}} />
           <div className="flex justify-between items-start z-10">
-            <p className={`text-[13px] font-normal ${statusInfo.textColor === 'text-white' ? 'text-white/70' : 'text-[#A3A39D]'}`}>Status Hari Ini</p>
+            <p className={`text-[13px] font-normal ${statusInfo.textColor === 'text-white' ? 'text-white/70' : 'text-[#7A7A75]'}`}>Status Hari Ini</p>
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusInfo.badgeStyle}`}>
               {statusInfo.badge}
             </span>
@@ -219,19 +219,19 @@ export default function DashboardPengajar() {
         <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Wajib Hadir</p>
-              <p className="text-[34px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{wajibHadirBulanIni}</p>
-              <p className="text-[11px] text-[#A3A39D] mt-1">dari {totalSesiBulanIni} sesi</p>
+              <p className="text-[11px] font-semibold text-[#7A7A75] mb-1">Wajib Hadir</p>
+              <p className="text-[34px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{wajibHadirBulanIni}</p>
+              <p className="text-[11px] text-[#7A7A75] mt-1">dari {totalSesiBulanIni} sesi</p>
             </div>
             <div className="text-center border-x border-[#EAEAE7]">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Izin</p>
-              <p className="text-[34px] font-light leading-none tracking-tighter text-[#8DB5D8]" style={{fontFamily: "'Doto', monospace"}}>{totalIzinBulanIni}</p>
-              <p className="text-[11px] text-[#A3A39D] mt-1">hari bulan ini</p>
+              <p className="text-[11px] font-semibold text-[#7A7A75] mb-1">Izin</p>
+              <p className="text-[34px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{totalIzinBulanIni}</p>
+              <p className="text-[11px] text-[#7A7A75] mt-1">hari bulan ini</p>
             </div>
             <div className="text-center flex flex-col justify-between items-center">
-              <p className="text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider mb-1">Status</p>
+              <p className="text-[11px] font-semibold text-[#7A7A75] mb-1">Status</p>
               <div className="mt-1.5">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold ring-1 ring-inset ${
                   statusAmanBulanIni === 'Memenuhi Target'
                     ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
                     : statusAmanBulanIni === 'Belum Ada Sesi'
@@ -241,7 +241,7 @@ export default function DashboardPengajar() {
                   {statusAmanBulanIni}
                 </span>
               </div>
-              <p className="text-[11px] text-[#A3A39D] mt-1.5">{totalHadirBulanIni} hadir / {totalSesiBulanIni - totalIzinBulanIni} aktif</p>
+              <p className="text-[11px] text-[#7A7A75] mt-1.5">{totalHadirBulanIni} hadir / {totalSesiBulanIni - totalIzinBulanIni} aktif</p>
             </div>
           </div>
           {totalSesiBulanIni > 0 && (
@@ -264,23 +264,23 @@ export default function DashboardPengajar() {
         {monthSummary.total > 0 && (
           <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
             <div className="flex items-center gap-2 mb-5">
-              <CalendarDays className="w-4 h-4 text-[#A3A39D]" strokeWidth={1.5} />
-              <p className="text-[13px] font-medium text-[#A3A39D] uppercase tracking-wider">
+              <CalendarDays className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
+              <h2 className="text-[13px] font-semibold text-[#6B6B66]">
                 Ringkasan Bulan Ini
-              </p>
+              </h2>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.total}</p>
-                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Hadir</p>
+                <p className="text-[40px] font-bold leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.total}</p>
+                <p className="text-[11px] text-[#7A7A75] mt-1.5">Total Hadir</p>
+              </div>
+              <div className="border-x border-[#EAEAE7]">
+                <p className="text-[40px] font-bold leading-none tracking-tighter text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.onTime}</p>
+                <p className="text-[11px] text-[#7A7A75] mt-1.5">Tepat Waktu</p>
               </div>
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.percentage}%</p>
-                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Tepat Waktu</p>
-              </div>
-              <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#D9A06B]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.late}</p>
-                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Terlambat</p>
+                <p className="text-[40px] font-bold leading-none tracking-tighter text-[#D9A06B]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.late}</p>
+                <p className="text-[11px] text-[#7A7A75] mt-1.5">Terlambat</p>
               </div>
             </div>
           </div>
@@ -366,7 +366,7 @@ export default function DashboardPengajar() {
         )}
 
         {recentAttendances.length === 0 && (
-          <div className="text-center py-10 text-[13px] text-[#A3A39D] font-medium">
+          <div className="text-center py-10 text-[13px] text-[#7A7A75] font-medium">
             Belum ada riwayat presensi
           </div>
         )}
