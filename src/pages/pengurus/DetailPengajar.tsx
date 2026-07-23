@@ -18,7 +18,7 @@ export default function DetailPengajar() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Pengajar tidak ditemukan</p>
+          <p className="text-[#A3A39D]">Pengajar tidak ditemukan</p>
           <button onClick={() => navigate('/pengurus/dashboard')} className="mt-4 text-primary text-sm underline">
             Kembali
           </button>
@@ -47,56 +47,56 @@ export default function DetailPengajar() {
   const tidakMasukCount = monthlyReport.filter((r) => r.status === 'tidak_masuk').length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-4 py-4 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+    <div className="min-h-screen bg-[#F7F7F5]">
+      <header className="bg-white border-b px-4 py-4 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="text-[#A3A39D] hover:text-[#1A1A18]">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1">
           <h1 className="font-semibold text-lg">{teacher.name}</h1>
-          <p className="text-xs text-muted-foreground">{teacher.email}{teacher.nim ? ` · ${teacher.nim}` : ''}</p>
+          <p className="text-xs text-[#A3A39D]">{teacher.email}{teacher.nim ? ` · ${teacher.nim}` : ''}</p>
         </div>
       </header>
 
       <main className="max-w-lg mx-auto p-4 flex flex-col gap-4">
         {/* Summary cards */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-card rounded-xl p-3 shadow-sm text-center">
+          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
             <p className="text-lg font-bold">{total}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Total</p>
+            <p className="text-xs text-[#A3A39D] mt-0.5">Total</p>
           </div>
-          <div className="bg-card rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold text-green-600">{onTime}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Tepat</p>
+          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
+            <p className="text-lg font-bold text-[#5B9C64]">{onTime}</p>
+            <p className="text-xs text-[#A3A39D] mt-0.5">Tepat</p>
           </div>
-          <div className="bg-card rounded-xl p-3 shadow-sm text-center">
-            <p className="text-lg font-bold text-orange-500">{late}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Telat</p>
+          <div className="bg-white rounded-xl p-3 shadow-sm text-center">
+            <p className="text-lg font-bold text-[#D9A06B]">{late}</p>
+            <p className="text-xs text-[#A3A39D] mt-0.5">Telat</p>
           </div>
         </div>
 
         {/* Monthly attendance status */}
-        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b flex items-center gap-2">
-            <FileText className="w-4 h-4 text-muted-foreground" />
+            <FileText className="w-4 h-4 text-[#A3A39D]" />
             <p className="text-sm font-medium">Status Bulanan</p>
-            <span className="ml-auto text-xs text-muted-foreground">
+            <span className="ml-auto text-xs text-[#A3A39D]">
               {formatMonthYear(now)}
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 p-3">
-            <div className="text-center p-2 rounded-lg bg-green-50">
-              <p className="text-lg font-bold text-green-600">{hadirCount}</p>
-              <p className="text-xs text-green-700">Hadir</p>
+            <div className="text-center p-2 rounded-lg bg-[#EDF5EE]">
+              <p className="text-lg font-bold text-[#5B9C64]">{hadirCount}</p>
+              <p className="text-xs text-[#5B9C64]">Hadir</p>
             </div>
-            <div className="text-center p-2 rounded-lg bg-blue-50">
-              <p className="text-lg font-bold text-blue-600">{izinCount}</p>
+            <div className="text-center p-2 rounded-lg bg-[#EDF3F8]">
+              <p className="text-lg font-bold text-[#8DB5D8]">{izinCount}</p>
               <p className="text-xs text-blue-700">Izin</p>
             </div>
-            <div className="text-center p-2 rounded-lg bg-red-50">
-              <p className="text-lg font-bold text-red-500">{tidakMasukCount}</p>
-              <p className="text-xs text-red-600">Tidak Masuk</p>
+            <div className="text-center p-2 rounded-lg bg-[#FDF1F2]">
+              <p className="text-lg font-bold text-[#D4787C]">{tidakMasukCount}</p>
+              <p className="text-xs text-[#D4787C]">Tidak Masuk</p>
             </div>
           </div>
 
@@ -109,12 +109,12 @@ export default function DetailPengajar() {
                     <span className="text-sm min-w-[120px]">
                       {formatDateIdShort(date)}
                     </span>
-                    <span className="text-xs text-muted-foreground flex-1">{row.tpaName}</span>
+                    <span className="text-xs text-[#A3A39D] flex-1">{row.tpaName}</span>
                     <span
                       className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        row.status === 'hadir' ? 'bg-green-50 text-green-600' :
-                        row.status === 'izin' ? 'bg-blue-50 text-blue-600' :
-                        'bg-red-50 text-red-500'
+                        row.status === 'hadir' ? 'bg-[#EDF5EE] text-[#5B9C64]' :
+                        row.status === 'izin' ? 'bg-[#EDF3F8] text-[#8DB5D8]' :
+                        'bg-[#FDF1F2] text-[#D4787C]'
                       }`}
                     >
                       {row.status === 'hadir' ? 'Hadir' : row.status === 'izin' ? 'Izin' : 'Tidak Masuk'}
@@ -128,17 +128,17 @@ export default function DetailPengajar() {
 
         {/* Attendance list grouped by session */}
         {myAttendances.length === 0 ? (
-          <div className="text-center py-16 text-sm text-muted-foreground bg-card rounded-xl shadow-sm">
+          <div className="text-center py-16 text-sm text-[#A3A39D] bg-white rounded-xl shadow-sm">
             Belum ada riwayat presensi
           </div>
         ) : (
           <div className="flex flex-col gap-3">
             {myAttendances.map((a) => {
               return (
-                <div key={a.id} className="bg-card rounded-xl shadow-sm p-4 flex items-center gap-3">
+                <div key={a.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3">
                   <div className="shrink-0">
                     {a.scanOutTime ? (
-                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <CheckCircle2 className="w-5 h-5 text-[#5B9C64]" />
                     ) : (
                       <Clock className="w-5 h-5 text-primary" />
                     )}
@@ -147,14 +147,14 @@ export default function DetailPengajar() {
                     <p className="text-sm font-medium">
                       {a.scanInTime ? formatDate(new Date(a.scanInTime)) : '—'}
                     </p>
-                    <div className="flex gap-3 text-xs text-muted-foreground mt-0.5">
+                    <div className="flex gap-3 text-xs text-[#A3A39D] mt-0.5">
                       {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                       {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
                     {a.isLate && (
-                      <span className="text-xs text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
+                      <span className="text-xs text-[#D9A06B] bg-[#FDF4ED] px-1.5 py-0.5 rounded">
                         +{a.lateMinutes}m
                       </span>
                     )}

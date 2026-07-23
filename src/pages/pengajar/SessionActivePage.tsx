@@ -125,7 +125,7 @@ export default function SessionActivePage() {
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] flex flex-col pb-12">
       {/* Header */}
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#7A7A75] hover:text-[#1A1A18]">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <div className="flex-1">
@@ -138,8 +138,8 @@ export default function SessionActivePage() {
         <span
           className={`inline-flex items-center text-[10px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset ${
             session.isActive
-              ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
-              : 'bg-stone-50 text-stone-700 ring-stone-600/20'
+              ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
+              : 'bg-[#F7F7F5] text-[#7A7A75] ring-[#7A7A75]/20'
           } uppercase tracking-wide`}
         >
           {session.isActive ? 'Aktif' : 'Ditutup'}
@@ -151,22 +151,22 @@ export default function SessionActivePage() {
         {session.isActive ? (
           <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] flex flex-col items-center gap-4">
             <p className="font-semibold text-center text-[14px] text-[#1A1A18] mb-1">QR Presensi Masuk</p>
-            <p className="text-[13px] text-[#6B6B66] text-center mb-3 leading-relaxed">
+            <p className="text-[13px] text-[#7A7A75] text-center mb-3 leading-relaxed">
               Tampilkan ke pengajar lain untuk scan presensi masuk
             </p>
             <QRDisplay sessionId={session.id} type="in" />
           </div>
         ) : (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex flex-col items-center gap-4 text-center">
-            <CheckCircle2 className="w-12 h-12 text-emerald-600 mb-2" strokeWidth={1.5} />
-            <p className="font-bold text-emerald-800 text-[20px]">Sesi Selesai</p>
-            <p className="text-[14px] text-emerald-700 leading-relaxed">
+          <div className="bg-[#EDF5EE] border border-[#5B9C64]/30 rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex flex-col items-center gap-4 text-center">
+            <CheckCircle2 className="w-12 h-12 text-[#5B9C64] mb-2" strokeWidth={1.5} />
+            <p className="font-bold text-[#5B9C64] text-[20px]">Sesi Selesai</p>
+            <p className="text-[14px] text-[#5B9C64] leading-relaxed">
               Presensi telah difinalisasi. Semua pengajar yang hadir telah tercatat jam keluarnya.
             </p>
             {session.closeNotes && (
-              <div className="mt-4 pt-4 border-t border-emerald-200 w-full">
-                <p className="text-[12px] font-semibold text-emerald-800 uppercase tracking-wider mb-1">Materi TPA:</p>
-                <p className="text-[14px] text-emerald-700 italic">"{session.closeNotes}"</p>
+              <div className="mt-4 pt-4 border-t border-[#5B9C64]/30 w-full">
+                <p className="text-[12px] font-semibold text-[#5B9C64] uppercase tracking-wider mb-1">Materi TPA:</p>
+                <p className="text-[14px] text-[#5B9C64] italic">"{session.closeNotes}"</p>
               </div>
             )}
           </div>
@@ -178,7 +178,7 @@ export default function SessionActivePage() {
             <Users className="w-6 h-6 text-[#1A1A18]" strokeWidth={1.5} />
             <div>
               <p className="text-[28px] font-bold text-[#1A1A18]">{checkedInCount}</p>
-              <p className="text-[12px] text-[#6B6B66] font-medium">Total Pengajar Hadir</p>
+              <p className="text-[12px] text-[#7A7A75] font-medium">Total Pengajar Hadir</p>
             </div>
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function SessionActivePage() {
         {attendances.length > 0 && (
           <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
             <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center gap-3 bg-[#F7F7F5]">
-              <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[14px] font-semibold text-[#1A1A18]">Daftar Kehadiran</p>
             </div>
             <ul className="divide-y divide-[#EAEAE7]">
@@ -205,7 +205,7 @@ export default function SessionActivePage() {
                           <span className="ml-2 text-[11px] text-[#A3A39D] font-medium">(Pertama)</span>
                         )}
                       </p>
-                      <div className="flex gap-3 text-[12px] text-[#6B6B66] font-medium mt-1">
+                      <div className="flex gap-3 text-[12px] text-[#7A7A75] font-medium mt-1">
                         {attendance.scanInTime && (
                           <span>Masuk: {formatTime(attendance.scanInTime)}</span>
                         )}
@@ -213,12 +213,12 @@ export default function SessionActivePage() {
                           <span>Keluar: {formatTime(attendance.scanOutTime)}</span>
                         )}
                         {attendance.isLate && (
-                          <span className="text-amber-600">Terlambat {attendance.lateMinutes}m</span>
+                          <span className="text-[#D9A06B]">Terlambat {attendance.lateMinutes}m</span>
                         )}
                       </div>
                     </div>
                     {attendance.scanOutTime ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                      <CheckCircle2 className="w-5 h-5 text-[#5B9C64] shrink-0" strokeWidth={1.5} />
                     ) : attendance.scanInTime ? (
                       <Clock className="w-5 h-5 text-[#D7FF3D] shrink-0" strokeWidth={1.5} />
                     ) : null}
@@ -231,22 +231,22 @@ export default function SessionActivePage() {
 
         {/* Absent users — shown after session is closed */}
         {!session.isActive && absentUsers.length > 0 && (
-          <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-rose-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-rose-200 flex items-center gap-3 bg-rose-50">
-              <Users className="w-4 h-4 text-rose-500" strokeWidth={1.5} />
-              <p className="text-[14px] font-semibold text-rose-700">Tidak Hadir ({absentUsers.length})</p>
+          <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#D4787C]/30 overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#D4787C]/30 flex items-center gap-3 bg-[#FDF1F2]">
+              <Users className="w-4 h-4 text-[#D4787C]" strokeWidth={1.5} />
+              <p className="text-[14px] font-semibold text-[#D4787C]">Tidak Hadir ({absentUsers.length})</p>
             </div>
             <ul className="divide-y divide-rose-200">
               {absentUsers.map((u) => (
                 <li key={u.id} className="px-6 py-5 flex items-center gap-3 hover:bg-rose-100 transition-colors">
                   <AvatarOrb name={u.name ?? '?'} size="md" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-semibold text-rose-700 truncate">{u.name}</p>
+                    <p className="text-[14px] font-semibold text-[#D4787C] truncate">{u.name}</p>
                     {u.nim && (
-                      <p className="text-[12px] text-rose-600 font-medium">{u.nim}</p>
+                      <p className="text-[12px] text-[#D4787C] font-medium">{u.nim}</p>
                     )}
                   </div>
-                  <span className="inline-flex items-center text-[10px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset bg-rose-50 text-rose-700 ring-rose-600/20 uppercase tracking-wide">
+                  <span className="inline-flex items-center text-[10px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20 uppercase tracking-wide">
                     Tidak Masuk
                   </span>
                 </li>
@@ -263,19 +263,19 @@ export default function SessionActivePage() {
             );
             if (nonExpectedAttendees.length === 0) return null;
             return (
-              <details className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-stone-200 overflow-hidden">
-                <summary className="px-6 py-4 flex items-center gap-3 cursor-pointer text-[14px] font-semibold text-stone-700 bg-stone-50 hover:bg-stone-100 transition-colors">
-                  <Users className="w-4 h-4 text-stone-600" strokeWidth={1.5} />
+              <details className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
+                <summary className="px-6 py-4 flex items-center gap-3 cursor-pointer text-[14px] font-semibold text-[#7A7A75] bg-[#F7F7F5] hover:bg-[#F7F7F5] transition-colors">
+                  <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
                   Tidak Dijadwalkan ({nonExpectedAttendees.length})
                 </summary>
-                <ul className="divide-y divide-stone-200 border-t border-stone-200">
+                <ul className="divide-y divide-[#EAEAE7] border-t border-[#EAEAE7]">
                   {nonExpectedAttendees.map((u) => (
-                    <li key={u.id} className="px-6 py-5 flex items-center gap-3 hover:bg-stone-100 transition-colors">
+                    <li key={u.id} className="px-6 py-5 flex items-center gap-3 hover:bg-[#F7F7F5] transition-colors">
                       <AvatarOrb name={u.name ?? '?'} size="md" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[14px] font-semibold text-stone-700 truncate">{u.name}</p>
+                        <p className="text-[14px] font-semibold text-[#7A7A75] truncate">{u.name}</p>
                       </div>
-                      <span className="inline-flex items-center text-[10px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset bg-stone-50 text-stone-700 ring-stone-600/20 uppercase tracking-wide">Non-Jadwal</span>
+                      <span className="inline-flex items-center text-[10px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset bg-[#F7F7F5] text-[#7A7A75] ring-[#7A7A75]/20 uppercase tracking-wide">Non-Jadwal</span>
                     </li>
                   ))}
                 </ul>
@@ -288,7 +288,7 @@ export default function SessionActivePage() {
         {isFirstTeacher && session.isActive && (
           <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-full h-12 rounded-[14px] bg-red-500 text-white font-semibold text-[14px] hover:bg-red-600" disabled={closing}>
+              <Button variant="destructive" className="w-full h-12 rounded-[14px] bg-[#FDF1F2]0 text-white font-semibold text-[14px] hover:bg-[#D4787C]" disabled={closing}>
                 <LogOut className="w-4 h-4 mr-2" strokeWidth={1.5} />
                 {closing ? 'Menutup Sesi...' : 'Tutup Sesi'}
               </Button>
@@ -296,7 +296,7 @@ export default function SessionActivePage() {
             <AlertDialogContent className="max-w-md bg-white rounded-[28px] border border-[#EAEAE7]">
               <AlertDialogHeader>
                 <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Tutup sesi?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm text-[#6B6B66]">
+                <AlertDialogDescription className="text-sm text-[#7A7A75]">
                   Pastikan semua pengajar sudah memindai presensi masuk. Menutup sesi akan memfinalisasi kehadiran hari ini.
                 </AlertDialogDescription>
               </AlertDialogHeader>

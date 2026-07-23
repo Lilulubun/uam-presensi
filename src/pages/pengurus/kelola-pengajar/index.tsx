@@ -101,7 +101,7 @@ export default function KelolaPengajarPage() {
   return (
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#7A7A75] hover:text-[#1A1A18]">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18] flex-1">Kelola Pengajar</h1>
@@ -140,7 +140,7 @@ export default function KelolaPengajarPage() {
              <Button
                 variant="outline"
                 onClick={() => setShowBulkTambah(true)}
-                className="h-11 rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#6B6B66] hover:text-[#1A1A18]"
+                className="h-11 rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-xs font-medium text-[#7A7A75] hover:text-[#1A1A18]"
               >
                <FileText className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
                Import CSV
@@ -154,12 +154,12 @@ export default function KelolaPengajarPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#EAEAE7] bg-[#F7F7F5]">
-                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider">Nama</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider">NIM</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider hidden sm:table-cell">Email</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider">TPA</th>
-                  <th className="text-center px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider">Status</th>
-                  <th className="text-right px-5 py-3 text-[11px] font-semibold text-[#6B6B66] uppercase tracking-wider">Aksi</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider">Nama</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider">NIM</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider hidden sm:table-cell">Email</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider">TPA</th>
+                  <th className="text-center px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider">Status</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-semibold text-[#7A7A75] uppercase tracking-wider">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EAEAE7]">
@@ -171,8 +171,8 @@ export default function KelolaPengajarPage() {
                         <p className="font-semibold text-[#1A1A18] text-[13px]">{user.name}</p>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-[#6B6B66] font-medium text-[13px]">{user.nim ?? '—'}</td>
-                    <td className="px-5 py-3.5 text-[#6B6B66] font-medium text-[13px] hidden sm:table-cell">{user.email}</td>
+                    <td className="px-5 py-3.5 text-[#7A7A75] font-medium text-[13px]">{user.nim ?? '—'}</td>
+                    <td className="px-5 py-3.5 text-[#7A7A75] font-medium text-[13px] hidden sm:table-cell">{user.email}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex flex-wrap gap-1.5">
                         {(userTPAs[user.id] ?? []).length > 0 ? (
@@ -188,11 +188,11 @@ export default function KelolaPengajarPage() {
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       {user.isActive !== false ? (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase tracking-wider">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase tracking-wider">
                           Aktif
                         </span>
                       ) : (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-600/20 uppercase tracking-wider">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FDF1F2] text-[#D4787C] ring-1 ring-inset ring-[#D4787C]/20 uppercase tracking-wider">
                           Nonaktif
                         </span>
                       )}
@@ -210,7 +210,7 @@ export default function KelolaPengajarPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
+                          className="text-[#D4787C] hover:text-[#D4787C] hover:bg-[#FDF1F2] h-8 w-8 p-0"
                           onClick={() => handleDelete(user.id, user.name)}
                           disabled={deleting === user.id}
                         >

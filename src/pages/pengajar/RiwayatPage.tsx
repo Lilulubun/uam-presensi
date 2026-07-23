@@ -32,7 +32,7 @@ export default function RiwayatPage() {
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       {/* Header */}
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#7A7A75] hover:text-[#1A1A18]">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18] flex-1">Riwayat Presensi</h1>
@@ -44,15 +44,15 @@ export default function RiwayatPage() {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-white rounded-[24px] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] text-center">
               <p className="text-[24px] font-bold text-[#1A1A18]">{attendances.length}</p>
-              <p className="text-[11px] text-[#6B6B66] font-medium mt-1">Total Presensi</p>
+              <p className="text-[11px] text-[#7A7A75] font-medium mt-1">Total Presensi</p>
             </div>
             <div className="bg-white rounded-[24px] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] text-center">
-              <p className="text-[24px] font-bold text-emerald-600">{onTime}</p>
-              <p className="text-[11px] text-[#6B6B66] font-medium mt-1">Tepat Waktu</p>
+              <p className="text-[24px] font-bold text-[#5B9C64]">{onTime}</p>
+              <p className="text-[11px] text-[#7A7A75] font-medium mt-1">Tepat Waktu</p>
             </div>
             <div className="bg-white rounded-[24px] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] text-center">
-              <p className="text-[24px] font-bold text-amber-600">{late}</p>
-              <p className="text-[11px] text-[#6B6B66] font-medium mt-1">Terlambat</p>
+              <p className="text-[24px] font-bold text-[#D9A06B]">{late}</p>
+              <p className="text-[11px] text-[#7A7A75] font-medium mt-1">Terlambat</p>
             </div>
           </div>
         )}
@@ -71,7 +71,7 @@ export default function RiwayatPage() {
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="shrink-0">
                         {attendance.scanOutTime ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600" strokeWidth={1.5} />
+                          <CheckCircle2 className="w-5 h-5 text-[#5B9C64]" strokeWidth={1.5} />
                         ) : (
                           <Clock className="w-5 h-5 text-[#D7FF3D]" strokeWidth={1.5} />
                         )}
@@ -79,7 +79,7 @@ export default function RiwayatPage() {
 
                       <div className="min-w-0">
                         <p className="text-[14px] font-semibold text-[#1A1A18] truncate">{getTPAName(attendance.sessionId)}</p>
-                        <p className="text-[12px] text-[#6B6B66] font-medium mt-1">
+                        <p className="text-[12px] text-[#7A7A75] font-medium mt-1">
                           {attendance.scanInTime ? formatDate(new Date(attendance.scanInTime)) : '—'}
                         </p>
                       </div>
@@ -92,8 +92,8 @@ export default function RiwayatPage() {
                       </p>
                       <span className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${
                         attendance.isLate 
-                          ? 'bg-amber-50 text-amber-700 ring-amber-600/20' 
-                          : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+                          ? 'bg-[#FDF4ED] text-[#D9A06B] ring-[#D9A06B]/20' 
+                          : 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
                       } uppercase tracking-wide`}>
                         {attendance.isLate
                           ? `Terlambat ${attendance.lateMinutes}m`

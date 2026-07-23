@@ -55,7 +55,7 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
       <AlertDialogContent className="max-w-sm bg-white rounded-[28px] border border-[#EAEAE7]">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-semibold text-[18px] text-[#1A1A18]">Reset Password</AlertDialogTitle>
-          <AlertDialogDescription className="text-sm text-[#6B6B66]">
+          <AlertDialogDescription className="text-sm text-[#7A7A75]">
             Pengajar: <strong>{user?.name ?? userId}</strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -63,7 +63,7 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
         <div className="px-6 py-2 space-y-3">
           <Button
             variant="outline"
-            className="w-full justify-start rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-[13px] text-[#6B6B66]"
+            className="w-full justify-start rounded-[14px] border-[#EAEAE7] hover:border-[#D7FF3D] hover:bg-[#F7F7F5] text-[13px] text-[#7A7A75]"
             onClick={handleTemporaryPassword}
             disabled={loading}
           >
@@ -86,10 +86,10 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
                   className="p-2 rounded-[14px] hover:bg-[#F0F0EC] transition-colors border border-[#EAEAE7]"
                   title="Salin"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-500" strokeWidth={1.5} /> : <Copy className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />}
+                  {copied ? <Check className="w-4 h-4 text-[#5B9C64]" strokeWidth={1.5} /> : <Copy className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />}
                 </button>
               </div>
-              <p className="text-[11px] text-amber-600 font-medium mt-2">Segera kirim ke pengajar. Password ini tidak bisa ditampilkan lagi.</p>
+              <p className="text-[11px] text-[#D9A06B] font-medium mt-2">Segera kirim ke pengajar. Password ini tidak bisa ditampilkan lagi.</p>
             </div>
           )}
         </div>

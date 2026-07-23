@@ -185,26 +185,26 @@ export default function DashboardPengurus() {
             <div className="flex items-center gap-2 lg:hidden">
               {location.pathname !== '/pengurus' && (
                 <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus')}>
-                  <Home className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                  <Home className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
                 </Button>
               )}
               <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/pengaturan')}>
-                <QrCode className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                <QrCode className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               </Button>
               <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/laporan')}>
-                <BarChart2 className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                <BarChart2 className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               </Button>
               <Button variant="outline" className="h-9 w-9 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] p-0" onClick={() => navigate('/pengurus/kelola-pengajar')}>
-                <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               </Button>
             </div>
 
             <div className="w-[1px] h-6 bg-[#EAEAE7] mx-1"></div>
 
-            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
+            <button onClick={() => navigate('/profile')} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
               <User className="w-4 h-4" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#6B6B66] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
+            <button onClick={handleLogout} className="w-9 h-9 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-center text-[#7A7A75] hover:text-[#1A1A18] transition-colors active:scale-[0.97] transition-transform duration-100 ease-out">
               <LogOut className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
@@ -228,7 +228,7 @@ export default function DashboardPengurus() {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-[13px] font-medium transition-colors active:scale-[0.97] transition-transform duration-100 ease-out text-left w-full ${
                     active
                       ? 'bg-[#EAEAE7] text-[#1A1A18]'
-                      : 'text-[#6B6B66] hover:bg-[#F4F4F2] hover:text-[#1A1A18]'
+                      : 'text-[#7A7A75] hover:bg-[#F4F4F2] hover:text-[#1A1A18]'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
@@ -352,7 +352,7 @@ export default function DashboardPengurus() {
               )}
               <button
                 onClick={() => navigate('/pengurus/riwayat-izin')}
-                className="text-[11px] font-medium text-[#6B6B66] hover:text-[#1A1A18] flex items-center gap-1 active:scale-[0.97] transition-transform duration-100 ease-out"
+                className="text-[11px] font-medium text-[#7A7A75] hover:text-[#1A1A18] flex items-center gap-1 active:scale-[0.97] transition-transform duration-100 ease-out"
               >
                 <History className="w-3.5 h-3.5" strokeWidth={1.5} />
                 Riwayat
@@ -369,7 +369,7 @@ export default function DashboardPengurus() {
                         <p className="text-[12px] text-[#A3A39D] mt-0.5">
                           {formatDateIdShort(izin.startDate)} – {formatDateId(izin.endDate)}
                         </p>
-                        <p className="text-[12px] text-[#6B6B66] mt-1 line-clamp-2">{izin.alasan}</p>
+                        <p className="text-[12px] text-[#7A7A75] mt-1 line-clamp-2">{izin.alasan}</p>
                       </div>
                       <div className="flex flex-wrap gap-2 shrink-0">
                         <AlertDialog>
@@ -412,7 +412,7 @@ export default function DashboardPengurus() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-9 rounded-[12px] border-[#EAEAE7] text-[#6B6B66] hover:border-[#D7FF3D] hover:text-[#1A1A18] text-[12px] font-medium"
+                              className="h-9 rounded-[12px] border-[#EAEAE7] text-[#7A7A75] hover:border-[#D7FF3D] hover:text-[#1A1A18] text-[12px] font-medium"
                               disabled={processingId !== null}
                             >
                               <XCircle className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
@@ -430,7 +430,7 @@ export default function DashboardPengurus() {
                               <AlertDialogCancel disabled={processingId !== null}>Batal</AlertDialogCancel>
                               <AlertDialogAction
                                 disabled={processingId !== null}
-                                className="bg-rose-500 hover:bg-rose-600 text-white"
+                                className="bg-[#FDF1F2]0 hover:bg-[#D4787C] text-white"
                                 onClick={async () => {
                                   setProcessingId(izin.id);
                                   const r = await rejectIzin(izin.id);
@@ -451,8 +451,8 @@ export default function DashboardPengurus() {
             </ul>
           ) : (
             <div className="px-6 py-10 text-center">
-              <FileText className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
-              <p className="text-[13px] font-medium text-[#6B6B66]">Tidak ada izin pending</p>
+              <FileText className="w-8 h-8 mx-auto text-[#A3A39D] mb-3" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#7A7A75]">Tidak ada izin pending</p>
               <p className="text-[12px] text-[#A3A39D] mt-1">Semua izin sudah diproses</p>
             </div>
           )}
@@ -463,8 +463,8 @@ export default function DashboardPengurus() {
           {/* Avg Keterlambatan */}
           <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
             <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
-              <p className="text-[12px] font-semibold text-[#6B6B66]">Rata-rata Keterlambatan</p>
+              <Clock className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#7A7A75]">Rata-rata Keterlambatan</p>
             </div>
             <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.avgLate}
@@ -475,10 +475,10 @@ export default function DashboardPengurus() {
           {/* On-Time Rate */}
           <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
-              <p className="text-[12px] font-semibold text-[#6B6B66]">Kehadiran Tepat Waktu</p>
+              <TrendingUp className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#7A7A75]">Kehadiran Tepat Waktu</p>
             </div>
-            <p className="text-[32px] font-light leading-none tracking-tighter text-emerald-600" style={{fontFamily: "'Doto', monospace"}}>
+            <p className="text-[32px] font-light leading-none tracking-tighter text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.onTimeRate}%
             </p>
             <p className="text-[11px] text-[#A3A39D] mt-1.5">dari total hadir</p>
@@ -487,8 +487,8 @@ export default function DashboardPengurus() {
           {/* Active TPA */}
           <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7]">
             <div className="flex items-center gap-2 mb-3">
-              <Users className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
-              <p className="text-[12px] font-semibold text-[#6B6B66]">TPA Aktif Hari Ini</p>
+              <Users className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
+              <p className="text-[12px] font-semibold text-[#7A7A75]">TPA Aktif Hari Ini</p>
             </div>
             <p className="text-[32px] font-light leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>
               {metricStats.activeTpaCount}
@@ -501,7 +501,7 @@ export default function DashboardPengurus() {
         <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-6 border border-[#EAEAE7]">
           <div className="flex items-start justify-between mb-6 gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <TrendingUp className="w-4 h-4 text-[#6B6B66] shrink-0" strokeWidth={1.5} />
+              <TrendingUp className="w-4 h-4 text-[#7A7A75] shrink-0" strokeWidth={1.5} />
               <h2 className="text-[14px] font-semibold tracking-tight">Tren kehadiran (7 hari terakhir)</h2>
             </div>
             <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#EFFFC2] text-[#1A1A18] ring-1 ring-inset ring-[#D7FF3D]/30 shrink-0 whitespace-nowrap">
@@ -510,8 +510,8 @@ export default function DashboardPengurus() {
           </div>
           {weeklyChartData.every(d => d.tepatWaktu === 0 && d.terlambat === 0) ? (
             <div className="h-[220px] flex flex-col items-center justify-center gap-2">
-              <TrendingUp className="w-8 h-8 text-[#D0D0CB]" strokeWidth={1.5} />
-              <p className="text-[13px] font-medium text-[#6B6B66]">Belum ada data kehadiran</p>
+              <TrendingUp className="w-8 h-8 text-[#A3A39D]" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#7A7A75]">Belum ada data kehadiran</p>
               <p className="text-[12px] text-[#A3A39D]">Data akan muncul setelah sesi pertama dibuka</p>
             </div>
           ) : (
@@ -544,7 +544,7 @@ export default function DashboardPengurus() {
 
         {/* STATUS TPA SECTION */}
         <div>
-          <h2 className="text-[13px] font-semibold text-[#6B6B66] mb-4 px-1">
+          <h2 className="text-[13px] font-semibold text-[#7A7A75] mb-4 px-1">
             Cabang TPA — {tpas.length} lokasi
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -565,7 +565,7 @@ export default function DashboardPengurus() {
                       <span
                         className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ring-1 ring-inset ${
                           activeSession
-                            ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/10'
+                            ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/10'
                             : 'bg-[#F0F0EC] text-[#5C5C57] ring-transparent'
                         }`}
                       >
@@ -576,7 +576,7 @@ export default function DashboardPengurus() {
                   </div>
 
                   {activeSession ? (
-                    <div className="mt-4 space-y-1.5 text-[13px] text-[#6B6B66]">
+                    <div className="mt-4 space-y-1.5 text-[13px] text-[#7A7A75]">
                       <p className="flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5 text-[#A3A39D]" strokeWidth={1.5} />
                         <span>{presentCount} pengajar aktif</span>
@@ -597,13 +597,13 @@ export default function DashboardPengurus() {
 
         {/* REKAP PENGAJAR SECTION */}
         <div>
-          <h2 className="text-[13px] font-semibold text-[#6B6B66] mb-4 px-1">
+          <h2 className="text-[13px] font-semibold text-[#7A7A75] mb-4 px-1">
             Rekap pengajar (90 hari)
           </h2>
           {teacherStats.length === 0 ? (
             <div className="bg-white rounded-[32px] p-10 text-center border border-[#EAEAE7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-              <Users className="w-8 h-8 mx-auto text-[#D0D0CB] mb-3" strokeWidth={1.5} />
-              <p className="text-[13px] font-medium text-[#6B6B66]">Belum ada data presensi</p>
+              <Users className="w-8 h-8 mx-auto text-[#A3A39D] mb-3" strokeWidth={1.5} />
+              <p className="text-[13px] font-medium text-[#7A7A75]">Belum ada data presensi</p>
               <p className="text-[12px] text-[#A3A39D] mt-1">Data akan muncul setelah 90 hari pertama</p>
             </div>
           ) : (
@@ -670,7 +670,7 @@ export default function DashboardPengurus() {
             className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
-              <TrendingUp className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />
+              <TrendingUp className="w-5 h-5 text-[#7A7A75]" strokeWidth={1.5} />
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Laporan</p>
@@ -682,7 +682,7 @@ export default function DashboardPengurus() {
             className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
-              <QrCode className="w-5 h-5 text-[#6B6B66]" strokeWidth={1.5} />
+              <QrCode className="w-5 h-5 text-[#7A7A75]" strokeWidth={1.5} />
             </div>
             <div>
               <p className="text-[15px] font-semibold text-[#1A1A18]">Setup QR</p>

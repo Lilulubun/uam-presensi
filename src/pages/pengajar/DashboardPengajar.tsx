@@ -57,9 +57,9 @@ export default function DashboardPengajar() {
         sub: 'Scan QR untuk mulai',
         badge: 'Belum Hadir',
         textColor: 'text-[#1A1A18]',
-        icon: <QrCode className="w-6 h-6 text-[#6B6B66]" />,
+        icon: <QrCode className="w-6 h-6 text-[#7A7A75]" />,
         gradient: 'bg-white border border-[#EAEAE7]',
-        badgeStyle: 'bg-[#F4F4F2] text-[#6B6B66]',
+        badgeStyle: 'bg-[#F4F4F2] text-[#7A7A75]',
       };
     }
     if (todayRecord.scanInTime && !todayRecord.scanOutTime) {
@@ -98,9 +98,9 @@ export default function DashboardPengajar() {
       sub: 'Scan QR untuk mulai',
       badge: 'Belum Hadir',
       textColor: 'text-[#1A1A18]',
-      icon: <QrCode className="w-6 h-6 text-[#6B6B66]" />,
+      icon: <QrCode className="w-6 h-6 text-[#7A7A75]" />,
       gradient: 'bg-white border border-[#EAEAE7]',
-      badgeStyle: 'bg-[#F4F4F2] text-[#6B6B66]',
+      badgeStyle: 'bg-[#F4F4F2] text-[#7A7A75]',
     };
   };
 
@@ -116,10 +116,10 @@ export default function DashboardPengajar() {
             <p className="text-[13px] text-[#A3A39D] font-medium">Halo, {user?.name}</p>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => navigate('/profile')} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
+            <button onClick={() => navigate('/profile')} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <User className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="text-[#6B6B66] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
+            <button onClick={handleLogout} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <LogOut className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
@@ -144,7 +144,7 @@ export default function DashboardPengajar() {
             {statusInfo.icon}
             <div>
               <p className={`text-[22px] font-light leading-tight tracking-tight ${statusInfo.textColor}`}>{statusInfo.label}</p>
-              <p className={`text-[13px] mt-0.5 ${statusInfo.textColor === 'text-white' ? 'text-white/65' : 'text-[#6B6B66]'}`}>{statusInfo.sub}</p>
+              <p className={`text-[13px] mt-0.5 ${statusInfo.textColor === 'text-white' ? 'text-white/65' : 'text-[#7A7A75]'}`}>{statusInfo.sub}</p>
             </div>
           </div>
           {/* dot matrix */}
@@ -163,15 +163,15 @@ export default function DashboardPengajar() {
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
                 <p className="text-[40px] font-thin leading-none tracking-tighter text-[#1A1A18]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.total}</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Hadir</p>
+                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Hadir</p>
               </div>
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-emerald-600" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.percentage}%</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Tepat Waktu</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#5B9C64]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.percentage}%</p>
+                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Tepat Waktu</p>
               </div>
               <div>
-                <p className="text-[40px] font-thin leading-none tracking-tighter text-amber-600" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.late}</p>
-                <p className="text-[12px] text-[#6B6B66] font-medium mt-1.5">Terlambat</p>
+                <p className="text-[40px] font-thin leading-none tracking-tighter text-[#D9A06B]" style={{fontFamily: "'Doto', monospace"}}>{monthSummary.late}</p>
+                <p className="text-[12px] text-[#7A7A75] font-medium mt-1.5">Terlambat</p>
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function DashboardPengajar() {
             <FileText className="w-5 h-5 mr-2" strokeWidth={1.5} />
             Ajukan Izin
             {pendingIzins > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold ring-2 ring-white">
+              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#D4787C] text-white text-xs flex items-center justify-center font-bold ring-2 ring-white">
                 {pendingIzins}
               </span>
             )}
@@ -220,7 +220,7 @@ export default function DashboardPengajar() {
         {recentAttendances.length > 0 && (
           <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
             <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center gap-2 bg-[#F7F7F5]">
-              <History className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+              <History className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               <p className="text-[14px] font-semibold text-[#1A1A18]">Riwayat Presensi</p>
             </div>
             <ul className="divide-y divide-[#EAEAE7]">
@@ -231,7 +231,7 @@ export default function DashboardPengajar() {
                         <p className="text-[13px] font-semibold text-[#1A1A18]">
                           {attendance.scanInTime ? formatDate(attendance.scanInTime) : '—'}
                         </p>
-                        <div className="text-[12px] text-[#6B6B66] font-medium mt-1 flex gap-2">
+                        <div className="text-[12px] text-[#7A7A75] font-medium mt-1 flex gap-2">
                           {attendance.scanInTime && (
                             <span>Masuk {formatTime(attendance.scanInTime)}</span>
                           )}
@@ -241,11 +241,11 @@ export default function DashboardPengajar() {
                         </div>
                       </div>
                       {attendance.isLate ? (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 uppercase">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FDF4ED] text-[#D9A06B] ring-1 ring-inset ring-[#D9A06B]/20 uppercase">
                           Terlambat
                         </span>
                       ) : (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase">
                           Tepat Waktu
                         </span>
                       )}
@@ -265,7 +265,7 @@ export default function DashboardPengajar() {
         {recentAttendances.length > 0 && (
           <button
             onClick={() => navigate('/pengajar/riwayat')}
-            className="text-xs text-[#6B6B66] font-medium underline underline-offset-2 text-center w-full hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out"
+            className="text-xs text-[#7A7A75] font-medium underline underline-offset-2 text-center w-full hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out"
           >
             Lihat semua riwayat
           </button>

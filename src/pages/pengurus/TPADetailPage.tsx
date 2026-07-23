@@ -47,7 +47,7 @@ export default function TPADetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">TPA tidak ditemukan</p>
+          <p className="text-[#A3A39D]">TPA tidak ditemukan</p>
           <button onClick={() => navigate('/pengurus/dashboard')} className="mt-4 text-primary text-sm underline">
             Kembali
           </button>
@@ -86,7 +86,7 @@ export default function TPADetailPage() {
   return (
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18]">
+        <button onClick={() => navigate('/pengurus/dashboard')} className="text-[#7A7A75] hover:text-[#1A1A18]">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <div className="flex-1">
@@ -94,7 +94,7 @@ export default function TPADetailPage() {
           <p className="text-[11px] text-[#A3A39D] font-medium">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
         </div>
         {activeSession && (
-          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase tracking-wider">
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase tracking-wider">
             Aktif
           </span>
         )}
@@ -106,11 +106,11 @@ export default function TPADetailPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-[14px] font-semibold text-[#1A1A18]">Sesi Berlangsung</p>
-                <p className="text-[12px] text-[#6B6B66] mt-0.5">
+                <p className="text-[12px] text-[#7A7A75] mt-0.5">
                   Dibuka {formatDateTime(new Date(activeSession.dateOpened))}
                 </p>
               </div>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 uppercase tracking-wider animate-pulse">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase tracking-wider animate-pulse">
                 Live
               </span>
             </div>
@@ -130,13 +130,13 @@ export default function TPADetailPage() {
                 <AlertDialogContent className="rounded-[28px] border border-[#EAEAE7] bg-white">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="font-semibold text-[18px]">Tutup sesi?</AlertDialogTitle>
-                    <AlertDialogDescription className="text-sm text-[#6B6B66]">
+                    <AlertDialogDescription className="text-sm text-[#7A7A75]">
                       Tindakan ini akan menutup paksa sesi yang sedang berlangsung. Kehadiran semua pengajar akan difinalisasi.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2">
                     <AlertDialogCancel className="rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5]">Batal</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleForceClose} className="rounded-[14px] bg-red-600 text-white hover:bg-red-700">Tutup Sesi</AlertDialogAction>
+                    <AlertDialogAction onClick={handleForceClose} className="rounded-[14px] bg-[#D4787C] text-white hover:bg-[#D4787C]/90">Tutup Sesi</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -145,7 +145,7 @@ export default function TPADetailPage() {
         )}
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-[11px] font-bold text-[#6B6B66] uppercase tracking-wider">
+          <h2 className="text-[11px] font-bold text-[#7A7A75] uppercase tracking-wider">
             Riwayat Sesi ({tpaSessions.length})
           </h2>
 
@@ -174,13 +174,13 @@ export default function TPADetailPage() {
                         {session.dateClosed && ` – ${formatTime(new Date(session.dateClosed))}`}
                       </p>
                       <p className="text-[11px] text-[#A3A39D] font-medium mt-1">
-                        Pengajar pertama: <span className="text-[#6B6B66]">{firstTeacher?.name ?? '(tidak ditemukan)'}</span>
+                        Pengajar pertama: <span className="text-[#7A7A75]">{firstTeacher?.name ?? '(tidak ditemukan)'}</span>
                       </p>
                     </div>
                     <span
                       className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${
                         session.isActive 
-                          ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' 
+                          ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
                           : 'bg-[#F0F0EC] text-[#5C5C57] ring-[#EAEAE7]'
                       } uppercase tracking-wider`}
                     >
@@ -188,12 +188,12 @@ export default function TPADetailPage() {
                     </span>
                   </div>
 
-                  <div className="px-6 py-2.5 flex gap-4 text-[12px] font-medium text-[#6B6B66] border-b border-[#EAEAE7] bg-[#F7F7F5]/50">
+                  <div className="px-6 py-2.5 flex gap-4 text-[12px] font-medium text-[#7A7A75] border-b border-[#EAEAE7] bg-[#F7F7F5]/50">
                     <span className="flex items-center gap-1.5">
                       <Users className="w-3.5 h-3.5" strokeWidth={1.5} /> {presentCount} hadir
                     </span>
                     {lateCount > 0 && (
-                      <span className="flex items-center gap-1.5 text-orange-600">
+                      <span className="flex items-center gap-1.5 text-[#D9A06B]">
                         <Clock className="w-3.5 h-3.5" strokeWidth={1.5} /> {lateCount} terlambat
                       </span>
                     )}
@@ -283,21 +283,21 @@ function SessionAttendees({
                   {teacher?.name ?? '(pengajar tidak ditemukan)'}
                 </button>
               </p>
-              <div className="flex gap-2 text-[11px] text-[#6B6B66] font-medium mt-0.5">
+              <div className="flex gap-2 text-[11px] text-[#7A7A75] font-medium mt-0.5">
                 {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                 {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
               </div>
             </div>
             <div className="shrink-0 flex flex-col items-end gap-1">
               {a.isLate && (
-                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full ring-1 ring-inset ring-amber-600/20">
+                <span className="text-[10px] font-semibold text-[#D9A06B] bg-[#FDF4ED] px-1.5 py-0.5 rounded-full ring-1 ring-inset ring-[#D9A06B]/20">
                   +{a.lateMinutes}m
                 </span>
               )}
               {a.scanOutTime ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" strokeWidth={1.5} />
+                <CheckCircle2 className="w-4 h-4 text-[#5B9C64]" strokeWidth={1.5} />
               ) : (
-                <Clock className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+                <Clock className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
               )}
             </div>
           </li>
@@ -315,9 +315,9 @@ function SessionAttendees({
                 {u.name}
               </button>
             </p>
-            <p className="text-[11px] text-[#8B8BF0] font-medium">Izin</p>
+            <p className="text-[11px] text-[#8DB5D8] font-medium">Izin</p>
           </div>
-          <FileText className="w-4 h-4 text-[#8B8BF0] shrink-0" strokeWidth={1.5} />
+          <FileText className="w-4 h-4 text-[#8DB5D8] shrink-0" strokeWidth={1.5} />
         </li>
       ))}
       {trulyAbsentUsers.map((u) => (
@@ -332,9 +332,9 @@ function SessionAttendees({
                 {u.name}
               </button>
             </p>
-            <p className="text-[11px] text-rose-600 font-medium">Tidak hadir</p>
+            <p className="text-[11px] text-[#D4787C] font-medium">Tidak hadir</p>
           </div>
-          <XSquare className="w-4 h-4 text-rose-400 shrink-0" strokeWidth={1.5} />
+          <XSquare className="w-4 h-4 text-[#D4787C] shrink-0" strokeWidth={1.5} />
         </li>
       ))}
     </ul>

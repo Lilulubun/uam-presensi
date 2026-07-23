@@ -44,15 +44,15 @@ export default function IzinPage() {
   };
 
   const statusConfig = {
-    pending: { icon: Clock, color: 'text-orange-500', bg: 'bg-orange-50', label: 'Pending' },
-    approved: { icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50', label: 'Disetujui' },
-    rejected: { icon: XCircle, color: 'text-red-500', bg: 'bg-red-50', label: 'Ditolak' },
+    pending: { icon: Clock, color: 'text-[#D9A06B]', bg: 'bg-[#FDF4ED]', label: 'Pending' },
+    approved: { icon: CheckCircle2, color: 'text-[#5B9C64]', bg: 'bg-[#EDF5EE]', label: 'Disetujui' },
+    rejected: { icon: XCircle, color: 'text-[#D4787C]', bg: 'bg-[#FDF1F2]', label: 'Ditolak' },
   } as const;
 
   return (
     <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] pb-12">
       <header className="bg-white/70 backdrop-blur-[20px] border-b border-[#EAEAE7] px-4 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-3">
-        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#6B6B66] hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out">
+        <button onClick={() => navigate('/pengajar/dashboard')} className="text-[#7A7A75] hover:text-[#1A1A18] active:scale-[0.97] transition-transform duration-100 ease-out">
           <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
         </button>
         <h1 className="font-semibold text-[20px] tracking-tight text-[#1A1A18]">Ajukan Izin</h1>
@@ -67,7 +67,7 @@ export default function IzinPage() {
           </p>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="start-date" className="text-[12px] font-medium text-[#6B6B66]">Tanggal Mulai</label>
+            <label htmlFor="start-date" className="text-[12px] font-medium text-[#7A7A75]">Tanggal Mulai</label>
             <input
               id="start-date"
               type="date"
@@ -79,7 +79,7 @@ export default function IzinPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="end-date" className="text-[12px] font-medium text-[#6B6B66]">Tanggal Akhir</label>
+            <label htmlFor="end-date" className="text-[12px] font-medium text-[#7A7A75]">Tanggal Akhir</label>
             <input
               id="end-date"
               type="date"
@@ -92,7 +92,7 @@ export default function IzinPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="alasan" className="text-[12px] font-medium text-[#6B6B66]">Alasan</label>
+            <label htmlFor="alasan" className="text-[12px] font-medium text-[#7A7A75]">Alasan</label>
             <textarea
               id="alasan"
               value={alasan}
@@ -117,7 +117,7 @@ export default function IzinPage() {
         {/* Riwayat */}
         <div className="bg-white rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7] overflow-hidden">
           <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center gap-2 bg-[#F7F7F5]">
-            <CalendarDays className="w-4 h-4 text-[#6B6B66]" strokeWidth={1.5} />
+            <CalendarDays className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />
             <p className="text-[14px] font-semibold text-[#1A1A18]">Riwayat Pengajuan</p>
           </div>
 
@@ -140,7 +140,7 @@ export default function IzinPage() {
                         <p className="text-[14px] font-semibold text-[#1A1A18]">
                           {formatDateId(izin.startDate)} — {formatDateId(izin.endDate)}
                         </p>
-                        <p className="text-[13px] text-[#6B6B66] mt-1.5 leading-relaxed">{izin.alasan}</p>
+                        <p className="text-[13px] text-[#7A7A75] mt-1.5 leading-relaxed">{izin.alasan}</p>
                       </div>
                       <span className={`shrink-0 flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset ${cfg.bg} ${cfg.color}`}>
                         <Icon className="w-3 h-3" strokeWidth={2} />
