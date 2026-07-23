@@ -167,31 +167,6 @@ export default function DetailPengajar() {
               <p className="text-xs text-[#D4787C]">Tidak Masuk</p>
             </div>
           </div>
-
-          {monthlyReport.length > 0 && (
-            <ul className="divide-y border-t">
-              {monthlyReport.map((row) => {
-                const date = new Date(row.tgl);
-                return (
-                  <li key={date.toISOString()} className="px-4 py-2.5 flex items-center gap-3">
-                    <span className="text-sm min-w-[120px]">
-                      {formatDateIdShort(date)}
-                    </span>
-                    <span className="text-xs text-[#7A7A75] flex-1">{row.tpaName}</span>
-                    <span
-                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        row.status === 'hadir' ? 'bg-[#EDF5EE] text-[#5B9C64]' :
-                        row.status === 'izin' ? 'bg-[#EDF3F8] text-[#8DB5D8]' :
-                        'bg-[#FDF1F2] text-[#D4787C]'
-                      }`}
-                    >
-                      {row.status === 'hadir' ? 'Hadir' : row.status === 'izin' ? 'Izin' : 'Tidak Masuk'}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
         </div>
 
         {/* Summary All-Time */}
