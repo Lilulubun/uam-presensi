@@ -211,9 +211,9 @@ export default function DashboardPengurus() {
         </div>
       </header>
 
-      <div className="flex max-w-[1440px] mx-auto">
-        {/* Sidebar — lg+ only, full height, flush left */}
-        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 pt-6 px-3 pb-12 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto shadow-[1px_0_0_0_#EAEAE7] bg-white/80 backdrop-blur-[20px] backdrop-saturate-[180%]">
+      <div className="flex max-w-[1440px] mx-auto gap-6">
+        {/* Sidebar — lg+ only, floating bento card that follows scroll */}
+        <aside className="hidden lg:flex flex-col w-[240px] shrink-0 p-5 pt-6 sticky top-[85px] h-[calc(100vh-110px)] overflow-y-auto rounded-[32px] border border-[#EAEAE7] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] mt-8">
           <nav className="flex flex-col gap-0.5">
             {sidebarNav.map(({ href, label, icon: Icon }) => {
               const active = location.pathname === href || (href !== '/pengurus' && location.pathname.startsWith(href));
