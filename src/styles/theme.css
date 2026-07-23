@@ -1,5 +1,18 @@
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Gate hover interactions behind @media (hover: hover) to prevent
+ * sticky hover states on touch devices that lack a real pointer.
+ * Use `can-hover:` instead of `hover:` for interactive button/card feedback.
+ *
+ * Example: can-hover:bg-accent instead of hover:bg-accent
+ */
+@custom-variant can-hover {
+  @media (hover: hover) {
+    @slot;
+  }
+}
+
 :root {
   --font-size: 16px;
   --background: #ffffff;
@@ -117,6 +130,74 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ── Entrance Animations ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@utility animate-fade-in-up {
+  animation: fade-in-up 280ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 200ms ease-out both;
+}
+
+/* Overrides for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-fade-in-up,
+  .motion-safe\:animate-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ───────────────────────────────────────────────
+   Page entry transitions using CSS @starting-style
+   ─────────────────────────────────────────────── */
+
+.page-enter {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .page-enter {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    transform: none;
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @starting-style {
+    .page-enter {
+      opacity: 0;
+      transform: none;
+    }
+  }
 }
 
 @layer base {
