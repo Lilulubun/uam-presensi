@@ -350,12 +350,12 @@ export default function DashboardPengajar() {
                         </div>
                       </div>
                       {attendance.isLate ? (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FDF4ED] text-[#D9A06B] ring-1 ring-inset ring-[#D9A06B]/20 uppercase">
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FDF4ED] text-[#D9A06B] ring-1 ring-inset ring-[#D9A06B]/20">
                           Terlambat
                         </span>
                       ) : (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20 uppercase">
-                          Tepat Waktu
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20">
+                          Tepat waktu
                         </span>
                       )}
                     </div>

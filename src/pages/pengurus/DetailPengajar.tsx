@@ -264,7 +264,7 @@ export default function DetailPengajar() {
                   <p className="text-[14px] font-medium text-[#1A1A18]">
                     {a.scanInTime ? formatDate(new Date(a.scanInTime)) : '—'}
                   </p>
-                  <div className="flex gap-3 text-[12px] text-[#7A7A75] mt-0.5">
+                  <div className="flex gap-3 text-[12px] text-[#7A7A75] mt-0.5 tabular-nums">
                     {a.scanInTime && <span>Masuk {formatTime(new Date(a.scanInTime))}</span>}
                     {a.scanOutTime && <span>· Keluar {formatTime(new Date(a.scanOutTime))}</span>}
                   </div>

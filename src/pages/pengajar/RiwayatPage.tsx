@@ -90,11 +90,11 @@ export default function RiwayatPage() {
                         {attendance.scanInTime ? formatTime(new Date(attendance.scanInTime)) : '—'}
                         {attendance.scanOutTime && ` – ${formatTime(new Date(attendance.scanOutTime))}`}
                       </p>
-                      <span className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${
+                      <span className={`inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${
                         attendance.isLate 
                           ? 'bg-[#FDF4ED] text-[#D9A06B] ring-[#D9A06B]/20' 
                           : 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
-                      } uppercase tracking-wide`}>
+                      }`}>
                         {attendance.isLate
                           ? `Terlambat ${attendance.lateMinutes}m`
                           : 'Tepat waktu'}
