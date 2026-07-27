@@ -17,6 +17,7 @@ export interface User {
   role: 'pengajar' | 'pengurus';
   nim?: string;
   isActive?: boolean;
+  mustChangePassword?: boolean;
 }
 
 export interface PengajarTPA {

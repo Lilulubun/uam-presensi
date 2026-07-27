@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PageTransition from './components/PageTransition';
 import LoginPage from '../pages/LoginPage';
+import UbahPasswordPage from '../pages/UbahPasswordPage';
 import DashboardPengajar from '../pages/pengajar/DashboardPengajar';
 import ScanPage from '../pages/pengajar/ScanPage';
 import SessionActivePage from '../pages/pengajar/SessionActivePage';
@@ -86,9 +87,25 @@ export default function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
+              user?.mustChangePassword ? (
+                <Navigate to="/ganti-password" replace />
+              ) : (
+                <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
+              )
             ) : (
               <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Password Reset Force Route */}
+        <Route
+          path="/ganti-password"
+          element={
+            isAuthenticated && user?.mustChangePassword ? (
+              <ErrorBoundary><PageTransition><UbahPasswordPage /></PageTransition></ErrorBoundary>
+            ) : (
+              <Navigate to="/" replace />
             )
           }
         />

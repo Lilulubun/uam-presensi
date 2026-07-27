@@ -35,6 +35,7 @@ export default function ScanPage() {
 
   const [processing, setProcessing] = useState(false);
   const [activeSessionInfo, setActiveSessionInfo] = useState<ActiveSessionInfo | null>(null);
+  const refreshSessions = useSessionStore((s) => s.init);
   const [showExpectedSelector, setShowExpectedSelector] = useState(false);
   const [pendingTpaId, setPendingTpaId] = useState<string | null>(null);
   const [pendingLocation, setPendingLocation] = useState<Coordinates | null>(null);
@@ -120,6 +121,23 @@ export default function ScanPage() {
         queueMicrotask(() => navigate(`/pengajar/session/${result.data.id}`));
       } else {
         toast.error(result.message);
+        // If session already exists (race condition with concurrent opener),
+        // show info banner instead of just toast
+        if (result.message.includes('sudah') || result.message.includes('aktif')) {
+          const existingSession = getActiveSessionByTPA(pendingTpaId);
+          if (existingSession) {
+            setActiveSessionInfo({ tpaName: result.data?.tpaName ?? '', sessionId: existingSession.id });
+          } else {
+            // Refresh sessions in case store is stale
+            refreshSessions().then(() => {
+              const fresh = getActiveSessionByTPA(pendingTpaId);
+              if (fresh) {
+                setActiveSessionInfo({ tpaName: fresh.id, sessionId: fresh.id });
+              }
+            });
+          }
+          setShowExpectedSelector(false);
+        }
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan');

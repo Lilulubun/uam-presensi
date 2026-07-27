@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Loader2, Copy, Check } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '../../../../app/components/ui/button';
 import {
   AlertDialog,
@@ -23,17 +23,16 @@ interface Props {
 export function ResetPasswordModal({ open, userId, onClose }: Props) {
   const user = getUserById(userId);
   const [loading, setLoading] = useState(false);
-  const [tempPassword, setTempPassword] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
 
   const handleTemporaryPassword = async () => {
     if (!user) return;
     setLoading(true);
     try {
       const result = await generateTemporaryPassword(user.email);
-      if (result.success && result.temporaryPassword) {
-        setTempPassword(result.temporaryPassword);
-        toast.success('Password siap, salin dan kirim ke pengajar');
+      if (result.success) {
+        setResetDone(true);
+        toast.success('Password berhasil direset');
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Gagal membuat password');
@@ -42,13 +41,6 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
     }
   };
 
-  const copyPassword = () => {
-    if (tempPassword) {
-      navigator.clipboard.writeText(tempPassword);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -70,33 +62,20 @@ export function ResetPasswordModal({ open, userId, onClose }: Props) {
             {loading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" strokeWidth={1.5} /> Membuat...</>
             ) : (
-              '🔑 Buat Password Sementara'
+              'Reset Password'
             )}
           </Button>
 
-          {tempPassword && (
+          {resetDone && (
             <div className="bg-[#F7F7F5] rounded-[16px] p-4 border border-[#EAEAE7]">
-              <p className="text-[11px] text-[#7A7A75] font-medium mb-2">Password sementara (sekali lihat):</p>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 text-[14px] font-mono bg-white px-3 py-1.5 rounded-[14px] border border-[#EAEAE7] text-[#1A1A18]">
-                  {tempPassword}
-                </code>
-                <button
-                  onClick={copyPassword}
-                  className="p-2 rounded-[14px] hover:bg-[#F0F0EC] transition-colors border border-[#EAEAE7]"
-                  title="Salin"
-                >
-                  {copied ? <Check className="w-4 h-4 text-[#5B9C64]" strokeWidth={1.5} /> : <Copy className="w-4 h-4 text-[#7A7A75]" strokeWidth={1.5} />}
-                </button>
-              </div>
-              <p className="text-[11px] text-[#D9A06B] font-medium mt-2">Segera kirim ke pengajar. Password ini tidak bisa ditampilkan lagi.</p>
+              <p className="text-[12px] text-[#5B9C64] font-medium">Password kembali ke format awal berdasarkan NIM. Pengajar wajib mengubahnya saat login.</p>
             </div>
           )}
         </div>
 
         <AlertDialogFooter>
           <AlertDialogCancel 
-            onClick={() => { setTempPassword(null); setCopied(false); }}
+            onClick={() => setResetDone(false)}
             className="h-11 rounded-[14px] border-[#EAEAE7] hover:bg-[#F7F7F5] w-full"
           >
             Tutup

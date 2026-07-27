@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-user`;
 
 interface CreateResult {
@@ -7,17 +9,19 @@ interface CreateResult {
 
 interface ResetPwResult {
   success: boolean;
-  method: 'temporary';
-  temporaryPassword?: string;
+  message?: string;
   error?: string;
 }
 
 async function callFunction<T>(payload: unknown): Promise<T> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Anda harus login ulang');
+
   const res = await fetch(FUNCTION_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      Authorization: `Bearer ${session.access_token}`,
     },
     body: JSON.stringify(payload),
   });

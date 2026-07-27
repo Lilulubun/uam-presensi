@@ -8,7 +8,8 @@ returns table (
   name text,
   role text,
   nim text,
-  is_active bool
+  is_active bool,
+  must_change_password bool
 )
 language plpgsql
 security definer
@@ -16,7 +17,7 @@ stable
 as $$
 begin
   return query
-    select u.id, u.email, u.name, u.role::text, u.nim, u.is_active
+    select u.id, u.email, u.name, u.role::text, u.nim, u.is_active, u.must_change_password
     from public.users u
     where u.id = auth.uid();
 end;

@@ -6,8 +6,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const supabaseUrl = Deno.env.get('PROJECT_URL')!;
-const serviceRoleKey = Deno.env.get('SERVICE_ROLE_KEY')!;
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
 });
@@ -43,13 +43,21 @@ interface ResetPwPayload {
 
 type Payload = CreatePayload | ResetPwPayload;
 
-async function handleCreate(p: CreatePayload): Promise<Response> {
+async function handleCreate(p: CreatePayload, callerId: string): Promise<Response> {
   const role = p.role || 'pengajar';
-  const password = p.password || `${p.nim || '1234'}uam`;
+
+  if (role === 'pengurus') {
+    return jsonResponse({ error: 'Forbidden: cannot create pengurus' }, 403);
+  }
+  if (!p.nim) {
+    return jsonResponse({ error: 'NIM required' }, 400);
+  }
+
+  const initialPassword = `${p.nim}uam`;
 
   const { data: authUser, error: createErr } = await supabase.auth.admin.createUser({
     email: p.email,
-    password,
+    password: initialPassword,
     email_confirm: true,
   });
   if (createErr) {
@@ -66,6 +74,7 @@ async function handleCreate(p: CreatePayload): Promise<Response> {
     name: p.name,
     role,
     nim: p.nim || null,
+    must_change_password: true,
   });
   if (profileErr) {
     await supabase.auth.admin.deleteUser(userId);
@@ -80,16 +89,24 @@ async function handleCreate(p: CreatePayload): Promise<Response> {
     }
   }
 
+  // Audit log
+  await supabase.from('interaction_logs').insert({
+    event_type: 'admin_create_user',
+    user_id: callerId,
+    session_id: null,
+    metadata: { target_email: p.email, target_id: userId }
+  });
+
   return jsonResponse({
     success: true,
     userId,
   });
 }
 
-async function handleResetPw(p: ResetPwPayload): Promise<Response> {
+async function handleResetPw(p: ResetPwPayload, callerId: string): Promise<Response> {
   const { data: users, error: lookupErr } = await supabase
     .from('users')
-    .select('id, email')
+    .select('id, email, role')
     .eq('email', p.email)
     .limit(1);
 
@@ -99,27 +116,48 @@ async function handleResetPw(p: ResetPwPayload): Promise<Response> {
 
   const user = users[0];
 
+  if (user.role === 'pengurus') {
+    return jsonResponse({ error: 'Forbidden: cannot reset pengurus' }, 403);
+  }
+
   const { data: profiles } = await supabase
     .from('users')
     .select('nim')
     .eq('id', user.id)
     .single();
 
-  const nim = (profiles as { nim?: string } | null)?.nim ?? 'XXXX';
-  const randomDigits = Math.floor(1000 + Math.random() * 9000);
-  const tempPassword = `UAM-${nim}-${randomDigits}`;
+  const nim = (profiles as { nim?: string } | null)?.nim;
+  if (!nim) {
+    return jsonResponse({ error: 'User does not have a NIM' }, 400);
+  }
+  const resetPassword = `${nim}uam`;
 
-  const { error: updateErr } = await supabase.auth.admin.updateUser(user.id, {
-    password: tempPassword,
+  const { error: updateErr } = await supabase.auth.admin.updateUserById(user.id, {
+    password: resetPassword,
   });
   if (updateErr) {
     return jsonResponse({ error: updateErr.message }, 500);
   }
 
+  const { error: flagErr } = await supabase
+    .from('users')
+    .update({ must_change_password: true })
+    .eq('id', user.id);
+
+  if (flagErr) {
+    return jsonResponse({ error: 'Failed to update password flag' }, 500);
+  }
+
+  await supabase.from('interaction_logs').insert({
+    event_type: 'admin_reset_password',
+    user_id: callerId,
+    session_id: null,
+    metadata: { target_email: p.email, target_id: user.id }
+  });
+
   return jsonResponse({
     success: true,
-    method: 'temporary',
-    temporaryPassword: tempPassword,
+    message: 'Password berhasil direset',
     userId: user.id,
   });
 }
@@ -134,13 +172,41 @@ serve(async (req) => {
   }
 
   try {
+    // Get JWT from Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return jsonResponse({ error: 'Missing Authorization header' }, 401);
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const authClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user: callerUser }, error: authError } = await authClient.auth.getUser(token);
+    if (authError || !callerUser) {
+      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+    }
+
+    // Verify caller is pengurus
+    const { data: callerProfile, error: profileError } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', callerUser.id)
+      .single();
+
+    if (profileError || callerProfile?.role !== 'pengurus') {
+      return jsonResponse({ error: 'Forbidden: only pengurus can manage users' }, 403);
+    }
+
     const payload: Payload = await req.json();
 
     switch (payload.action) {
       case 'create':
-        return await handleCreate(payload);
+        return await handleCreate(payload, callerUser.id);
       case 'reset-pw':
-        return await handleResetPw(payload);
+        return await handleResetPw(payload, callerUser.id);
       default:
         return jsonResponse({ error: 'Unknown action' }, 400);
     }

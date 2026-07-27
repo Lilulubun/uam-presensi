@@ -28,5 +28,10 @@ export default function ProtectedRoute({
     return <Navigate to={redirectPath} replace />;
   }
 
+  // Block normal routes if password needs changing
+  if (user.mustChangePassword) {
+    return <Navigate to="/ganti-password" replace />;
+  }
+
   return <>{children}</>;
 }
