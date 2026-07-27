@@ -33,6 +33,8 @@ export function ExpectedTeacherSelector({
   };
 
   const count = selected.size;
+  const hostIsSelected = selected.has(currentUserId);
+  const hostName = teachers.find(t => t.id === currentUserId)?.name || 'Anda';
 
   const handleSubmit = () => {
     if (count === 0) return;
@@ -83,6 +85,13 @@ export function ExpectedTeacherSelector({
           </li>
         ))}
       </ul>
+
+      {/* Explicit note when host (self) is not selected */}
+      {count > 0 && !hostIsSelected && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12px] text-amber-800 leading-relaxed">
+          <strong>Catatan:</strong> Sebagai host (<strong>{hostName}</strong>), Anda tidak dipilih dalam daftar pengajar wajib hadir. Anda akan tetap dicatat hadir saat sesi dibuka, namun tidak dihitung dalam target keaktifan sesi ini.
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-3">

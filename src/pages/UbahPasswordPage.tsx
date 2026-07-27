@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeyRound, Loader2, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { logEvent } from '../lib/log-event';
 import { useAuthStore } from '../store/authStore';
 import { Button } from '../app/components/ui/button';
 import { toast } from 'sonner';
@@ -47,6 +48,11 @@ export default function UbahPasswordPage() {
 
       toast.success('Password berhasil diubah');
       
+      // Audit log (fire and forget)
+      if (user?.id) {
+        logEvent('user_change_password', undefined, { target_id: user.id });
+      }
+
       // Refresh user profile state to clear mustChangePassword flag
       await initAuth();
       

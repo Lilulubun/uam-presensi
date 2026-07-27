@@ -35,7 +35,6 @@ export default function ScanPage() {
 
   const [processing, setProcessing] = useState(false);
   const [activeSessionInfo, setActiveSessionInfo] = useState<ActiveSessionInfo | null>(null);
-  const refreshSessions = useSessionStore((s) => s.init);
   const [showExpectedSelector, setShowExpectedSelector] = useState(false);
   const [pendingTpaId, setPendingTpaId] = useState<string | null>(null);
   const [pendingLocation, setPendingLocation] = useState<Coordinates | null>(null);
@@ -123,18 +122,14 @@ export default function ScanPage() {
         toast.error(result.message);
         // If session already exists (race condition with concurrent opener),
         // show info banner instead of just toast
-        if (result.message.includes('sudah') || result.message.includes('aktif')) {
+        if (result.message === 'SESSION_ALREADY_ACTIVE' || result.message.toLowerCase().includes('sudah') || result.message.toLowerCase().includes('aktif')) {
+          // Try local store first
           const existingSession = getActiveSessionByTPA(pendingTpaId);
           if (existingSession) {
-            setActiveSessionInfo({ tpaName: result.data?.tpaName ?? '', sessionId: existingSession.id });
+            setActiveSessionInfo({ tpaName: existingSession.tpaId, sessionId: existingSession.id });
           } else {
-            // Refresh sessions in case store is stale
-            refreshSessions().then(() => {
-              const fresh = getActiveSessionByTPA(pendingTpaId);
-              if (fresh) {
-                setActiveSessionInfo({ tpaName: fresh.id, sessionId: fresh.id });
-              }
-            });
+            // Don't rely on store refresh — show banner with pending TPA name directly
+            setActiveSessionInfo({ tpaName: pendingTpaId, sessionId: '' });
           }
           setShowExpectedSelector(false);
         }
@@ -144,7 +139,7 @@ export default function ScanPage() {
     } finally {
       setProcessing(false);
     }
-  }, [pendingTpaId, pendingLocation, openSessionWithExpected, navigate]);
+  }, [pendingTpaId, pendingLocation, openSessionWithExpected, getActiveSessionByTPA, navigate]);
 
   const handleCameraError = useCallback((error: string) => {
     toast.error(error);

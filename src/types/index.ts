@@ -140,6 +140,7 @@ export interface SessionState {
   forceCloseSession: (sessionId: string) => Promise<ValidationResult>;
   refreshQRToken: (sessionId: string, type: 'in' | 'out') => Promise<ValidationResult>;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
+  fetchMyExpectedSessions: (year: number, month: number) => Promise<Set<string>>;
 }
 
 export interface AttendanceState {

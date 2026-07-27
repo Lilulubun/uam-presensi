@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, FileText, FileSpreadsheet, FileDown, Loader2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -348,6 +349,11 @@ export default function LaporanPage() {
   function exportExcel() {
     if (!hasData) return;
     const wb = XLSX.utils.book_new();
+    const totalRows = filteredTables.reduce((sum, table) => sum + table.teachers.length, 0);
+    if (totalRows > 5000) {
+      toast.error(`Jumlah baris ekspor (${totalRows}) melebihi batas 5000. Silakan filter data.`);
+      return;
+    }
     for (const t of filteredTables) {
       const headers = ['Nama', '%', 'Tepat Waktu', 'Terlambat', 'Izin', 'Alpa', 'Status', ...t.dates.flatMap((d) => [`${d} Masuk`, `${d} Keluar`])];
       const rows = t.teachers.map((teacher) => [

@@ -9,6 +9,7 @@ let mockActiveSession: Session | null = null
 let mockSessions: Session[] = []
 const mockLogout = vi.fn()
 const mockNavigate = vi.fn()
+const mockFetchExpectedSessions = vi.fn().mockResolvedValue(new Set())
 
 vi.mock('../../../store/authStore', () => ({
   useAuthStore: (selector?: any) => {
@@ -39,7 +40,7 @@ vi.mock('../../../lib/date-utils', async (importOriginal) => {
 
 vi.mock('../../../store/sessionStore', () => ({
   useSessionStore: (selector?: any) => {
-    const state = { sessions: mockSessions, activeSession: mockActiveSession }
+    const state = { sessions: mockSessions, activeSession: mockActiveSession, fetchMyExpectedSessions: mockFetchExpectedSessions }
     return selector ? selector(state) : state
   },
 }))

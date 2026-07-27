@@ -6,6 +6,7 @@ const mockOpenSessionWithExpected = vi.fn();
 const mockGetActiveSessionByTPA = vi.fn().mockReturnValue(null);
 const mockFetchPengajarByTPA = vi.fn();
 const mockNavigate = vi.fn();
+const mockInit = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -27,6 +28,7 @@ vi.mock('../../../store/sessionStore', () => ({
     const state = {
       openSessionWithExpected: mockOpenSessionWithExpected,
       getActiveSessionByTPA: mockGetActiveSessionByTPA,
+      init: mockInit,
     };
     return selector ? selector(state) : state;
   },
@@ -197,6 +199,27 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Pilih Pengajar yang Wajib Hadir')).not.toBeInTheDocument();
+    });
+  });
+
+  it('handles race condition gracefully when session is concurrently opened', async () => {
+    mockOpenSessionWithExpected.mockResolvedValueOnce({
+      valid: false,
+      message: 'TPA ini sudah memiliki sesi aktif',
+    });
+
+    await grantLocationAndScan();
+
+    await waitFor(() => {
+      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Pilih Pengajar yang Wajib Hadir')).not.toBeInTheDocument();
+      expect(screen.getByText('Sudah Ada Sesi Aktif')).toBeInTheDocument();
     });
   });
 });

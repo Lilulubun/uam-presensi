@@ -8,9 +8,9 @@ import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { getTpaById } from '../../store/tpaStore';
 import { formatTime, formatDate, isSameDay, jakartaNow } from '../../lib/date-utils';
-import { computeMonthlySummary } from '../../lib/computeMonthlySummary';
+import { computeMonthlySummary, computeMonthlySummaryWithExpected } from '../../lib/computeMonthlySummary';
 import { useIzinStore } from '../../store/izinStore';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useUsersStore } from '../../store/userStore';
 
 // Day indices: 0 = Minggu, 1 = Senin, 2 = Selasa, 3 = Rabu, 4 = Kamis, 5 = Jumat, 6 = Sabtu
@@ -36,6 +36,10 @@ export default function DashboardPengajar() {
   const allAttendances = useAttendanceStore((s) => s.attendances);
   const { locationState, nearestTPA } = useWatchLocation(true);
   const myIzins = useIzinStore((s) => s.myIzins);
+  const allSessions = useSessionStore((s) => s.sessions);
+  const fetchMyExpectedSessions = useSessionStore((s) => s.fetchMyExpectedSessions);
+  const [expectedSessionIds, setExpectedSessionIds] = useState<Set<string>>(new Set());
+
   const pendingIzins = myIzins.filter((i) => i.status === 'pending').length;
   const fetchMyIzins = useIzinStore((s) => s.fetchMyIzins);
   const loadUserTPAs = useUsersStore((s) => s.loadUserTPAs);
@@ -46,6 +50,7 @@ export default function DashboardPengajar() {
     fetchMyIzins();
     if (user?.id) {
       loadUserTPAs(user.id);
+      fetchMyExpectedSessions(jakartaNow().year, jakartaNow().month + 1).then(setExpectedSessionIds);
     }
   }, []);
 
@@ -72,26 +77,20 @@ export default function DashboardPengajar() {
   const myAttendances = allAttendances.filter((a) => a.userId === user?.id);
   const { year: jkYear, month: jkMonth } = jakartaNow();
   const monthSummary = computeMonthlySummary(myAttendances, jkYear, jkMonth + 1);
+  const expectedSummary = computeMonthlySummaryWithExpected(
+    myAttendances,
+    expectedSessionIds,
+    myIzins.filter(i => i.status === 'approved'),
+    jkYear,
+    jkMonth + 1,
+    allSessions
+  );
 
   // Target + Status calculations
-  const currentMonthAttendances = myAttendances.filter((a) => {
-    const scanTime = a.scanInTime ?? a.scanOutTime;
-    if (!scanTime) return false;
-    const date = new Date(scanTime);
-    return date.getFullYear() === jkYear && (date.getMonth() + 1) === (jkMonth + 1);
-  });
-
-  const totalSesiBulanIni = currentMonthAttendances.length;
-  const totalHadirBulanIni = currentMonthAttendances.filter((a) => a.scanInTime).length;
-  const monthStart = new Date(jkYear, jkMonth, 1);
-  const monthEnd = new Date(jkYear, jkMonth + 1, 0, 23, 59, 59, 999);
-  const totalIzinBulanIni = myIzins.filter((izin) =>
-    izin.status === 'approved' &&
-    new Date(izin.startDate) <= monthEnd &&
-    new Date(izin.endDate) >= monthStart
-  ).length;
-
-  const wajibHadirBulanIni = Math.ceil(totalSesiBulanIni * 0.5 * 0.75);
+  const totalSesiBulanIni = expectedSummary.expectedCount;
+  const totalHadirBulanIni = expectedSummary.actualHadir;
+  const totalIzinBulanIni = expectedSummary.excusedCount;
+  const wajibHadirBulanIni = expectedSummary.requiredCount;
 
   const statusAmanBulanIni =
     totalSesiBulanIni === 0
@@ -248,7 +247,7 @@ export default function DashboardPengajar() {
                   {statusAmanBulanIni}
                 </span>
               </div>
-              <p className="text-[11px] text-[#7A7A75] mt-1.5">{totalHadirBulanIni} hadir / {totalSesiBulanIni - totalIzinBulanIni} aktif</p>
+              <p className="text-[11px] text-[#7A7A75] mt-1.5">{totalHadirBulanIni} hadir / {Math.max(0, totalSesiBulanIni - totalIzinBulanIni)} aktif</p>
             </div>
           </div>
           {totalSesiBulanIni > 0 && (

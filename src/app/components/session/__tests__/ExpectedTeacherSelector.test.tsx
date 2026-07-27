@@ -67,6 +67,22 @@ describe('ExpectedTeacherSelector', () => {
     expect(submitBtn).toHaveTextContent('Buka Sesi (1)');
   });
 
+  it('shows explicit warning note when host (currentUserId) is not checked', () => {
+    renderComponent('user-001');
+    const checkboxes = screen.getAllByRole('checkbox');
+    // Select Ani (user-002) but not Budi (user-001)
+    fireEvent.click(checkboxes[1]);
+    expect(screen.getByText(/Sebagai host/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Budi Santoso/).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('does not show warning note when host is checked', () => {
+    renderComponent('user-001');
+    const checkboxes = screen.getAllByRole('checkbox');
+    fireEvent.click(checkboxes[0]); // Check Budi
+    expect(screen.queryByText(/Sebagai host/)).not.toBeInTheDocument();
+  });
+
   it('calls onSubmit with selected IDs when submit button clicked', () => {
     renderComponent();
     const checkboxes = screen.getAllByRole('checkbox');

@@ -154,4 +154,16 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   getActiveSessionByTPA: (tpaId: string): Session | null => {
     return get().sessions.find((s) => s.tpaId === tpaId && s.isActive) ?? null;
   },
+
+  fetchMyExpectedSessions: async (year: number, month: number): Promise<Set<string>> => {
+    const { data, error } = await supabase.rpc('get_my_expected_sessions', {
+      p_year: year,
+      p_month: month,
+    });
+    if (error) {
+      console.error('fetchMyExpectedSessions error:', error);
+      return new Set();
+    }
+    return new Set((data as { session_id: string }[]).map((row) => row.session_id));
+  },
 }));

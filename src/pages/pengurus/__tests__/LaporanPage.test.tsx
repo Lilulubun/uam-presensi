@@ -195,18 +195,23 @@ describe('LaporanPage', () => {
   it('calculates percentages correctly', async () => {
     mockRpc.mockResolvedValue({
       data: [
-        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),                                          // tepatWaktu + hadirFisik (scan-in, scan-out, not late)
-        row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),                         // tepatWaktu + hadirFisik (scan-in, scan-out, 10 ≤ 15 → not late)
-        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }), // tepatWaktu + hadirFisik (scan-in, no scan-out)
+        row({ tgl: '2026-06-02', teacher_name: 'Budi' }),
+        row({ tgl: '2026-06-04', teacher_name: 'Budi', late_minutes: 10 }),
+        row({ tgl: '2026-06-06', teacher_name: 'Budi', scan_out_time: null, first_teacher_id: 'user-other' }),
       ],
       error: null,
     });
     renderComponent();
     await waitFor(() => {
-      // hadir_fisik=3, total_sesi=3, izin=0, tidakMasuk=0
-      // Total and on-time columns both legitimately render 100%.
-      expect(screen.getAllByText('100%').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('3')).toBeInTheDocument();
+      // Find row containing 'Budi'
+      const budiRow = screen.getByText('Budi').closest('tr');
+      expect(budiRow).toBeInTheDocument();
+      if (budiRow) {
+        // Kehadiran (100%) and Tepat Waktu (100%)
+        const cells = Array.from(budiRow.querySelectorAll('td')).map(c => c.textContent);
+        expect(cells).toContain('100%');
+        expect(cells).toContain('3'); // Hadir Fisik
+      }
     });
   });
 
@@ -224,10 +229,13 @@ describe('LaporanPage', () => {
     });
     renderComponent();
     await waitFor(() => {
-      // totalSesi=3 (unique dates), hadirFisik=3, izin=0, tidakMasuk=0
-      // More than one metric may legitimately render 100%.
-      expect(screen.getAllByText('100%').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('3')).toBeInTheDocument();
+      const budiRow = screen.getByText('Budi').closest('tr');
+      expect(budiRow).toBeInTheDocument();
+      if (budiRow) {
+        const cells = Array.from(budiRow.querySelectorAll('td')).map(c => c.textContent);
+        expect(cells).toContain('100%');
+        expect(cells).toContain('3');
+      }
     });
   });
 
