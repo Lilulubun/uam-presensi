@@ -4,9 +4,6 @@ import {
   ArrowLeft, FileText, FileSpreadsheet, FileDown, Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Button } from '../../app/components/ui/button';
 import { useTPAStore } from '../../store/tpaStore';
 import { supabase } from '../../lib/supabase';
@@ -346,8 +343,9 @@ export default function LaporanPage() {
     downloadBlob(csv, 'laporan-presensi.csv', 'text/csv;charset=utf-8;');
   }
 
-  function exportExcel() {
+  async function exportExcel() {
     if (!hasData) return;
+    const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
     const totalRows = filteredTables.reduce((sum, table) => sum + table.teachers.length, 0);
     if (totalRows > 5000) {
@@ -376,8 +374,10 @@ export default function LaporanPage() {
     XLSX.writeFile(wb, 'laporan-presensi.xlsx');
   }
 
-  function exportPDF() {
+  async function exportPDF() {
     if (!hasData) return;
+    const { default: jsPDF } = await import('jspdf');
+    const { default: autoTable } = await import('jspdf-autotable');
     const doc = new jsPDF('p', 'mm', 'a4');
     const margin = 14;
     const pageWidth = doc.internal.pageSize.getWidth();
