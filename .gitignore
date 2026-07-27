@@ -36,6 +36,12 @@ coverage
 .env.local
 .env.*.local
 
+# Tool generated / Temp
+supabase/.temp/
+temp/
+playwright-report/
+.hermes/
+
 # Logs
 *.log
 npm-debug.log*
