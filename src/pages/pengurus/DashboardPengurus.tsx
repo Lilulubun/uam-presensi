@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Home, Menu } from 'lucide-react';
+import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Menu } from 'lucide-react';
 import Sheet from '../../app/components/ui/sheet';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
@@ -689,7 +689,7 @@ export default function DashboardPengurus() {
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
-              {teacherStats.map(({ teacher, total, onTime, late, rate, status }, idx) => {
+              {teacherStats.map(({ teacher, total, onTime, late, rate, status }) => {
                 return (
                   <button
                     key={teacher.id}

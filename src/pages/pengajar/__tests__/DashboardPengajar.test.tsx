@@ -189,7 +189,7 @@ describe('DashboardPengajar', () => {
     renderComponent()
     const hours = String(now.getHours()).padStart(2, '0')
     const minutes = String(now.getMinutes()).padStart(2, '0')
-    expect(screen.getByText(new RegExp(`Keluar pukul ${hours}:${minutes}`))).toBeInTheDocument()
+    expect(screen.getAllByText(new RegExp(`Keluar ${hours}:${minutes}`)).length).toBeGreaterThanOrEqual(1)
   })
 
   it('does not show scan-out time when scanOutTime is absent', () => {

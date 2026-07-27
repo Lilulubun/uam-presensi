@@ -35,7 +35,8 @@ export default function DashboardPengajar() {
   const activeSession = useSessionStore((s) => s.activeSession);
   const allAttendances = useAttendanceStore((s) => s.attendances);
   const { locationState, nearestTPA } = useWatchLocation(true);
-  const pendingIzins = useIzinStore((s) => s.myIzins.filter((i) => i.status === 'pending').length);
+  const myIzins = useIzinStore((s) => s.myIzins);
+  const pendingIzins = myIzins.filter((i) => i.status === 'pending').length;
   const fetchMyIzins = useIzinStore((s) => s.fetchMyIzins);
   const loadUserTPAs = useUsersStore((s) => s.loadUserTPAs);
   const allUserTPAs = useUsersStore((s) => s.userTPAs);
@@ -82,7 +83,13 @@ export default function DashboardPengajar() {
 
   const totalSesiBulanIni = currentMonthAttendances.length;
   const totalHadirBulanIni = currentMonthAttendances.filter((a) => a.scanInTime).length;
-  const totalIzinBulanIni = currentMonthAttendances.filter((a) => a.isIzin).length;
+  const monthStart = new Date(jkYear, jkMonth, 1);
+  const monthEnd = new Date(jkYear, jkMonth + 1, 0, 23, 59, 59, 999);
+  const totalIzinBulanIni = myIzins.filter((izin) =>
+    izin.status === 'approved' &&
+    new Date(izin.startDate) <= monthEnd &&
+    new Date(izin.endDate) >= monthStart
+  ).length;
 
   const wajibHadirBulanIni = Math.ceil(totalSesiBulanIni * 0.5 * 0.75);
 

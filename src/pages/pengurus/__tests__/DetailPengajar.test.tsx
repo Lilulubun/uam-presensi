@@ -14,6 +14,11 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate }
 })
 
+vi.mock('../../../lib/date-utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../lib/date-utils')>()
+  return { ...actual, jakartaNow: () => ({ year: 2026, month: 5 }) }
+})
+
 vi.mock('../../../store/sessionStore', () => ({
   useSessionStore: (selector?: any) => {
     const state = { sessions: mockSessions }
@@ -117,7 +122,7 @@ describe('DetailPengajar', () => {
 
   it('shows empty state when no attendances', () => {
     renderWithRoute()
-    expect(screen.getByText('Belum ada riwayat presensi')).toBeInTheDocument()
+    expect(screen.getByText(/Belum ada riwayat presensi di Juni 2026/)).toBeInTheDocument()
   })
 
   it('shows summary cards with counts', () => {
@@ -127,9 +132,9 @@ describe('DetailPengajar', () => {
       { id: 'att-2', sessionId: 'session-1', userId: 'user-001', scanInTime: new Date(), isLate: true, lateMinutes: 10 } as Attendance,
     ]
     renderWithRoute()
-    expect(screen.getByText('Total')).toBeInTheDocument()
-    expect(screen.getByText('Tepat')).toBeInTheDocument()
-    expect(screen.getByText('Telat')).toBeInTheDocument()
+    expect(screen.getByText('Total Hadir')).toBeInTheDocument()
+    expect(screen.getByText('Tepat Waktu')).toBeInTheDocument()
+    expect(screen.getByText('Terlambat')).toBeInTheDocument()
   })
 
   it('shows attendance entries grouped by session', () => {

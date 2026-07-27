@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, CheckCircle2, FileText, TrendingUp } from 'lucide-rea
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { useUsersStore } from '../../store/userStore';
 import { useIzinStore } from '../../store/izinStore';
-import { formatDate, formatTime, formatDateIdShort, jakartaNow } from '../../lib/date-utils';
+import { formatDate, formatTime, jakartaNow } from '../../lib/date-utils';
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
