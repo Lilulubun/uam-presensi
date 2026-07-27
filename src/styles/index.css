@@ -1,15 +1,6 @@
 @import './tailwind.css';
 @import './theme.css';
 
-/* ── Card stagger entrance ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .card-stagger { animation: none; opacity: 1; }
-}
-
 .page-enter {
   @starting-style {
     opacity: 0;

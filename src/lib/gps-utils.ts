@@ -24,18 +24,6 @@ export function calculateDistance(
 }
 
 /**
- * Check if user location is within allowed radius of target location
- */
-export function isWithinRadius(
-  userLocation: Coordinates,
-  targetLocation: Coordinates,
-  radiusMeters: number
-): boolean {
-  const distance = calculateDistance(userLocation, targetLocation);
-  return distance <= radiusMeters;
-}
-
-/**
  * Get current GPS location from browser (or mock in debug mode)
  */
 export function getCurrentLocation(): Promise<Coordinates> {
