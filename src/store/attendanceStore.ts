@@ -1,19 +1,7 @@
 import { create } from 'zustand';
-import type { AttendanceState, Attendance, Coordinates, ValidationResult, CheckInResult } from '../types';
+import type { AttendanceState, Attendance } from '../types';
 import { supabase } from '../lib/supabase';
-import { logEvent } from '../lib/log-event';
-import { toCamelCase, toCamelCaseArray } from '../lib/transform';
-
-function errorResult(message: string, sessionId?: string): ValidationResult {
-  if (sessionId) {
-    if (/radius/i.test(message)) {
-      logEvent('scan_in_gps_denied', sessionId, { error: message });
-    } else if (/tidak valid|kadaluarsa/i.test(message)) {
-      logEvent('qr_expired', sessionId, { error: message });
-    }
-  }
-  return { valid: false, message };
-}
+import { toCamelCaseArray } from '../lib/transform';
 
 export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   attendances: [] as Attendance[],
@@ -32,37 +20,6 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
       if (error) console.error('attendanceStore.init error:', error);
       set({ loading: false });
     }
-  },
-
-  checkIn: async (
-    sessionId: string,
-    token: string,
-    location: Coordinates,
-  ): Promise<ValidationResult> => {
-    const { data, error } = await supabase.rpc('check_in', {
-      p_session_id: sessionId,
-      p_token: token,
-      p_location: { lat: location.lat, lng: location.lng },
-    });
-    if (error || !data) {
-      return errorResult(error?.message ?? 'Gagal melakukan presensi masuk', sessionId);
-    }
-    const raw = data as any;
-    const attendance = toCamelCase<Attendance>(raw.attendance);
-    const reason: CheckInResult['reason'] = raw.reason ?? null;
-    if (reason !== 'FIRST_TEACHER_AUTO') {
-      set((state) => ({
-        attendances: [...state.attendances.filter((a) => a.id !== attendance.id), attendance],
-      }));
-      logEvent('scan_in_success', sessionId);
-    }
-    return {
-      valid: true,
-      message: reason === 'FIRST_TEACHER_AUTO'
-        ? 'Presensi Anda sudah otomatis tercatat saat membuka sesi'
-        : 'Presensi masuk berhasil',
-      data: { attendance, reason },
-    };
   },
 
   getAttendanceBySession: (sessionId: string): Attendance[] => {

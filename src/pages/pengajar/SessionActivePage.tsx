@@ -21,7 +21,6 @@ import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
 import { closeSessionV2 } from '../../store/attendanceV2Adapter';
-import { isReleaseC } from '../../lib/feature-flags';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
@@ -34,7 +33,6 @@ export default function SessionActivePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const closeSession = useSessionStore((s) => s.closeSession);
   const session = useSessionStore((s) => s.sessions.find((x) => x.id === sessionId));
   const attendances = useAttendanceStore(
     useShallow((s) => s.attendances.filter((a) => a.sessionId === sessionId))
@@ -78,12 +76,10 @@ export default function SessionActivePage() {
       } catch {
         // close without location if GPS unavailable
       }
-      const result = isReleaseC()
-        ? await closeSessionV2(sessionId, location, notes || undefined)
-        : await closeSession(sessionId, location, notes || undefined);
+      const result = await closeSessionV2(sessionId, location, notes || undefined);
       if (result.valid) {
         setNotes('');
-        toast.success(isReleaseC() ? 'Sesi berhasil ditutup!' : 'Sesi berhasil ditutup! QR presensi keluar aktif.');
+        toast.success('Sesi berhasil ditutup!');
       } else {
         toast.error(result.message);
       }

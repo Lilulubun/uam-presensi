@@ -71,7 +71,7 @@ export default function TPADetailPage() {
       const result = await forceCloseSession(activeSession.id);
       if (result.valid) {
         toast.success('Sesi berhasil ditutup');
-        logEvent('admin_force_close', activeSession.id);
+        logEvent('force_close_session_v2', activeSession.id);
         setDialogOpen(false);
       } else {
         toast.error(result.message);

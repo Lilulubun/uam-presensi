@@ -1,34 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-const mockOpenSessionWithExpected = vi.fn();
-const mockGetActiveSessionByTPA = vi.fn().mockReturnValue(null);
-const mockFetchPengajarByTPA = vi.fn();
 const mockNavigate = vi.fn();
-const mockInit = vi.fn().mockResolvedValue(undefined);
-
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-vi.mock('../../../store/authStore', () => ({
-  useAuthStore: (selector?: any) => {
-    const state = {
-      user: { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar' as const, nim: '21511001' },
-      isAuthenticated: true,
-    };
-    return selector ? selector(state) : state;
-  },
-}));
-
+const mockGetActiveSessionByTPA = vi.fn();
 vi.mock('../../../store/sessionStore', () => ({
   useSessionStore: (selector?: any) => {
     const state = {
-      openSessionWithExpected: mockOpenSessionWithExpected,
       getActiveSessionByTPA: mockGetActiveSessionByTPA,
-      init: mockInit,
+      init: vi.fn(),
     };
     return selector ? selector(state) : state;
   },
@@ -36,15 +21,28 @@ vi.mock('../../../store/sessionStore', () => ({
 
 vi.mock('../../../store/attendanceStore', () => ({
   useAttendanceStore: (selector?: any) => {
-    const state = { checkIn: vi.fn() };
+    const state = { init: vi.fn() };
     return selector ? selector(state) : state;
   },
 }));
 
-vi.mock('../../../store/tpaStore', () => ({
-  getTpaByStaticQR: () => ({ id: 'tpa-001', name: 'TPA Al-Fath', location: { lat: -7.68, lng: 110.41, radius: 500 } }),
+const mockOpenSessionV2 = vi.fn();
+const mockCheckInV2 = vi.fn();
+vi.mock('../../../store/attendanceV2Adapter', () => ({
+  openSessionV2: mockOpenSessionV2,
+  checkInV2: mockCheckInV2,
 }));
 
+vi.mock('../../../store/tpaStore', () => ({
+  getTpaByStaticQR: () => ({
+    id: 'tpa-001',
+    name: 'TPA Al-Fath',
+    location: { lat: -7.68, lng: 110.41, radius: 500 },
+  }),
+  getTpaById: () => null,
+}));
+
+const mockFetchPengajarByTPA = vi.fn();
 vi.mock('../../../store/userStore', () => ({
   useUsersStore: (selector?: any) => {
     const state = {
@@ -84,7 +82,6 @@ vi.mock('sonner', () => ({
 
 vi.mock('../../../app/components/qr/QRScanner', () => ({
   QRScanner: ({ onScan }: { onScan: (text: string) => void; onError: (err: string) => void }) => {
-    // Expose scan trigger globally for test
     (window as any).__triggerQRScan = onScan;
     return <div data-testid="qr-scanner">QR Scanner Mock</div>;
   },
@@ -104,28 +101,25 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetActiveSessionByTPA.mockReturnValue(null);
-    mockOpenSessionWithExpected.mockResolvedValue({
+    mockOpenSessionV2.mockResolvedValue({
       valid: true,
       message: 'Sesi berhasil dibuka',
-      data: { id: 'session-1' },
+      data: { session: { id: 'session-1' } },
     });
   });
 
   async function grantLocationAndScan() {
     renderComponent();
 
-    // First, grant location permission
     const locationBtn = screen.getByRole('button', { name: /Izinkan Akses Lokasi/ });
     await act(async () => {
       fireEvent.click(locationBtn);
     });
 
-    // Wait for QR scanner to appear
     await waitFor(() => {
       expect(screen.getByTestId('qr-scanner')).toBeInTheDocument();
     });
 
-    // Trigger static QR scan for TPA
     await act(async () => {
       (window as any).__triggerQRScan('static-qr-token');
     });
@@ -149,23 +143,21 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     });
   });
 
-  it('calls openSessionWithExpected with selected IDs when submit clicked', async () => {
+  it('calls openSessionV2 with selected IDs when submit clicked', async () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
       expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
     });
 
-    // Check Budi and Ani
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Budi
     fireEvent.click(checkboxes[1]); // Ani
 
-    // Submit
     fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
 
     await waitFor(() => {
-      expect(mockOpenSessionWithExpected).toHaveBeenCalledWith(
+      expect(mockOpenSessionV2).toHaveBeenCalledWith(
         'tpa-001',
         { lat: -7.68, lng: 110.41 },
         ['user-001', 'user-002'],
@@ -180,7 +172,7 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
       expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getAllByRole('checkbox')[0]); // Select Budi
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
     fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
 
     await waitFor(() => {
@@ -203,7 +195,7 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
   });
 
   it('handles race condition gracefully when session is concurrently opened', async () => {
-    mockOpenSessionWithExpected.mockResolvedValueOnce({
+    mockOpenSessionV2.mockResolvedValueOnce({
       valid: false,
       message: 'TPA ini sudah memiliki sesi aktif',
     });

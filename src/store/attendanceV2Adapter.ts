@@ -1,15 +1,14 @@
 /**
- * V2 Adapter Hooks — compatible parallel contract for the v2 secure RPCs.
+ * v2 attendance adapter — direct RPC wrappers with Zustand store sync.
  *
- * These hooks call the _v2 RPCs deployed in Release B:
- * - open_session_with_expected_v2  → returns { session, qr } (no token columns)
- * - check_in_v2                    → validates against private token hash table
- * - close_session_v2               → sets checkout_method, no location copy
- * - rotate_qr_token_v2             → writes to private token table
+ * v2 RPCs:
+ *   - open_session_with_expected_v2  → openSessionV2
+ *   - check_in_v2                    → checkInV2
+ *   - close_session_v2               → closeSessionV2
+ *   - rotate_qr_token_v2             → rotateQRV2
  *
- * Legacy hooks (openSessionWithExpected, checkIn, closeSession, refreshQRToken)
- * continue to work unchanged. The frontend toggles between v1 and v2 via
- * the FINAL_GATES_RELEASE_C feature flag in src/lib/feature-flags.ts.
+ * All v2 RPCs enforce: auth check, teacher-is-active-for-tpa guard,
+ * GPS haversine check, SHA-256 token hashing, and audit logs.
  */
 
 import { supabase } from '../lib/supabase';
@@ -22,7 +21,6 @@ import type {
   Attendance,
   Coordinates,
   ValidationResult,
-  CheckInResult,
 } from '../types';
 
 // ─── openSessionV2 ────────────────────────────────────────────────────────────
@@ -87,7 +85,7 @@ export async function checkInV2(
 
   const raw = data as any;
   const attendance = toCamelCase<Attendance>(raw.attendance);
-  const reason: CheckInResult['reason'] = raw.reason ?? null;
+  const reason = (raw.reason as string | null) ?? null;
 
   logEvent('scan_in_success_v2', sessionId);
   return {

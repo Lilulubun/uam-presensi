@@ -8,9 +8,7 @@ import { LocationStatus } from '../../app/components/gps/LocationStatus';
 import { ExpectedTeacherSelector } from '../../app/components/session/ExpectedTeacherSelector';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
-import { useAttendanceStore } from '../../store/attendanceStore';
 import { openSessionV2, checkInV2 } from '../../store/attendanceV2Adapter';
-import { isReleaseC } from '../../lib/feature-flags';
 import { useUsersStore } from '../../store/userStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { getCurrentLocation, calculateDistance } from '../../lib/gps-utils';
@@ -26,9 +24,7 @@ interface ActiveSessionInfo {
 export default function ScanPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const openSessionWithExpected = useSessionStore((s) => s.openSessionWithExpected);
   const getActiveSessionByTPA = useSessionStore((s) => s.getActiveSessionByTPA);
-  const checkIn = useAttendanceStore((s) => s.checkIn);
   const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
   const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
 
@@ -87,9 +83,7 @@ export default function ScanPage() {
         const location = locationState.status === 'ready' ? locationState.coords : await getCurrentLocation();
 
         if (token.type === 'in') {
-          const result = isReleaseC()
-            ? await checkInV2(token.sessionId, token.token, location)
-            : await checkIn(token.sessionId, token.token, location);
+          const result = await checkInV2(token.sessionId, token.token, location);
           if (result.valid) {
             const reason = (result.data as { reason?: string | null })?.reason ?? null;
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
@@ -108,7 +102,7 @@ export default function ScanPage() {
         setProcessing(false);
       }
     },
-    [user, openSessionWithExpected, getActiveSessionByTPA, checkIn, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
+    [user, getActiveSessionByTPA, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
   );
 
   const handleExpectedSubmit = useCallback(async (selectedIds: string[]) => {
@@ -116,14 +110,11 @@ export default function ScanPage() {
 
     setProcessing(true);
     try {
-      const result = isReleaseC()
-        ? await openSessionV2(pendingTpaId, pendingLocation, selectedIds)
-        : await openSessionWithExpected(pendingTpaId, pendingLocation, selectedIds);
+      const result = await openSessionV2(pendingTpaId, pendingLocation, selectedIds);
       if (result.valid) {
         toast.success(`Sesi dibuka dengan ${selectedIds.length} pengajar wajib hadir!`);
         setShowExpectedSelector(false);
-        // v2: session is nested under result.data.session; v1: result.data is the session itself
-        const sessionId = isReleaseC() ? result.data.session.id : result.data.id;
+        const sessionId = result.data.session.id;
         queueMicrotask(() => navigate(`/pengajar/session/${sessionId}`));
       } else {
         toast.error(result.message);
@@ -146,7 +137,7 @@ export default function ScanPage() {
     } finally {
       setProcessing(false);
     }
-  }, [pendingTpaId, pendingLocation, openSessionWithExpected, getActiveSessionByTPA, navigate]);
+  }, [pendingTpaId, pendingLocation, getActiveSessionByTPA, navigate]);
 
   const handleCameraError = useCallback((error: string) => {
     toast.error(error);

@@ -33,10 +33,6 @@ export interface Session {
   dateClosed?: Date;
   firstTeacherId: string;
   isActive: boolean;
-  qrDynamicInToken?: string;
-  qrDynamicOutToken?: string;
-  qrDynamicInExpiry?: Date;
-  qrDynamicOutExpiry?: Date;
   closeNotes?: string;
   expectedAtOpen?: Date;
 }
@@ -116,14 +112,7 @@ export interface ValidationResult {
   data?: any;
 }
 
-// check_in RPC composite return type (Task 1.7 / R2)
-export type CheckInReason = 'FIRST_TEACHER_AUTO' | null;
-export interface CheckInResult {
-  attendance: Attendance;
-  reason: CheckInReason;
-}
-
-// Store States
+// QR Token Structure
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -138,9 +127,6 @@ export interface SessionState {
   activeSession: Session | null;
   loading: boolean;
   init: () => Promise<void>;
-  openSession: (tpaId: string, location: Coordinates) => Promise<ValidationResult>;
-  openSessionWithExpected: (tpaId: string, location: Coordinates, expectedUserIds: string[]) => Promise<ValidationResult>;
-  closeSession: (sessionId: string, location?: Coordinates, notes?: string) => Promise<ValidationResult>;
   forceCloseSession: (sessionId: string) => Promise<ValidationResult>;
   getActiveSessionByTPA: (tpaId: string) => Session | null;
   fetchMyExpectedSessions: (year: number, month: number) => Promise<Set<string>>;
@@ -150,7 +136,6 @@ export interface AttendanceState {
   attendances: Attendance[];
   loading: boolean;
   init: () => Promise<void>;
-  checkIn: (sessionId: string, qrToken: string, location: Coordinates) => Promise<ValidationResult>;
   getAttendanceBySession: (sessionId: string) => Attendance[];
   getAttendanceByUser: (userId: string) => Attendance[];
 }

@@ -88,69 +88,6 @@ describe('useSessionStore (Supabase-backed)', () => {
     });
   });
 
-  describe('openSession()', () => {
-    it('calls open_session RPC and stores the returned session as active', async () => {
-      mockRpc.mockResolvedValue({ data: fakeSession, error: null });
-      const result = await useSessionStore.getState().openSession('tpa-001', { lat: -7.7, lng: 110.4 });
-      expect(mockRpc).toHaveBeenCalledWith('open_session', {
-        p_tpa_id: 'tpa-001',
-        p_location: { lat: -7.7, lng: 110.4 },
-      });
-      expect(result.valid).toBe(true);
-      expect(useSessionStore.getState().activeSession?.id).toBe('session-uuid-1');
-      expect(useSessionStore.getState().sessions.some(s => s.id === 'session-uuid-1')).toBe(true);
-    });
-
-    it('returns Indonesian error when RPC reports TPA already has active session', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: { message: 'TPA ini sudah memiliki sesi aktif' } });
-      const result = await useSessionStore.getState().openSession('tpa-001', { lat: -7.7, lng: 110.4 });
-      expect(result.valid).toBe(false);
-      expect(result.message).toBe('TPA ini sudah memiliki sesi aktif');
-      expect(useSessionStore.getState().activeSession).toBeNull();
-    });
-
-    it('returns Indonesian error when not authenticated', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: { message: 'not authenticated' } });
-      const result = await useSessionStore.getState().openSession('tpa-001', { lat: -7.7, lng: 110.4 });
-      expect(result.valid).toBe(false);
-      expect(result.message).toMatch(/tidak diotorisasi|autentikasi/i);
-    });
-  });
-
-  describe('closeSession()', () => {
-    beforeEach(() => {
-      useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });
-    });
-
-    it('calls close_session RPC and clears activeSession on success', async () => {
-      const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
-      mockRpc.mockResolvedValue({ data: closed, error: null });
-      const result = await useSessionStore.getState().closeSession(fakeSession.id);
-      expect(mockRpc).toHaveBeenCalledWith('close_session', { p_session_id: fakeSession.id });
-      expect(result.valid).toBe(true);
-      expect(useSessionStore.getState().activeSession).toBeNull();
-    });
-
-    it('passes p_location when location is provided', async () => {
-      const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
-      mockRpc.mockResolvedValue({ data: closed, error: null });
-      const location = { lat: -7.68, lng: 110.41 };
-      await useSessionStore.getState().closeSession(fakeSession.id, location);
-      expect(mockRpc).toHaveBeenCalledWith('close_session', {
-        p_session_id: fakeSession.id,
-        p_location: { lat: -7.68, lng: 110.41 },
-      });
-    });
-
-    it('surfaces first-teacher-only error from the server', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: { message: 'Hanya Pengajar Pertama yang dapat menutup sesi' } });
-      const result = await useSessionStore.getState().closeSession(fakeSession.id);
-      expect(result.valid).toBe(false);
-      expect(result.message).toBe('Hanya Pengajar Pertama yang dapat menutup sesi');
-      expect(useSessionStore.getState().activeSession).not.toBeNull();
-    });
-  });
-
   describe('forceCloseSession()', () => {
     beforeEach(() => {
       useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });

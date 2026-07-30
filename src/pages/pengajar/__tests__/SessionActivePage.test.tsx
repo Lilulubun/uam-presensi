@@ -5,7 +5,7 @@ import type { Session, Attendance } from '../../../types'
 
 let mockSession: Session | null = null
 let mockAttendances: Attendance[] = []
-const mockCloseSession = vi.fn()
+const mockCloseSessionV2 = vi.fn()
 const mockNavigate = vi.fn()
 const mockFetchPengajarByTPA = vi.fn()
 
@@ -37,10 +37,13 @@ vi.mock('../../../store/sessionStore', () => ({
     const state = {
       sessions: mockSession ? [mockSession] : [],
       activeSession: mockSession,
-      closeSession: mockCloseSession,
     }
     return selector ? selector(state) : state
   },
+}))
+
+vi.mock('../../../store/attendanceV2Adapter', () => ({
+  closeSessionV2: mockCloseSessionV2,
 }))
 
 vi.mock('../../../store/attendanceStore', () => ({
@@ -169,7 +172,7 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
   })
 
   it('calls closeSession when confirmed', async () => {
-    mockCloseSession.mockResolvedValueOnce({ valid: true, message: 'Sesi berhasil ditutup' })
+    mockCloseSessionV2.mockResolvedValueOnce({ valid: true, message: 'Sesi berhasil ditutup' })
     renderComponent()
     fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi/ }))
 
@@ -180,7 +183,7 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
     const confirmButton = screen.getByRole('button', { name: /^Tutup Sesi$/ })
     fireEvent.click(confirmButton)
     await vi.waitFor(() => {
-      expect(mockCloseSession).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 }, 'Belajar Tajwid')
+      expect(mockCloseSessionV2).toHaveBeenCalledWith('session-1', { lat: -7.68, lng: 110.41 }, 'Belajar Tajwid')
     })
   })
 
@@ -189,7 +192,7 @@ describe('SessionActivePage - Konfirmasi Penutupan', () => {
     fireEvent.click(screen.getByRole('button', { name: /Tutup Sesi/ }))
     const cancelButton = screen.getByRole('button', { name: /Batal/ })
     fireEvent.click(cancelButton)
-    expect(mockCloseSession).not.toHaveBeenCalled()
+    expect(mockCloseSessionV2).not.toHaveBeenCalled()
   })
 
   it('hides the confirmation dialog after cancel', () => {
