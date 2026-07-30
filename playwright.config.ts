@@ -1,47 +1,37 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import dotenv from 'dotenv';
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
 export default defineConfig({
   testDir: './e2e',
-  globalSetup: './e2e/global-setup.ts',
-  /* Run tests in files in parallel */
-  fullyParallel: false,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on local. */
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
+  retries: 0,
   workers: 1,
-  /* Reporter to use. See https://playwright.dev/docs/reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:5173',
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: process.env.BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    launchOptions: {
+      executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || '/opt/data/.playwright-browsers/chromium-1228/chrome-linux64/chrome',
+    },
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Memberikan izin GPS secara default
-        permissions: ['geolocation'],
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 
-  /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'npx vite --host 0.0.0.0 --port 5173',
     url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    reuseExistingServer: true,
+    timeout: 30_000,
+    cwd: process.cwd(),
   },
 });
