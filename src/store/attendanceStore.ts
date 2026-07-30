@@ -65,26 +65,6 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     };
   },
 
-  checkOut: async (
-    sessionId: string,
-    token: string,
-    location: Coordinates,
-  ): Promise<ValidationResult> => {
-    const { data, error } = await supabase.rpc('check_out', {
-      p_session_id: sessionId,
-      p_token: token,
-      p_location: { lat: location.lat, lng: location.lng },
-    });
-    if (error || !data) {
-      return errorResult(error?.message ?? 'Gagal melakukan presensi keluar');
-    }
-    const attendance = toCamelCase<Attendance>(data);
-    set((state) => ({
-      attendances: state.attendances.map((a) => (a.id === attendance.id ? attendance : a)),
-    }));
-    return { valid: true, message: 'Presensi keluar berhasil', data: attendance };
-  },
-
   getAttendanceBySession: (sessionId: string): Attendance[] => {
     return get().attendances.filter((a) => a.sessionId === sessionId);
   },

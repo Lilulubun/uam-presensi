@@ -29,7 +29,6 @@ export default function ScanPage() {
   const openSessionWithExpected = useSessionStore((s) => s.openSessionWithExpected);
   const getActiveSessionByTPA = useSessionStore((s) => s.getActiveSessionByTPA);
   const checkIn = useAttendanceStore((s) => s.checkIn);
-  const checkOut = useAttendanceStore((s) => s.checkOut);
   const pengajarByTPA = useUsersStore((s) => s.pengajarByTPA);
   const fetchPengajarByTPA = useUsersStore((s) => s.fetchPengajarByTPA);
 
@@ -109,7 +108,7 @@ export default function ScanPage() {
         setProcessing(false);
       }
     },
-    [user, openSessionWithExpected, getActiveSessionByTPA, checkIn, checkOut, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
+    [user, openSessionWithExpected, getActiveSessionByTPA, checkIn, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
   );
 
   const handleExpectedSubmit = useCallback(async (selectedIds: string[]) => {

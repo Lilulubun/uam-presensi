@@ -93,37 +93,6 @@ describe('useAttendanceStore (Supabase-backed)', () => {
     });
   });
 
-  describe('checkOut()', () => {
-    it('calls check_out RPC and updates the matching attendance row', async () => {
-      useAttendanceStore.setState({ attendances: [baseAtt] } as any);
-      const checkedOut: Attendance = { ...baseAtt, scanOutTime: new Date('2026-06-02T11:00:00Z'), scanOutLocation: { lat: -7.7, lng: 110.4 } };
-      mockRpc.mockResolvedValue({ data: checkedOut, error: null });
-      const result = await useAttendanceStore.getState().checkOut(
-        'session-uuid-1', 'qr-token-out', { lat: -7.7, lng: 110.4 },
-      );
-      expect(mockRpc).toHaveBeenCalledWith('check_out', {
-        p_session_id: 'session-uuid-1',
-        p_token: 'qr-token-out',
-        p_location: { lat: -7.7, lng: 110.4 },
-      });
-      expect(result.valid).toBe(true);
-      const updated = useAttendanceStore.getState().attendances[0];
-      expect(updated.scanOutTime).toEqual(checkedOut.scanOutTime);
-    });
-
-    it('surfaces "belum presensi masuk" error for check-out without prior check-in', async () => {
-      mockRpc.mockResolvedValue({
-        data: null,
-        error: { message: 'Anda belum melakukan presensi masuk' },
-      });
-      const result = await useAttendanceStore.getState().checkOut(
-        'session-uuid-1', 'qr-token-out', { lat: -7.7, lng: 110.4 },
-      );
-      expect(result.valid).toBe(false);
-      expect(result.message).toBe('Anda belum melakukan presensi masuk');
-    });
-  });
-
   describe('getAttendanceBySession()', () => {
     it('returns only attendances for the given sessionId', () => {
       useAttendanceStore.setState({

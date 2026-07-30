@@ -36,7 +36,7 @@ vi.mock('../../../store/sessionStore', () => ({
 
 vi.mock('../../../store/attendanceStore', () => ({
   useAttendanceStore: (selector?: any) => {
-    const state = { checkIn: vi.fn(), checkOut: vi.fn() };
+    const state = { checkIn: vi.fn() };
     return selector ? selector(state) : state;
   },
 }));
