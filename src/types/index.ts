@@ -105,6 +105,8 @@ export interface QRToken {
 export interface Coordinates {
   lat: number;
   lng: number;
+  /** GPS accuracy in meters (from Geolocation API). Optional for backward compat. */
+  accuracy?: number;
 }
 
 // Validation Results

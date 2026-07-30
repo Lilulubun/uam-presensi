@@ -38,6 +38,7 @@ export function getCurrentLocation(): Promise<Coordinates> {
         resolve({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
+          accuracy: position.coords.accuracy,
         });
       },
       (error) => {
