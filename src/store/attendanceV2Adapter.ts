@@ -15,6 +15,8 @@
 import { supabase } from '../lib/supabase';
 import { toCamelCase } from '../lib/transform';
 import { logEvent } from '../lib/log-event';
+import { useSessionStore } from '../store/sessionStore';
+import { useAttendanceStore } from '../store/attendanceStore';
 import type {
   Session,
   Attendance,
@@ -44,6 +46,13 @@ export async function openSessionV2(
   const session = toCamelCase<Session>(raw.session);
   // QR token was returned by the RPC — store keeps the expiry for UI only
   const qr = raw.qr as { token: string; expiry: string };
+
+  // Sync session to Zustand store (same contract as v1 openSessionWithExpected)
+  useSessionStore.setState((state) => ({
+    sessions: [...state.sessions.filter((s) => s.id !== session.id), session],
+    activeSession: session,
+  }));
+  useAttendanceStore.getState().init();
 
   logEvent('session_opened_v2', session.id);
   return {
@@ -113,6 +122,14 @@ export async function closeSessionV2(
   }
 
   const updated = toCamelCase<Session>(data);
+
+  // Sync closed session to Zustand store (same contract as v1 closeSession)
+  useSessionStore.setState((state) => ({
+    sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
+    activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
+  }));
+  useAttendanceStore.getState().init();
+
   logEvent('session_closed_v2', sessionId);
   return { valid: true, message: 'Sesi berhasil ditutup', data: updated };
 }
