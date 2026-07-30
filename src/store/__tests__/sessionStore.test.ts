@@ -60,8 +60,6 @@ const fakeSession: Session = {
   firstTeacherId: 'user-uuid-1',
   dateOpened: new Date('2026-06-02T10:00:00Z'),
   isActive: true,
-  qrDynamicInToken: 'token-in-abc',
-  qrDynamicInExpiry: new Date(Date.now() + 20_000),
 };
 
 describe('useSessionStore (Supabase-backed)', () => {
@@ -125,7 +123,7 @@ describe('useSessionStore (Supabase-backed)', () => {
     });
 
     it('calls close_session RPC and clears activeSession on success', async () => {
-      const closed = { ...fakeSession, isActive: false, dateClosed: new Date(), qrDynamicOutToken: 'token-out-xyz', qrDynamicOutExpiry: new Date() };
+      const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
       mockRpc.mockResolvedValue({ data: closed, error: null });
       const result = await useSessionStore.getState().closeSession(fakeSession.id);
       expect(mockRpc).toHaveBeenCalledWith('close_session', { p_session_id: fakeSession.id });
@@ -134,7 +132,7 @@ describe('useSessionStore (Supabase-backed)', () => {
     });
 
     it('passes p_location when location is provided', async () => {
-      const closed = { ...fakeSession, isActive: false, dateClosed: new Date(), qrDynamicOutToken: 'token-out-xyz', qrDynamicOutExpiry: new Date() };
+      const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
       mockRpc.mockResolvedValue({ data: closed, error: null });
       const location = { lat: -7.68, lng: 110.41 };
       await useSessionStore.getState().closeSession(fakeSession.id, location);
@@ -174,34 +172,6 @@ describe('useSessionStore (Supabase-backed)', () => {
       expect(result.valid).toBe(false);
       expect(result.message).toBe('forbidden');
       expect(useSessionStore.getState().activeSession).not.toBeNull();
-    });
-  });
-
-  describe('refreshQRToken()', () => {
-    beforeEach(() => {
-      useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });
-    });
-
-    it('does NOT call RPC when the in-token is still valid', async () => {
-      await useSessionStore.getState().refreshQRToken(fakeSession.id, 'in');
-      expect(mockRpc).not.toHaveBeenCalled();
-    });
-
-    it('calls rotate_qr_token RPC when the in-token has expired and updates the session', async () => {
-      useSessionStore.setState({
-        sessions: [{ ...fakeSession, qrDynamicInExpiry: new Date(Date.now() - 1000) }],
-        activeSession: { ...fakeSession, qrDynamicInExpiry: new Date(Date.now() - 1000) },
-      });
-      mockRpc.mockResolvedValue({ data: { token: 'new-token', expiry: new Date(Date.now() + 20_000).toISOString() }, error: null });
-      await useSessionStore.getState().refreshQRToken(fakeSession.id, 'in');
-      expect(mockRpc).toHaveBeenCalledWith('rotate_qr_token', { p_session_id: fakeSession.id, p_direction: 'in' });
-      const updated = useSessionStore.getState().sessions.find(s => s.id === fakeSession.id);
-      expect(updated?.qrDynamicInToken).toBe('new-token');
-    });
-
-    it('is a no-op for an unknown session id', async () => {
-      await useSessionStore.getState().refreshQRToken('does-not-exist', 'in');
-      expect(mockRpc).not.toHaveBeenCalled();
     });
   });
 

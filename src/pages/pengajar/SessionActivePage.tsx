@@ -292,7 +292,7 @@ export default function SessionActivePage() {
         {isFirstTeacher && session.isActive && (
           <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-full h-12 rounded-[14px] bg-[#FDF1F2]0 text-white font-semibold text-[14px] hover:bg-[#D4787C]" disabled={closing}>
+              <Button variant="destructive" className="w-full h-12 rounded-[14px] bg-[#FDF1F2] text-[#D4787C] hover:bg-[#FDE8E8] font-semibold text-[14px]" disabled={closing}>
                 <LogOut className="w-4 h-4 mr-2" strokeWidth={1.5} />
                 {closing ? 'Menutup Sesi...' : 'Tutup Sesi'}
               </Button>

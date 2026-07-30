@@ -24,7 +24,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     if (!userId) { set({ loading: false }); return; }
     const { data, error } = await supabase
       .from('sessions')
-      .select('id,tpa_id,first_teacher_id,date_opened,date_closed,is_active,qr_dynamic_in_expiry,qr_dynamic_out_expiry,close_notes,expected_at_open')
+      .select('id,tpa_id,first_teacher_id,date_opened,date_closed,is_active,close_notes,expected_at_open')
       .order('date_opened', { ascending: false })
       .limit(200);
     if (data && !error) {
@@ -117,38 +117,6 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
     }));
     return { valid: true, message: 'Sesi berhasil ditutup oleh admin', data: updated };
-  },
-
-  refreshQRToken: async (sessionId: string, type: 'in' | 'out'): Promise<ValidationResult> => {
-    const session = get().sessions.find((s) => s.id === sessionId);
-    if (!session) return { valid: false, message: 'Sesi tidak ditemukan' };
-
-    const expiry = type === 'in' ? session.qrDynamicInExpiry : session.qrDynamicOutExpiry;
-    if (expiry && new Date(expiry).getTime() > Date.now()) {
-      return { valid: true, message: 'Token masih berlaku', data: session };
-    }
-
-    const { data, error } = await supabase.rpc('rotate_qr_token', {
-      p_session_id: sessionId,
-      p_direction: type,
-    });
-    if (error || !data) return mapRpcError(error);
-
-    const { token, expiry: newExpiry } = data as { token: string; expiry: string };
-    set((state) => ({
-      sessions: state.sessions.map((s) => {
-        if (s.id !== sessionId) return s;
-        return type === 'in'
-          ? { ...s, qrDynamicInToken: token, qrDynamicInExpiry: new Date(newExpiry) }
-          : { ...s, qrDynamicOutToken: token, qrDynamicOutExpiry: new Date(newExpiry) };
-      }),
-      activeSession: state.activeSession?.id === sessionId
-        ? (type === 'in'
-            ? { ...state.activeSession, qrDynamicInToken: token, qrDynamicInExpiry: new Date(newExpiry) }
-            : { ...state.activeSession, qrDynamicOutToken: token, qrDynamicOutExpiry: new Date(newExpiry) })
-        : state.activeSession,
-    }));
-    return { valid: true, message: 'Token dirotasi', data: { token, expiry: newExpiry } };
   },
 
   getActiveSessionByTPA: (tpaId: string): Session | null => {
