@@ -59,8 +59,11 @@ export default function DetailPengajar() {
   const totalSesiBulanIni = hadirCount + izinCount + tidakMasukCount;
   const totalHariAktif = totalSesiBulanIni - izinCount;
   const pctKehadiran = totalHariAktif > 0 ? Math.round((hadirCount / totalHariAktif) * 100) : 0;
-  const wajibHadirBulanIni = Math.ceil(totalSesiBulanIni * 0.5 * 0.75);
-  const statusAmanBulanIni = totalSesiBulanIni === 0
+
+  // wajibHadir = 75% × jumlah sesi di mana pengajar dijadwalkan (expected)
+  const totalExpected = monthlyReport.filter((r) => r.isExpected).length;
+  const wajibHadirBulanIni = Math.ceil(totalExpected * 0.75);
+  const statusAmanBulanIni = totalExpected === 0
     ? 'Belum Ada Sesi'
     : hadirCount >= wajibHadirBulanIni
       ? 'Memenuhi Target'

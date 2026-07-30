@@ -71,6 +71,7 @@ export interface DailyReportRow {
   tpaId: string;
   tpaName: string;
   status: 'hadir' | 'izin' | 'tidak_masuk';
+  isExpected: boolean;
 }
 
 // Laporan Presensi (pivot report)
