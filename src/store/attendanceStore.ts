@@ -23,7 +23,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
     set({ loading: true });
     const { data, error } = await supabase
       .from('attendances')
-      .select('*')
+      .select('id,session_id,user_id,scan_in_time,scan_out_time,is_late,late_minutes,scan_in_location,scan_out_location,checkout_method')
       .order('scan_in_time', { ascending: false })
       .limit(500);
     if (!error && data) {

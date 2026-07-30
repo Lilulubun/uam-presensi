@@ -24,7 +24,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     if (!userId) { set({ loading: false }); return; }
     const { data, error } = await supabase
       .from('sessions')
-      .select('*')
+      .select('id,tpa_id,first_teacher_id,date_opened,date_closed,is_active,qr_dynamic_in_expiry,qr_dynamic_out_expiry,close_notes,expected_at_open')
       .order('date_opened', { ascending: false })
       .limit(200);
     if (data && !error) {

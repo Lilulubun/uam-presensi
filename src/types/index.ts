@@ -38,6 +38,7 @@ export interface Session {
   qrDynamicInExpiry?: Date;
   qrDynamicOutExpiry?: Date;
   closeNotes?: string;
+  expectedAtOpen?: Date;
 }
 
 export interface Attendance {
@@ -50,6 +51,7 @@ export interface Attendance {
   lateMinutes?: number;
   scanInLocation?: { lat: number; lng: number };
   scanOutLocation?: { lat: number; lng: number };
+  checkoutMethod?: string;
 }
 
 export type IzinStatus = 'pending' | 'approved' | 'rejected';
