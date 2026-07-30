@@ -9,6 +9,8 @@ import { ExpectedTeacherSelector } from '../../app/components/session/ExpectedTe
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { openSessionV2, checkInV2 } from '../../store/attendanceV2Adapter';
+import { isReleaseC } from '../../lib/feature-flags';
 import { useUsersStore } from '../../store/userStore';
 import { useWatchLocation } from '../../app/hooks/useWatchLocation';
 import { getCurrentLocation, calculateDistance } from '../../lib/gps-utils';
@@ -86,7 +88,9 @@ export default function ScanPage() {
         const location = locationState.status === 'ready' ? locationState.coords : await getCurrentLocation();
 
         if (token.type === 'in') {
-          const result = await checkIn(token.sessionId, token.token, location);
+          const result = isReleaseC()
+            ? await checkInV2(token.sessionId, token.token, location)
+            : await checkIn(token.sessionId, token.token, location);
           if (result.valid) {
             const reason = (result.data as { reason?: string | null })?.reason ?? null;
             queueMicrotask(() => navigate('/pengajar/konfirmasi', {
@@ -113,11 +117,15 @@ export default function ScanPage() {
 
     setProcessing(true);
     try {
-      const result = await openSessionWithExpected(pendingTpaId, pendingLocation, selectedIds);
+      const result = isReleaseC()
+        ? await openSessionV2(pendingTpaId, pendingLocation, selectedIds)
+        : await openSessionWithExpected(pendingTpaId, pendingLocation, selectedIds);
       if (result.valid) {
         toast.success(`Sesi dibuka dengan ${selectedIds.length} pengajar wajib hadir!`);
         setShowExpectedSelector(false);
-        queueMicrotask(() => navigate(`/pengajar/session/${result.data.id}`));
+        // v2: session is nested under result.data.session; v1: result.data is the session itself
+        const sessionId = isReleaseC() ? result.data.session.id : result.data.id;
+        queueMicrotask(() => navigate(`/pengajar/session/${sessionId}`));
       } else {
         toast.error(result.message);
         // If session already exists (race condition with concurrent opener),

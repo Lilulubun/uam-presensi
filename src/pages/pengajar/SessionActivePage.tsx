@@ -20,6 +20,8 @@ import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import { useSessionStore } from '../../store/sessionStore';
 import { useAttendanceStore } from '../../store/attendanceStore';
+import { closeSessionV2 } from '../../store/attendanceV2Adapter';
+import { isReleaseC } from '../../lib/feature-flags';
 import { useShallow } from 'zustand/react/shallow';
 import { getTpaById } from '../../store/tpaStore';
 import { useUsersStore } from '../../store/userStore';
@@ -76,10 +78,12 @@ export default function SessionActivePage() {
       } catch {
         // close without location if GPS unavailable
       }
-      const result = await closeSession(sessionId, location, notes || undefined);
+      const result = isReleaseC()
+        ? await closeSessionV2(sessionId, location, notes || undefined)
+        : await closeSession(sessionId, location, notes || undefined);
       if (result.valid) {
         setNotes('');
-        toast.success('Sesi berhasil ditutup! QR presensi keluar aktif.');
+        toast.success(isReleaseC() ? 'Sesi berhasil ditutup!' : 'Sesi berhasil ditutup! QR presensi keluar aktif.');
       } else {
         toast.error(result.message);
       }
