@@ -87,11 +87,7 @@ export default function App() {
           path="/"
           element={
             isAuthenticated ? (
-              user?.mustChangePassword ? (
-                <Navigate to="/ganti-password" replace />
-              ) : (
-                <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
-              )
+              <Navigate to={user?.role === 'pengajar' ? '/pengajar/dashboard' : '/pengurus/dashboard'} replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -102,7 +98,7 @@ export default function App() {
         <Route
           path="/ganti-password"
           element={
-            isAuthenticated && user?.mustChangePassword ? (
+            isAuthenticated ? (
               <ErrorBoundary><PageTransition><UbahPasswordPage /></PageTransition></ErrorBoundary>
             ) : (
               <Navigate to="/" replace />

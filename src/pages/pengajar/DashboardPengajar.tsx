@@ -12,6 +12,7 @@ import { computeMonthlySummary, computeMonthlySummaryWithExpected } from '../../
 import { useIzinStore } from '../../store/izinStore';
 import { useEffect, useMemo, useState } from 'react';
 import { useUsersStore } from '../../store/userStore';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 
 // Day indices: 0 = Minggu, 1 = Senin, 2 = Selasa, 3 = Rabu, 4 = Kamis, 5 = Jumat, 6 = Sabtu
 const TPA_SCHEDULES: Record<string, number[]> = {
@@ -195,6 +196,24 @@ export default function DashboardPengajar() {
           </div>
         </div>
       </header>
+
+      {user?.mustChangePassword && (
+        <div className="bg-[#FDF4ED] border-b border-[#D9A06B]/20 px-4 py-3">
+          <div className="max-w-lg mx-auto flex items-center gap-3">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-[#D9A06B]" strokeWidth={1.5} />
+            <div className="flex-1">
+              <p className="text-[13px] font-semibold text-[#D9A06B]">Keamanan Akun</p>
+              <p className="text-[12px] text-[#7A7A75] mt-0.5">Password sementara Anda masih aktif. Ganti password untuk mengamankan akun.</p>
+            </div>
+            <button
+              onClick={() => navigate('/ganti-password')}
+              className="shrink-0 flex items-center gap-1 text-[12px] font-semibold text-[#D9A06B] hover:text-[#B87830] bg-[#D9A06B]/10 hover:bg-[#D9A06B]/15 px-3 py-1.5 rounded-full transition-colors"
+            >
+              Ganti <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-lg mx-auto p-4 sm:p-6 pb-24 flex flex-col gap-6">
         {/* Today's status card — gradient hero */}

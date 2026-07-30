@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { calculateDistance } from '../gps-utils';
+import type { Coordinates } from '../../types';
 
 // ============================================================================
 // Known Haversine reference points (verified with NOAA calculator)
@@ -121,13 +122,13 @@ describe('logEvent', () => {
 
 describe('Coordinates accuracy', () => {
   it('accepts coordinates without accuracy (backward compat)', () => {
-    const coords = { lat: -7.77, lng: 110.37 };
+    const coords: Coordinates = { lat: -7.77, lng: 110.37 };
     expect(coords.lat).toBe(-7.77);
     expect(coords.accuracy).toBeUndefined();
   });
 
   it('accepts coordinates with accuracy', () => {
-    const coords = { lat: -7.77, lng: 110.37, accuracy: 3.5 };
+    const coords: Coordinates = { lat: -7.77, lng: 110.37, accuracy: 3.5 };
     expect(coords.accuracy).toBe(3.5);
   });
 });

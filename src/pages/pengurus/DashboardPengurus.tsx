@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, RefreshCw, BarChart2, QrCode, Users, Clock, TrendingUp, User, FileText, CheckCircle, XCircle, History, ChevronRight, Menu } from 'lucide-react';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 import Sheet from '../../app/components/ui/sheet';
 import { toast } from 'sonner';
 import { useIzinStore } from '../../store/izinStore';
@@ -51,6 +52,7 @@ function SkeletonPulse({ className = '' }: { className?: string }) {
 export default function DashboardPengurus() {
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const sessions = useSessionStore((s) => s.sessions);
   const sessionLoading = useSessionStore((s) => s.loading);
@@ -212,6 +214,24 @@ export default function DashboardPengurus() {
           </div>
         </div>
       </header>
+
+      {user?.mustChangePassword && (
+        <div className="bg-[#FDF4ED] border-b border-[#D9A06B]/20 px-4 py-3">
+          <div className="max-w-[1440px] mx-auto flex items-center gap-3">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-[#D9A06B]" strokeWidth={1.5} />
+            <div className="flex-1">
+              <p className="text-[13px] font-semibold text-[#D9A06B]">Keamanan Akun</p>
+              <p className="text-[12px] text-[#7A7A75] mt-0.5">Password sementara Anda masih aktif. Ganti password untuk mengamankan akun.</p>
+            </div>
+            <button
+              onClick={() => navigate('/ganti-password')}
+              className="shrink-0 flex items-center gap-1 text-[12px] font-semibold text-[#D9A06B] hover:text-[#B87830] bg-[#D9A06B]/10 hover:bg-[#D9A06B]/15 px-3 py-1.5 rounded-full transition-colors"
+            >
+              Ganti <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Navigation Sheet */}
       <Sheet open={menuOpen} onClose={() => setMenuOpen(false)}>
