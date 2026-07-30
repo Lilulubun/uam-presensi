@@ -156,11 +156,11 @@ describe('useSessionStore (Supabase-backed)', () => {
       useSessionStore.setState({ sessions: [fakeSession], activeSession: fakeSession });
     });
 
-    it('calls admin_force_close RPC and clears activeSession on success', async () => {
+    it('calls force_close_session_v2 RPC and clears activeSession on success', async () => {
       const closed = { ...fakeSession, isActive: false, dateClosed: new Date() };
       mockRpc.mockResolvedValue({ data: closed, error: null });
       const result = await useSessionStore.getState().forceCloseSession(fakeSession.id);
-      expect(mockRpc).toHaveBeenCalledWith('admin_force_close', { p_session_id: fakeSession.id });
+      expect(mockRpc).toHaveBeenCalledWith('force_close_session_v2', { p_session_id: fakeSession.id });
       expect(result.valid).toBe(true);
       expect(result.message).toBe('Sesi berhasil ditutup oleh admin');
       expect(useSessionStore.getState().activeSession).toBeNull();

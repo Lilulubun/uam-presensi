@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { logEvent } from '../lib/log-event';
 import { toCamelCase, toCamelCaseArray } from '../lib/transform';
 import { useAttendanceStore } from './attendanceStore';
+import { useUsersStore } from './userStore';
 
 const RPC_NOT_AUTHENTICATED_MSG = 'Sesi tidak dapat dibuka: tidak terautentikasi. Silakan login ulang.';
 
@@ -109,13 +110,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
 
   forceCloseSession: async (sessionId: string): Promise<ValidationResult> => {
-    const { data, error } = await supabase.rpc('admin_force_close', { p_session_id: sessionId });
+    const { data, error } = await supabase.rpc('force_close_session_v2', { p_session_id: sessionId });
     if (error || !data) return mapRpcError(error);
     const updated = toCamelCase<Session>(data);
     set((state) => ({
       sessions: state.sessions.map((s) => (s.id === sessionId ? updated : s)),
       activeSession: state.activeSession?.id === sessionId ? null : state.activeSession,
     }));
+    useAttendanceStore.getState().init();
+    useUsersStore.getState().init();
     return { valid: true, message: 'Sesi berhasil ditutup oleh admin', data: updated };
   },
 
