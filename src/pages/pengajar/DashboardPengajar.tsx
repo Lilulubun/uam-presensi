@@ -190,7 +190,7 @@ export default function DashboardPengajar() {
             <button onClick={() => navigate('/profile')} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <User className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button onClick={handleLogout} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
+            <button onClick={handleLogout} className="text-[#7A7A75] hover:text-[#1A1A18] p-2 min-h-[44px] min-w-[44px] rounded-full hover:bg-[#F7F7F5] active:scale-[0.97] transition-transform duration-100 ease-out">
               <LogOut className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>

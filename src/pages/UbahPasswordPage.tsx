@@ -79,7 +79,7 @@ export default function UbahPasswordPage() {
             <KeyRound className="w-6 h-6 text-[#1A1A18]" strokeWidth={1.5} />
           </div>
           
-          <h1 className="text-2xl font-bold text-center text-[#1A1A18] tracking-tight mb-2">
+          <h1 className="text-2xl font-bold text-center text-balance text-[#1A1A18] tracking-tight mb-2">
             Ubah Password
           </h1>
           <p className="text-[14px] text-center text-[#7A7A75] mb-8">
