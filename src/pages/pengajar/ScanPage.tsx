@@ -224,16 +224,16 @@ export default function ScanPage() {
         {/* Active session info banner */}
         {activeSessionInfo && (
           <div className="w-full max-w-sm">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-[24px] p-5 flex items-start gap-3">
-              <div className="mt-0.5 shrink-0 text-emerald-600 text-[18px] font-bold">ℹ</div>
+            <div className="bg-[#EDF5EE] border border-[#5B9C64]/20 rounded-[24px] p-5 flex items-start gap-3">
+              <div className="mt-0.5 shrink-0 text-[#5B9C64] text-[18px] font-bold">ℹ</div>
               <div>
-                <p className="font-semibold text-emerald-900 text-[14px]">Sudah Ada Sesi Aktif</p>
-                <p className="text-[13px] text-emerald-700 mt-1.5 leading-relaxed">
+                <p className="font-semibold text-[#1A1A18] text-[14px]">Sudah Ada Sesi Aktif</p>
+                <p className="text-[13px] text-[#7A7A75] mt-1.5 leading-relaxed">
                   <strong>{activeSessionInfo.tpaName}</strong> sudah memiliki sesi. Scan QR presensi masuk dari
                   layar pengajar pertama di atas.
                 </p>
                 <button
-                  className="mt-2 text-[12px] text-emerald-600 font-medium underline underline-offset-2 hover:text-emerald-800"
+                  className="mt-2 text-[12px] text-[#5B9C64] font-medium underline underline-offset-2 hover:text-[#4a8553]"
                   onClick={() => setActiveSessionInfo(null)}
                 >
                   Scan ulang

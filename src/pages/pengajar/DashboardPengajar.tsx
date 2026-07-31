@@ -232,7 +232,7 @@ export default function DashboardPengajar() {
           <div className="z-10 flex items-end gap-3 mt-4">
             {statusInfo.icon}
             <div>
-              <p className={`text-[22px] font-light leading-tight tracking-tight ${statusInfo.textColor}`}>{statusInfo.label}</p>
+              <p className={`text-[22px] font-semibold leading-tight tracking-tight ${statusInfo.textColor}`}>{statusInfo.label}</p>
               <p className={`text-[13px] mt-0.5 ${statusInfo.textColor === 'text-white' ? 'text-white/65' : 'text-[#7A7A75]'}`}>{statusInfo.sub}</p>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function DashboardPengajar() {
               </div>
               <div className="w-full h-1.5 rounded-full bg-[#EAEAE7] overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#5B9C64] transition-all duration-300"
+                  className="h-full rounded-full bg-[#5B9C64] motion-safe:transition-[box-shadow,border-color,opacity,transform] duration-300"
                   style={{ width: `${Math.min(100, (totalHadirBulanIni / Math.max(1, wajibHadirBulanIni)) * 100)}%` }}
                 ></div>
               </div>

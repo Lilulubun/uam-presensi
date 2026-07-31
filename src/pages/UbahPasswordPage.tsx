@@ -94,7 +94,7 @@ export default function UbahPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimal 8 karakter"
-                className="w-full px-4 py-3 rounded-[16px] bg-[#F4F4F2] border border-transparent focus:border-[#D7FF3D] focus:bg-white focus:ring-4 focus:ring-[#D7FF3D]/10 outline-none transition-all text-[#1A1A18] placeholder:text-[#A3A39D]"
+                className="w-full px-4 py-3 rounded-[16px] bg-[#F4F4F2] border border-transparent focus:border-[#D7FF3D] focus:bg-white focus:ring-4 focus:ring-[#D7FF3D]/10 outline-none motion-safe:transition-[box-shadow,border-color,opacity,transform] text-[#1A1A18] placeholder:text-[#7A7A75]"
                 required
               />
             </div>
@@ -106,7 +106,7 @@ export default function UbahPasswordPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Ulangi password baru"
-                className="w-full px-4 py-3 rounded-[16px] bg-[#F4F4F2] border border-transparent focus:border-[#D7FF3D] focus:bg-white focus:ring-4 focus:ring-[#D7FF3D]/10 outline-none transition-all text-[#1A1A18] placeholder:text-[#A3A39D]"
+                className="w-full px-4 py-3 rounded-[16px] bg-[#F4F4F2] border border-transparent focus:border-[#D7FF3D] focus:bg-white focus:ring-4 focus:ring-[#D7FF3D]/10 outline-none motion-safe:transition-[box-shadow,border-color,opacity,transform] text-[#1A1A18] placeholder:text-[#7A7A75]"
                 required
               />
             </div>

@@ -655,7 +655,7 @@ export default function DashboardPengurus() {
                 <button
                   key={tpa.id}
                   onClick={() => navigate(`/pengurus/tpa/${tpa.id}`)}
-                  className="motion-safe:animate-fade-in-up bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
+                  className="motion-safe:animate-fade-in-up bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] motion-safe:transition-[box-shadow,border-color,opacity,transform] active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] group relative overflow-hidden"
                   style={{ animationDelay: `${idx * 40}ms` }}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -672,7 +672,7 @@ export default function DashboardPengurus() {
                       >
                         {activeSession ? 'Aktif' : 'Tutup'}
                       </span>
-                      <ChevronRight className="w-4 h-4 text-[#7A7A75] group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" strokeWidth={1.5} />
+                      <ChevronRight className="w-4 h-4 text-[#7A7A75] group-hover:text-primary group-hover:translate-x-0.5 motion-safe:transition-[box-shadow,border-color,opacity,transform] shrink-0" strokeWidth={1.5} />
                     </div>
                   </div>
 
@@ -754,7 +754,7 @@ export default function DashboardPengurus() {
                       
                       {/* Plain text rate percentage */}
                       <div className="text-right shrink-0 min-w-[45px]">
-                        <span className="text-[14px] font-light text-[#1A1A18]">{rate}%</span>
+                        <span className="text-[14px] font-semibold tabular-nums text-[#1A1A18]">{rate}%</span>
                       </div>
                     </div>
                   </button>
@@ -768,7 +768,7 @@ export default function DashboardPengurus() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/pengurus/laporan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] motion-safe:transition-[box-shadow,border-color,opacity,transform] active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
               <TrendingUp className="w-5 h-5 text-[#7A7A75]" strokeWidth={1.5} />
@@ -780,7 +780,7 @@ export default function DashboardPengurus() {
           </button>
           <button
             onClick={() => navigate('/pengurus/pengaturan')}
-            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
+            className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] text-left hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] motion-safe:transition-[box-shadow,border-color,opacity,transform] active:scale-[0.97] border border-[#EAEAE7] hover:border-[#D7FF3D] flex items-center gap-4 group"
           >
             <div className="w-11 h-11 rounded-full bg-[#F7F7F5] flex items-center justify-center border border-[#EAEAE7] group-hover:border-[#D7FF3D] transition-colors shrink-0">
               <QrCode className="w-5 h-5 text-[#7A7A75]" strokeWidth={1.5} />

@@ -91,7 +91,7 @@ export default function TPADetailPage() {
         </button>
         <div className="flex-1">
           <h1 className="font-semibold text-[18px] tracking-tight text-[#1A1A18]">{tpa.name}</h1>
-          <p className="text-[11px] text-[#7A7A75] font-medium">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
+          <p className="text-[11px] text-[#7A7A75] font-medium tabular-nums">{tpa.staticQRCode} • Radius {tpa.location.radius}m</p>
         </div>
         {activeSession && (
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EDF5EE] text-[#5B9C64] ring-1 ring-inset ring-[#5B9C64]/20">
@@ -164,7 +164,7 @@ export default function TPADetailPage() {
               const isToday = isSameDay(new Date(session.dateOpened), today);
 
               return (
-                <div key={session.id} className="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all">
+                <div key={session.id} className="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] border border-[#EAEAE7] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] motion-safe:transition-[box-shadow,border-color,opacity,transform]">
                   <div className="px-6 py-4 border-b border-[#EAEAE7] flex items-center justify-between gap-3 bg-[#F7F7F5]">
                     <div>
                       <p className="text-[14px] font-semibold text-[#1A1A18]">
@@ -173,7 +173,7 @@ export default function TPADetailPage() {
                         {formatTime(new Date(session.dateOpened))}
                         {session.dateClosed && ` – ${formatTime(new Date(session.dateClosed))}`}
                       </p>
-                      <p className="text-[11px] text-[#7A7A75] font-medium mt-1">
+                      <p className="text-[11px] text-[#7A7A75] font-medium tabular-nums mt-1">
                         Pengajar pertama: <span className="text-[#7A7A75]">{firstTeacher?.name ?? '(tidak ditemukan)'}</span>
                       </p>
                     </div>

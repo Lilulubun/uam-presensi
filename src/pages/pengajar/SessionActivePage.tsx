@@ -51,7 +51,7 @@ export default function SessionActivePage() {
     return (
       <div className="min-h-screen bg-[#F4F4F2] font-sans text-[#1A1A18] flex items-center justify-center p-4">
         <div className="text-center bg-white rounded-[28px] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#EAEAE7]">
-          <p className="text-[14px] text-[#A3A39D] font-medium">Sesi tidak ditemukan</p>
+          <p className="text-[14px] text-[#7A7A75] font-medium">Sesi tidak ditemukan</p>
           <Button 
             className="mt-6 h-11 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] hover:bg-[#cbe646] font-semibold" 
             onClick={() => navigate('/pengajar/dashboard')}

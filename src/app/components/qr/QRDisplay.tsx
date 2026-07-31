@@ -52,7 +52,7 @@ export function QRDisplay({ sessionId, type, label }: QRDisplayProps) {
         {/* Progress bar */}
         <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-2">
           <div
-            className="h-full bg-primary transition-all duration-1000 ease-linear rounded-full"
+            className="h-full bg-primary motion-safe:transition-[box-shadow,border-color,opacity,transform] duration-1000 ease-linear rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>

@@ -95,7 +95,7 @@ export default function PengaturanPage() {
           {tpasWithQR.map((tpa) => (
             <div
               key={tpa.id}
-              className="bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-5 border border-[#EAEAE7] flex flex-col items-center gap-4 text-center hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] transition-all"
+              className="bg-white rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] p-5 border border-[#EAEAE7] flex flex-col items-center gap-4 text-center hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)] motion-safe:transition-[box-shadow,border-color,opacity,transform]"
             >
               <div className="bg-[#F7F7F5] p-3 rounded-[16px] border border-[#EAEAE7]">
                 {tpa.qrDataUrl ? (

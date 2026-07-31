@@ -107,7 +107,7 @@ export default function IzinPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646] disabled:opacity-50 flex items-center justify-center gap-2 transition-all active:scale-[0.97]"
+            className="w-full h-12 rounded-[14px] bg-[#D7FF3D] text-[#1A1A18] font-semibold text-[14px] hover:bg-[#cbe646] disabled:opacity-50 flex items-center justify-center gap-2 motion-safe:transition-[box-shadow,border-color,opacity,transform] active:scale-[0.97]"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />}
             {submitting ? 'Mengirim...' : 'Ajukan Izin'}

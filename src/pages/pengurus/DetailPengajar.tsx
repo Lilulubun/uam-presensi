@@ -173,7 +173,7 @@ export default function DetailPengajar() {
               </div>
               <div className="w-full h-2 rounded-full bg-[#1A1A18]/10 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#1A1A18]/30 transition-all duration-300"
+                  className="h-full rounded-full bg-[#1A1A18]/30 motion-safe:transition-[box-shadow,border-color,opacity,transform] duration-300"
                   style={{ width: `${Math.min(100, (hadirCount / Math.max(1, wajibHadirBulanIni)) * 100)}%` }}
                 ></div>
               </div>

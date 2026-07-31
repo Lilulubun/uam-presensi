@@ -47,7 +47,7 @@ export default function RiwayatIzinPengurus() {
                         <User className="w-3.5 h-3.5 text-[#7A7A75] shrink-0" strokeWidth={1.5} />
                         <p className="text-[14px] font-semibold text-[#1A1A18]">{izin.userName}</p>
                       </div>
-                      <p className="text-[12px] text-[#6B6B66] mt-1.5 font-medium">
+                      <p className="text-[12px] text-[#6B6B66] mt-1.5 font-medium tabular-nums">
                         {formatDateId(izin.startDate)} — {formatDateId(izin.endDate)}
                       </p>
                       <p className="text-[13px] text-[#6B6B66] mt-2 leading-relaxed line-clamp-2">{izin.alasan}</p>
