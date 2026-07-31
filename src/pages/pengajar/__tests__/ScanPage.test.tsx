@@ -26,8 +26,10 @@ vi.mock('../../../store/attendanceStore', () => ({
   },
 }));
 
-const mockOpenSessionV2 = vi.fn();
-const mockCheckInV2 = vi.fn();
+const { mockOpenSessionV2, mockCheckInV2 } = vi.hoisted(() => ({
+  mockOpenSessionV2: vi.fn(),
+  mockCheckInV2: vi.fn(),
+}));
 vi.mock('../../../store/attendanceV2Adapter', () => ({
   openSessionV2: mockOpenSessionV2,
   checkInV2: mockCheckInV2,

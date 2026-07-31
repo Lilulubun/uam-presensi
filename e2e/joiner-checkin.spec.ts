@@ -52,7 +52,7 @@ test.describe('Joiner Check-in Flow', () => {
       geolocation: { latitude: -7.7458065, longitude: 110.4090801 }
     });
     const hostPage = await hostContext.newPage();
-    await loginAs(hostPage, '20521001', '23523198uam'); // Budi Santoso
+    await loginAs(hostPage, '20521001', process.env.E2E_PASSWORD_BU_PASS!); // Budi Santoso
     
     await hostPage.goto('/pengajar/scan');
     await hostPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
@@ -89,7 +89,7 @@ test.describe('Joiner Check-in Flow', () => {
       geolocation: { latitude: -7.74582, longitude: 110.4091 } // ~15m from TPA Adz-Dzikro center
     });
     const joinerPage = await joinerContext.newPage();
-    await loginAs(joinerPage, '20521002', '23523198uam'); // Siti Rahayu
+    await loginAs(joinerPage, '20521002', process.env.E2E_PASSWORD_BU_PASS!); // Siti Rahayu
 
     await joinerPage.goto('/pengajar/scan');
     await joinerPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();

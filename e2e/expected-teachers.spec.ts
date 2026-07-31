@@ -57,7 +57,7 @@ test.describe('Expected Teachers Flow', () => {
       geolocation: { latitude: -7.6864394, longitude: 110.4183135 } // TPA Al-Fath (from DB)
     });
     const hostPage = await hostContext.newPage();
-    await loginAs(hostPage, '20521001', '23523198uam');
+    await loginAs(hostPage, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
 
     await hostPage.goto('/pengajar/scan');
     await hostPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
@@ -110,7 +110,7 @@ test.describe('Expected Teachers Flow', () => {
       geolocation: { latitude: -7.745806514820902, longitude: 110.40908009692278 } // TPA Adz-Dzikro (tpa-002) from DB
     });
     const hostPage = await hostContext.newPage();
-    await loginAs(hostPage, '20521001', '23523198uam');
+    await loginAs(hostPage, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
 
     await hostPage.goto('/pengajar/scan');
     await hostPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
@@ -144,7 +144,7 @@ test.describe('Expected Teachers Flow', () => {
       geolocation: { latitude: -7.74581, longitude: 110.40909 } // ~5m from TPA Adz-Dzikro center (within 150m)
     });
     const joinerPage = await joinerContext.newPage();
-    await loginAs(joinerPage, '20521002', '23523198uam');
+    await loginAs(joinerPage, '20521002', process.env.E2E_PASSWORD_BU_PASS!);
 
     await joinerPage.goto('/pengajar/scan');
     await joinerPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
@@ -178,7 +178,7 @@ test.describe('Expected Teachers Flow', () => {
       geolocation: { latitude: -7.6864394, longitude: 110.4183135 } // TPA Al-Fath
     });
     const hostPage = await hostContext.newPage();
-    await loginAs(hostPage, '20521001', '23523198uam');
+    await loginAs(hostPage, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
 
     await hostPage.goto('/pengajar/scan');
     await hostPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();

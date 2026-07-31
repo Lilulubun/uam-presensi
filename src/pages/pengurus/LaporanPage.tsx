@@ -38,6 +38,7 @@ interface TeacherCounts {
   hadirFisik: number;
   izin: number;
   tidakMasuk: number;
+  expectedCount: number;
 }
 
 interface TpaStatsAgregat {
@@ -54,7 +55,7 @@ interface TeacherRow {
   cells: CellDisplay[];
   counts: TeacherCounts;
   totalHari: number;
-  statusAman: 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi';
+  statusAman: 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi Wajib';
 }
 
 interface TpaTable {
@@ -101,10 +102,10 @@ function getCellDisplay(row: LaporanRow): CellDisplay {
   };
 }
 
-function isAman(hadirFisik: number, totalSesiTPA: number): 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi' {
-  if (totalSesiTPA === 0) return 'Belum Ada Sesi';
-  const wajibHadir = Math.ceil(totalSesiTPA * 0.5 * 0.75);
-  return hadirFisik >= wajibHadir ? 'Memenuhi Target' : 'Belum Memenuhi';
+function isAman(hadirFisik: number, expectedCount: number, izinCount: number): 'Memenuhi Target' | 'Belum Memenuhi' | 'Belum Ada Sesi Wajib' {
+  const adjusted = Math.max(0, expectedCount - izinCount);
+  if (adjusted === 0 && expectedCount === 0) return 'Belum Ada Sesi Wajib';
+  return hadirFisik >= Math.ceil(adjusted * 0.75) ? 'Memenuhi Target' : 'Belum Memenuhi';
 }
 
 function processData(rows: LaporanRow[]): TpaTable[] {
@@ -125,7 +126,6 @@ function processData(rows: LaporanRow[]): TpaTable[] {
 
   for (const [tpaId, group] of grouped) {
     const dates = Array.from(dateSet.get(tpaId)!).sort();
-    const totalSesiTPA = dates.length; // Important: total sessions for THIS TPA
     let tpaTotalLateMinutes = 0;
     let tpaTotalLateCount = 0;
 
@@ -136,7 +136,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         teacherMap.set(row.teacherId, {
           name: row.teacherName,
           bestRow: new Map(),
-          counts: { tepatWaktu: 0, terlambat: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0 },
+          counts: { tepatWaktu: 0, terlambat: 0, hadirFisik: 0, izin: 0, tidakMasuk: 0, expectedCount: 0 },
           totalHari: 0,
         });
       }
@@ -155,6 +155,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         t.totalHari++;
         cells.set(tgl, getCellDisplay(row));
 
+        if (row.isExpected) t.counts.expectedCount++;
         if (row.scanInTime) {
           if (row.isLate) {
             t.counts.terlambat++;
@@ -171,7 +172,7 @@ function processData(rows: LaporanRow[]): TpaTable[] {
         }
       }
       
-      const statusAman = isAman(t.counts.hadirFisik, totalSesiTPA);
+      const statusAman = isAman(t.counts.hadirFisik, t.counts.expectedCount, t.counts.izin);
 
       return {
         id: teacherId,
@@ -729,7 +730,7 @@ export default function LaporanPage() {
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold  ring-1 ring-inset ${
                               teacher.statusAman === 'Memenuhi Target' 
                                 ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20' 
-                                : teacher.statusAman === 'Belum Ada Sesi'
+                                : teacher.statusAman === 'Belum Ada Sesi Wajib'
                                 ? 'bg-stone-50 text-stone-700 ring-stone-600/20'
                                 : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
                             }`}>

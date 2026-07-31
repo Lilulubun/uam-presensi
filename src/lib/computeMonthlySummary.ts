@@ -88,13 +88,13 @@ export function computeMonthlySummaryWithExpected(
   const adjustedExpected = Math.max(0, expectedCount - excusedCount);
   const requiredCount = Math.ceil(adjustedExpected * 0.75);
 
-  // Actual attendance count (including non-expected session attendance in that month)
+  // Actual attendance count — only for expected sessions this month
   let actualHadir = 0;
   for (const a of attendances) {
     const dt = toDate(a.scanInTime);
     if (!dt) continue;
     if (toJakartaMonth(dt) !== target) continue;
-    if (a.scanInTime) {
+    if (a.scanInTime && expectedSessionIds.has(a.sessionId)) {
       actualHadir++;
     }
   }

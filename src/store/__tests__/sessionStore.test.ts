@@ -41,6 +41,15 @@ vi.mock('../../lib/supabase', () => ({
           select: () => chain,
         };
       }
+      if (table === 'users') {
+        const chain = {
+          order: () => chain,
+          limit: () => ({
+            then: (resolve: any) => resolve({ data: [], error: null }),
+          }),
+        };
+        return { select: () => chain };
+      }
       return { select: vi.fn() };
     },
   },

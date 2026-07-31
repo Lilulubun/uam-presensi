@@ -95,7 +95,7 @@ export default function DashboardPengajar() {
 
   const statusAmanBulanIni =
     totalSesiBulanIni === 0
-      ? 'Belum Ada Sesi'
+      ? 'Belum Ada Sesi Wajib'
       : totalHadirBulanIni >= wajibHadirBulanIni
         ? 'Memenuhi Target'
         : 'Belum Memenuhi';
@@ -259,7 +259,7 @@ export default function DashboardPengajar() {
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold ring-1 ring-inset ${
                   statusAmanBulanIni === 'Memenuhi Target'
                     ? 'bg-[#EDF5EE] text-[#5B9C64] ring-[#5B9C64]/20'
-                    : statusAmanBulanIni === 'Belum Ada Sesi'
+                    : statusAmanBulanIni === 'Belum Ada Sesi Wajib'
                     ? 'bg-stone-50 text-stone-700 ring-stone-600/20'
                     : 'bg-[#FDF1F2] text-[#D4787C] ring-[#D4787C]/20'
                 }`}>

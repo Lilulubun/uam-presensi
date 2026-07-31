@@ -60,11 +60,12 @@ export default function DetailPengajar() {
   const totalHariAktif = totalSesiBulanIni - izinCount;
   const pctKehadiran = totalHariAktif > 0 ? Math.round((hadirCount / totalHariAktif) * 100) : 0;
 
-  // wajibHadir = 75% × jumlah sesi di mana pengajar dijadwalkan (expected)
+  // wajibHadir = 75% × (expected - izin), izin mengurangi total sesi wajib
   const totalExpected = monthlyReport.filter((r) => r.isExpected).length;
-  const wajibHadirBulanIni = Math.ceil(totalExpected * 0.75);
+  const adjustedExpected = Math.max(0, totalExpected - izinCount);
+  const wajibHadirBulanIni = Math.ceil(adjustedExpected * 0.75);
   const statusAmanBulanIni = totalExpected === 0
-    ? 'Belum Ada Sesi'
+    ? 'Belum Ada Sesi Wajib'
     : hadirCount >= wajibHadirBulanIni
       ? 'Memenuhi Target'
       : 'Belum Memenuhi';
@@ -135,7 +136,7 @@ export default function DetailPengajar() {
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ring-1 ring-inset ${
               statusAmanBulanIni === 'Memenuhi Target'
                 ? 'bg-white/60 text-[#1A1A18] ring-white/30'
-                : statusAmanBulanIni === 'Belum Ada Sesi'
+                : statusAmanBulanIni === 'Belum Ada Sesi Wajib'
                 ? 'bg-white/60 text-[#7A7A75] ring-white/30'
                 : 'bg-white/60 text-[#D4787C] ring-white/30'
             }`}>

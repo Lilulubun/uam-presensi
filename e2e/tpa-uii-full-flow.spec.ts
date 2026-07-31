@@ -26,13 +26,13 @@ test.describe('TPA Test UII — Full Session Flow', () => {
   });
 
   test('1. Auth: Nawal login berhasil', async ({ page }) => {
-    await loginAs(page, '23523198', '!23aS678');
+    await loginAs(page, '23523198', process.env.E2E_PASSWORD_NAWAL!);
     // Verify we land on dashboard — look for recognizable elements
     await expect(page.getByText(/Scan QR Presensi/i)).toBeVisible({ timeout: 10000 });
   });
 
   test('2. Auth: Wisam login berhasil', async ({ page }) => {
-    await loginAs(page, '22423133', '22423133uam');
+    await loginAs(page, '22423133', process.env.E2E_PASSWORD_WISAM!);
     await expect(page.getByText(/Scan QR Presensi/i)).toBeVisible({ timeout: 10000 });
   });
 
@@ -65,7 +65,7 @@ test.describe('TPA Test UII — Full Session Flow', () => {
       geolocation: TPA_COORDS,
     });
     const nawalPage = await nawalCtx.newPage();
-    await loginAs(nawalPage, '23523198', '!23aS678');
+    await loginAs(nawalPage, '23523198', process.env.E2E_PASSWORD_NAWAL!);
 
     await nawalPage.goto('/pengajar/scan');
     await nawalPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
@@ -105,7 +105,7 @@ test.describe('TPA Test UII — Full Session Flow', () => {
       geolocation: TPA_COORDS,
     });
     const wisamPage = await wisamCtx.newPage();
-    await loginAs(wisamPage, '22423133', '22423133uam');
+    await loginAs(wisamPage, '22423133', process.env.E2E_PASSWORD_WISAM!);
 
     await wisamPage.goto('/pengajar/scan');
     await wisamPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();

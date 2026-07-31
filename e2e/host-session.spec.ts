@@ -36,7 +36,7 @@ test.describe('Host Session Creation', () => {
       geolocation: { latitude: -6.2088, longitude: 106.8456 }
     });
     const page = await context.newPage();
-    await loginAs(page, '20521001', '23523198uam');
+    await loginAs(page, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
     
     await page.goto('/pengajar/scan');
     
@@ -55,7 +55,7 @@ test.describe('Host Session Creation', () => {
       geolocation: { latitude: -7.686439, longitude: 110.418313 }
     });
     const page = await context.newPage();
-    await loginAs(page, '20521001', '23523198uam');
+    await loginAs(page, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
 
     await page.goto('/pengajar/scan');
     

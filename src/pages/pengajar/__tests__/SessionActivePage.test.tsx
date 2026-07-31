@@ -5,7 +5,9 @@ import type { Session, Attendance } from '../../../types'
 
 let mockSession: Session | null = null
 let mockAttendances: Attendance[] = []
-const mockCloseSessionV2 = vi.fn()
+const { mockCloseSessionV2 } = vi.hoisted(() => ({
+  mockCloseSessionV2: vi.fn(),
+}))
 const mockNavigate = vi.fn()
 const mockFetchPengajarByTPA = vi.fn()
 

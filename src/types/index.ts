@@ -88,6 +88,7 @@ export interface LaporanRow {
   isLate: boolean;
   lateMinutes: number | null;
   isIzin: boolean;
+  isExpected: boolean;
 }
 
 // QR Token Structure

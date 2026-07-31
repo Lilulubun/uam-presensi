@@ -71,7 +71,7 @@ describe('computeMonthlySummaryWithExpected', () => {
     // excused = 1 (s2 overlap izin)
     // adjustedExpected = 1
     // required = ceil(1 * 0.75) = 1
-    // actual hadir = 1 (s1)
+    // actual hadir = 1 (s1, hanya expected sessions)
     expect(summary.expectedCount).toBe(2);
     expect(summary.excusedCount).toBe(1);
     expect(summary.requiredCount).toBe(1);

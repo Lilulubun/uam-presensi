@@ -15,7 +15,7 @@ test('diag: verify TPA-002 GPS', async ({ browser }) => {
     }
   });
 
-  await loginAs(page, '20521001', '23523198uam');
+  await loginAs(page, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
   await page.goto('/pengajar/scan');
 
   // Get the geolocation value the browser is actually using

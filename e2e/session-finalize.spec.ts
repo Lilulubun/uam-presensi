@@ -48,7 +48,7 @@ test.describe('Session Finalization', () => {
       geolocation: { latitude: -7.686439, longitude: 110.418313 } // TPA Al-Fath
     });
     const hostPage = await hostContext.newPage();
-    await loginAs(hostPage, '20521001', '23523198uam');
+    await loginAs(hostPage, '20521001', process.env.E2E_PASSWORD_BU_PASS!);
 
     await hostPage.goto('/pengajar/scan');
     await hostPage.getByRole('button', { name: /Izinkan Akses Lokasi/i }).click();
