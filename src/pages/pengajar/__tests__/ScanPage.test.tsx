@@ -131,7 +131,7 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
-      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+      expect(screen.getByText('Pilih pengajar wajib hadir')).toBeInTheDocument();
     });
   });
 
@@ -149,14 +149,14 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
-      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+      expect(screen.getByText('Pilih pengajar wajib hadir')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Budi
     fireEvent.click(checkboxes[1]); // Ani
 
-    fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Buka sesi/i }));
 
     await waitFor(() => {
       expect(mockOpenSessionV2).toHaveBeenCalledWith(
@@ -171,11 +171,11 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
-      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+      expect(screen.getByText('Pilih pengajar wajib hadir')).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getAllByRole('checkbox')[0]);
-    fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Buka sesi/i }));
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/pengajar/session/session-1');
@@ -186,13 +186,13 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
-      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+      expect(screen.getByText('Pilih pengajar wajib hadir')).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole('button', { name: /Batal/ }));
 
     await waitFor(() => {
-      expect(screen.queryByText('Pilih Pengajar yang Wajib Hadir')).not.toBeInTheDocument();
+      expect(screen.queryByText('Pilih pengajar wajib hadir')).not.toBeInTheDocument();
     });
   });
 
@@ -205,14 +205,14 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
     await grantLocationAndScan();
 
     await waitFor(() => {
-      expect(screen.getByText('Pilih Pengajar yang Wajib Hadir')).toBeInTheDocument();
+      expect(screen.getByText('Pilih pengajar wajib hadir')).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getAllByRole('checkbox')[0]);
-    fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Buka sesi/i }));
 
     await waitFor(() => {
-      expect(screen.queryByText('Pilih Pengajar yang Wajib Hadir')).not.toBeInTheDocument();
+      expect(screen.queryByText('Pilih pengajar wajib hadir')).not.toBeInTheDocument();
       expect(screen.getByText('Sudah Ada Sesi Aktif')).toBeInTheDocument();
     });
   });

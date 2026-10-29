@@ -39,22 +39,22 @@ describe('ExpectedTeacherSelector', () => {
     checkboxes.forEach(cb => expect(cb).not.toBeChecked());
   });
 
-  it('shows counter "0 dipilih" when nothing is checked', () => {
+  it('shows counter "0 pengajar dipilih" when nothing is checked', () => {
     renderComponent();
-    expect(screen.getByText('0 dipilih')).toBeInTheDocument();
+    expect(screen.getByText('0 pengajar dipilih')).toBeInTheDocument();
   });
 
-  it('shows counter "2 dipilih" when two teachers are checked', () => {
+  it('shows counter "2 pengajar dipilih" when two teachers are checked', () => {
     renderComponent();
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Budi
     fireEvent.click(checkboxes[2]); // Cici
-    expect(screen.getByText('2 dipilih')).toBeInTheDocument();
+    expect(screen.getByText('2 pengajar dipilih')).toBeInTheDocument();
   });
 
   it('submit button is disabled when 0 selected', () => {
     renderComponent();
-    const submitBtn = screen.getByRole('button', { name: /Buka Sesi/ });
+    const submitBtn = screen.getByRole('button', { name: /Buka sesi/i });
     expect(submitBtn).toBeDisabled();
   });
 
@@ -62,9 +62,9 @@ describe('ExpectedTeacherSelector', () => {
     renderComponent();
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Budi
-    const submitBtn = screen.getByRole('button', { name: /Buka Sesi/ });
+    const submitBtn = screen.getByRole('button', { name: /Buka sesi/i });
     expect(submitBtn).not.toBeDisabled();
-    expect(submitBtn).toHaveTextContent('Buka Sesi (1)');
+    expect(submitBtn).toHaveTextContent('Buka sesi (1)');
   });
 
   it('shows explicit warning note when host (currentUserId) is not checked', () => {
@@ -72,15 +72,15 @@ describe('ExpectedTeacherSelector', () => {
     const checkboxes = screen.getAllByRole('checkbox');
     // Select Ani (user-002) but not Budi (user-001)
     fireEvent.click(checkboxes[1]);
-    expect(screen.getByText(/Sebagai host/)).toBeInTheDocument();
-    expect(screen.getAllByText(/Budi Santoso/).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/Anda tetap dicatat hadir sebagai pembuka sesi/)).toBeInTheDocument();
+    expect(screen.getByText(/tidak dihitung sebagai pengajar wajib/)).toBeInTheDocument();
   });
 
   it('does not show warning note when host is checked', () => {
     renderComponent('user-001');
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Check Budi
-    expect(screen.queryByText(/Sebagai host/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Anda tetap dicatat hadir sebagai pembuka sesi/)).not.toBeInTheDocument();
   });
 
   it('calls onSubmit with selected IDs when submit button clicked', () => {
@@ -88,7 +88,7 @@ describe('ExpectedTeacherSelector', () => {
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]); // Budi
     fireEvent.click(checkboxes[2]); // Cici
-    fireEvent.click(screen.getByRole('button', { name: /Buka Sesi/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Buka sesi/i }));
     expect(onSubmit).toHaveBeenCalledWith(['user-001', 'user-003']);
   });
 

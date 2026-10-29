@@ -23,24 +23,27 @@ import type {
   ValidationResult,
 } from '../types';
 
+// Reuse requestId only for transport retries of the same attempt, not a fresh scan.
 // ─── openSessionV2 ────────────────────────────────────────────────────────────
 
 export async function openSessionV2(
   tpaId: string,
   location: Coordinates,
   expectedUserIds: string[],
+  requestId = crypto.randomUUID(),
 ): Promise<ValidationResult> {
   const { data, error } = await supabase.rpc('open_session_with_expected_v2', {
     p_tpa_id: tpaId,
     p_location: { lat: location.lat, lng: location.lng },
     p_expected_user_ids: expectedUserIds,
+    p_request_id: requestId,
   });
 
-  if (error || !data) {
-    return { valid: false, message: error?.message ?? 'Gagal membuka sesi' };
+  if (error || !data || data.accepted === false) {
+    return { valid: false, message: error?.message ?? data?.message ?? 'Gagal membuka sesi' };
   }
 
-  const raw = data as any;
+  const raw = (data.accepted === true ? data.data : data) as any;
   const session = toCamelCase<Session>(raw.session);
   // QR token was returned by the RPC — store keeps the expiry for UI only
   const qr = raw.qr as { token: string; expiry: string };
@@ -66,15 +69,17 @@ export async function checkInV2(
   sessionId: string,
   token: string,
   location: Coordinates,
+  requestId = crypto.randomUUID(),
 ): Promise<ValidationResult> {
   const { data, error } = await supabase.rpc('check_in_v2', {
     p_session_id: sessionId,
     p_token: token,
+    p_request_id: requestId,
     p_location: { lat: location.lat, lng: location.lng },
   });
 
-  if (error || !data) {
-    const msg = error?.message ?? 'Gagal melakukan presensi masuk';
+  if (error || !data || data.accepted === false) {
+    const msg = error?.message ?? data?.message ?? 'Gagal melakukan presensi masuk';
     if (/radius/i.test(msg)) {
       logEvent('scan_in_gps_denied', sessionId, { error: msg });
     } else if (/tidak valid|kadaluarsa/i.test(msg)) {
@@ -83,7 +88,7 @@ export async function checkInV2(
     return { valid: false, message: msg };
   }
 
-  const raw = data as any;
+  const raw = (data.accepted === true ? data.data : data) as any;
   const attendance = toCamelCase<Attendance>(raw.attendance);
   const reason = (raw.reason as string | null) ?? null;
 
