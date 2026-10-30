@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+const { recoveryEvents } = vi.hoisted(() => ({ recoveryEvents: { callback: undefined as undefined | ((event: string, session: any) => unknown) } }));
+
 // Hoisted mock handles — referenced by both the vi.mock factory and the test bodies
 const { mockGetSession, mockSignInWithPassword, mockSignOut, mockProfileSelect, mockRpc, resetMocks } = vi.hoisted(() => {
   const mockGetSession = vi.fn();
@@ -23,7 +25,10 @@ vi.mock('../../lib/supabase', () => ({
       getSession: mockGetSession,
       signInWithPassword: mockSignInWithPassword,
       signOut: mockSignOut,
-      onAuthStateChange: vi.fn(),
+      onAuthStateChange: vi.fn((callback) => {
+        recoveryEvents.callback = callback;
+        return { data: { subscription: { unsubscribe: vi.fn() } } };
+      }),
     },
     rpc: mockRpc,
     from: () => ({
@@ -49,11 +54,25 @@ import { useAuthStore } from '../authStore';
 describe('useAuthStore (Supabase-backed)', () => {
   beforeEach(() => {
     resetMocks();
-    useAuthStore.setState({ user: null, isAuthenticated: false, loading: true });
+    useAuthStore.setState({ user: null, isAuthenticated: false, loading: true, recoveryUserId: null });
   });
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  describe('recovery events', () => {
+    it('captures recovery before getSession resolves without auth calls inside callback', async () => {
+      mockGetSession.mockImplementation(async () => {
+        expect(recoveryEvents.callback).toBeTypeOf('function');
+        expect(recoveryEvents.callback!('PASSWORD_RECOVERY', { user: { id: 'recovery-user' }, expires_at: Date.now() / 1000 + 3600 })).toBeUndefined();
+        expect(mockRpc).not.toHaveBeenCalled();
+        expect(useAuthStore.getState()).toHaveProperty('recoveryUserId', 'recovery-user');
+        return { data: { session: null } };
+      });
+      await useAuthStore.getState().init();
+      expect(useAuthStore.getState()).toHaveProperty('recoveryUserId', 'recovery-user');
+    });
   });
 
   describe('init()', () => {

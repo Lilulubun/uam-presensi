@@ -11,13 +11,18 @@ async function fetchProfile(): Promise<User | null> {
   return toCamelCase<User>(data[0]);
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isAuthenticated: false,
   loading: true,
+  recoveryUserId: null,
 
   init: async () => {
     const { data } = await supabase.auth.getSession();
+    if (get().recoveryUserId) {
+      set({ loading: false });
+      return;
+    }
     if (data.session?.user) {
       const profile = await fetchProfile();
       if (profile?.isActive === false) {
@@ -29,12 +34,26 @@ export const useAuthStore = create<AuthState>((set) => ({
     } else {
       set({ loading: false });
     }
+  },
 
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        set({ user: null, isAuthenticated: false });
+  recoverPassword: async (password) => {
+    const recoveryUserId = get().recoveryUserId;
+    if (!recoveryUserId || password.length < 8) {
+      return { valid: false, message: 'Sesi pemulihan tidak valid atau password kurang dari 8 karakter.' };
+    }
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error || get().recoveryUserId !== recoveryUserId || data.session?.user.id !== recoveryUserId || !data.session.expires_at || data.session.expires_at * 1000 <= Date.now()) {
+        set({ recoveryUserId: null });
+        return { valid: false, message: 'Tautan pemulihan tidak valid atau kedaluwarsa. Minta tautan baru.' };
       }
-    });
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) return { valid: false, message: 'Gagal menyimpan password. Coba lagi atau minta tautan pemulihan baru.' };
+      set({ recoveryUserId: null });
+      return { valid: true, message: 'Password berhasil diubah. Silakan masuk dengan password baru.' };
+    } catch {
+      return { valid: false, message: 'Gagal menyimpan password. Coba lagi.' };
+    }
   },
 
   login: async (identifier: string, password: string): Promise<ValidationResult> => {
@@ -91,3 +110,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, isAuthenticated: false });
   },
 }));
+
+// Subscribe at module load, before SDK URL initialization can emit recovery.
+// Keep callback synchronous: auth requests here can deadlock the SDK lock.
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY' && session?.user && session.expires_at && session.expires_at * 1000 > Date.now()) {
+    useAuthStore.setState({ recoveryUserId: session.user.id, user: null, isAuthenticated: false });
+  } else if (event === 'SIGNED_OUT' || event === 'SIGNED_IN') {
+    useAuthStore.setState({ recoveryUserId: null, ...(event === 'SIGNED_OUT' ? { user: null, isAuthenticated: false } : {}) });
+  }
+});
