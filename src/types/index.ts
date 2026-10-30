@@ -119,6 +119,8 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
+  recoveryUserId: string | null;
+  recoverPassword: (password: string) => Promise<ValidationResult>;
   init: () => Promise<void>;
   login: (identifier: string, password: string) => Promise<ValidationResult>;
   logout: () => Promise<void>;

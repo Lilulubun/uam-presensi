@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PageTransition from './components/PageTransition';
 import LoginPage from '../pages/LoginPage';
+import PasswordRecoveryPage from '../pages/PasswordRecoveryPage';
 import UbahPasswordPage from '../pages/UbahPasswordPage';
 import DashboardPengajar from '../pages/pengajar/DashboardPengajar';
 import ScanPage from '../pages/pengajar/ScanPage';
@@ -29,13 +30,19 @@ import RiwayatIzinPengurus from '../pages/pengurus/RiwayatIzinPengurus';
 
 export default function App() {
   const [storesReady, setStoresReady] = useState(false);
+  // URL hints only select the error screen; only the SDK event unlocks its form.
+  const [recoveryLink] = useState(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const query = new URLSearchParams(window.location.search);
+    return params.get('type') === 'recovery' || params.has('error') || query.has('error');
+  });
 
   useEffect(() => {
     const safe = <T,>(p: Promise<T>) => p.catch((e) => console.error('store init:', e));
     // Auth harus selesai dulu sebelum store lain di-fetch
     // karena semua tabel pakai RLS auth.role() = 'authenticated'
     safe(useAuthStore.getState().init()).then(() =>
-      Promise.all([
+      useAuthStore.getState().recoveryUserId ? undefined : Promise.all([
         safe(useTPAStore.getState().init()),
         safe(useSessionStore.getState().init()),
         safe(useAttendanceStore.getState().init()),
@@ -43,8 +50,8 @@ export default function App() {
       ])
     ).then(() => setStoresReady(true));
   }, []);
-  const { isAuthenticated, user } = useAuthStore(
-    useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user }))
+  const { isAuthenticated, user, recoveryUserId } = useAuthStore(
+    useShallow((s) => ({ isAuthenticated: s.isAuthenticated, user: s.user, recoveryUserId: s.recoveryUserId }))
   );
 
   // Re-fetch semua store data setiap kali isAuthenticated berubah jadi true
@@ -70,6 +77,8 @@ export default function App() {
         </div>
       ) : (
       <Routes>
+        <Route path="/pulihkan-password" element={<PasswordRecoveryPage />} />
+        {recoveryUserId || (recoveryLink && (window.location.hash || window.location.search)) ? <Route path="*" element={<Navigate to="/pulihkan-password" replace />} /> : <>
         {/* Login */}
         <Route
           path="/login"
@@ -128,6 +137,7 @@ export default function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        </>}
       </Routes>
       )}
     </BrowserRouter>

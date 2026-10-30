@@ -4,7 +4,7 @@ const mockInsert = vi.fn().mockResolvedValue({ error: null });
 const mockFrom = vi.fn().mockReturnValue({ insert: mockInsert });
 
 vi.mock('../supabase', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: mockFrom, auth: { onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }) } },
 }));
 
 describe('logEvent', () => {
