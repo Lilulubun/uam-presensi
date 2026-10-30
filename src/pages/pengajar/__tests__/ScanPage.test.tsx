@@ -103,6 +103,13 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetActiveSessionByTPA.mockReturnValue(null);
+    // Default: cache already reflects the server list, so existing
+    // assertions stay stable. The stale-cache test overrides this.
+    mockFetchPengajarByTPA.mockResolvedValue([
+      { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
+      { id: 'user-002', name: 'Ani Rahayu', email: 'ani@uii.ac.id', role: 'pengajar', nim: '21511002' },
+      { id: 'user-003', name: 'Cici Dewi', email: 'cici@uii.ac.id', role: 'pengajar', nim: '21511003' },
+    ]);
     mockOpenSessionV2.mockResolvedValue({
       valid: true,
       message: 'Sesi berhasil dibuka',
@@ -142,6 +149,20 @@ describe('ScanPage — ExpectedTeacherSelector integration', () => {
       expect(screen.getByText('Budi Santoso')).toBeInTheDocument();
       expect(screen.getByText('Ani Rahayu')).toBeInTheDocument();
       expect(screen.getByText('Cici Dewi')).toBeInTheDocument();
+    });
+  });
+
+  it('refetches teachers on every scan so a stale cached list is not submitted', async () => {
+    // Cache holds a teacher who has since moved to another TPA; the server
+    // list no longer includes them.
+    mockFetchPengajarByTPA.mockResolvedValueOnce([
+      { id: 'user-001', name: 'Budi Santoso', email: 'budi@uii.ac.id', role: 'pengajar', nim: '21511001' },
+    ]);
+
+    await grantLocationAndScan();
+
+    await waitFor(() => {
+      expect(mockFetchPengajarByTPA).toHaveBeenCalledWith('tpa-001');
     });
   });
 

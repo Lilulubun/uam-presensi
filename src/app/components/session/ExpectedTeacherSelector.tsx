@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Users, Loader2, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import type { User } from '../../../types';
@@ -34,16 +35,16 @@ export function ExpectedTeacherSelector({
   const allSelected = teachers.length > 0 && count === teachers.length;
   const hostIsSelected = selected.has(currentUserId);
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A18]/35 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1A1A18]/35 p-4"
       role="presentation"
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="expected-teacher-title"
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-[28px] bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] sm:rounded-[28px] sm:p-6"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[28px] bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] sm:p-6"
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -124,6 +125,7 @@ export function ExpectedTeacherSelector({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
