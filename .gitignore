@@ -60,3 +60,8 @@ src/imports/
 # Misc
 .eslintcache
 .parcel-cache
+
+# Security e2e artifacts (JWT/QR leak risk)
+.env.security
+playwright-report-security
+test-results-security
