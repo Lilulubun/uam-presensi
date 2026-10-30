@@ -62,11 +62,9 @@ export default function ScanPage() {
             return;
           }
 
-          // Fetch pengajar list for this TPA, then show ExpectedTeacherSelector
-          const pengajarList = pengajarByTPA[tpa.id];
-          if (!pengajarList || pengajarList.length === 0) {
-            await fetchPengajarByTPA(tpa.id);
-          }
+          // Always refetch: the cached list can predate assignment changes
+          // and would submit teachers the server then rejects.
+          await fetchPengajarByTPA(tpa.id);
           setPendingTpaId(tpa.id);
           setPendingLocation(location);
           setShowExpectedSelector(true);
@@ -102,7 +100,7 @@ export default function ScanPage() {
         setProcessing(false);
       }
     },
-    [user, getActiveSessionByTPA, navigate, locationState, pengajarByTPA, fetchPengajarByTPA]
+    [user, getActiveSessionByTPA, navigate, locationState, fetchPengajarByTPA]
   );
 
   const handleExpectedSubmit = useCallback(async (selectedIds: string[]) => {
@@ -204,9 +202,9 @@ export default function ScanPage() {
           <LocationStatus locationState={locationState} nearestTPA={nearestTPA} />
         </div>
 
-        {/* Expected Teacher Selector — shown after static QR scan */}
+        {/* Expected Teacher Selector — portaled to document.body so it
+            centers on the viewport, not inside this scrolling main */}
         {showExpectedSelector && pendingTpaId && (
-          <div className="w-full max-w-sm">
             <ExpectedTeacherSelector
               teachers={pengajarByTPA[pendingTpaId] ?? []}
               currentUserId={user?.id ?? ''}
@@ -218,7 +216,6 @@ export default function ScanPage() {
               }}
               loading={processing}
             />
-          </div>
         )}
 
         {/* Active session info banner */}
