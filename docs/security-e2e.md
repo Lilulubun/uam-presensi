@@ -7,6 +7,23 @@
 **Migrations at HEAD:** 51 files, latest `20261029000000_add_attempt_logs.sql`
 **Frontend:** vite preview :4173, production bundle of working tree (uncommitted UI redesign present)
 **Final run:** 20/20 PASS (Playwright, 1 worker, no retries) + 11/11 guard unit tests (Vitest)
+## 2b. R1 — Performance & concurrency probe (1/5/12 VU)
+
+Script: `scripts/perf-vu-probe.ts` (tsx, single process, run-scoped `e2e-perf-*` fixtures, registry cleanup). Workload per VU: one `open_session_with_expected_v2`, then 3× `rotate_qr_token_v2` (the production hot path — QR rotates every 20 s per active session). Two TPA slots cap concurrent sessions at 2, matching the domain constraint (one active session per TPA).
+
+**"Peak 12" definition (P0-02):** 12 concurrent authenticated clients dispatching session RPCs simultaneously from one host process. This measures server RPC throughput under concurrent client dispatch, NOT 12 distinct physical devices, network variance, or browser render cost.
+
+Measured (2026-10-31, hosted target, two runs):
+
+| VU | opens p50 | opens p95 | rotate p50 | rotate p95 | rotate fail |
+|---|---|---|---|---|---|
+| 1 | 311 / 191 ms | 311 / 191 ms | 101 / 183 ms | 101 / 233 ms | 0 |
+| 5 | 325 / 231 ms | 337 / 233 ms | 101 / 105 ms | 127 / 124 ms | 0 |
+| 12 | 543 / 194 ms | 640 / 337 ms | 95 / 97 ms | 101 / 132 ms | 0 |
+
+Observation: no failures at any level; rotate latency flat (~100 ms p50); open p95 rises to ~640 ms at 12 VU in one run, ~337 ms in the other. Single-run variance is visible; treat these as order-of-magnitude observations, not SLA claims.
+
+**Not measured / limitations:** browser render and QR decode cost on low-end phones; network jitter across real mobile networks; sessions beyond 2 concurrent (domain limit); sustained load beyond one burst per VU.
 
 ---
 
@@ -82,3 +99,69 @@ npx vitest run --config vitest.security.config.ts   # guard unit tests
 - Browser geolocation emulation ≠ GNSS hardware validation.
 - Concurrency: client-dispatch overlap only; server overlap unverified.
 - Attempt telemetry counts only requests that reached and committed the instrumented RPCs.
+
+---
+
+## 9. Arsitektur dan trust boundary (R2)
+
+```mermaid
+flowchart LR
+    subgraph devices["Perangkat Pengajar (UNTRUSTED)"]
+        B1["Browser pengajar pembuka<br/>(GPS, kamera)"]
+        B2["Browser pengajar peserta<br/>(GPS, kamera)"]
+    end
+
+    subgraph edge["Supabase Edge (TRUST BOUNDARY)"]
+        GW["PostgREST + Auth (JWT)"]
+    end
+
+    subgraph server["Server — trusted (security definer)"]
+        RPC1["open_session_with_expected_v2"]
+        RPC2["check_in_v2"]
+        RPC3["rotate_qr_token_v2"]
+        RPC4["close_session_v2 / force_close_v2"]
+        RLS["Row Level Security policies"]
+    end
+
+    subgraph db["Postgres (TRUSTED)"]
+        T1[("sessions")]
+        T2[("attendances")]
+        T3[("session_qr_tokens<br/>(hash saja)")]
+        T4[("used_tokens")]
+        T5[("attempt_logs<br/>(no client access)")]
+        T6[("attendance_audit_logs")]
+    end
+
+    B1 -- "JWT + static QR text + GPS" --> GW
+    B2 -- "JWT + dynamic token + GPS" --> GW
+    GW --> RPC1 & RPC2 & RPC3 & RPC4
+    RPC1 & RPC2 -- "validasi: auth, role, is_active,<br/>assignment, radius (haversine),<br/>expiry (server clock)" --> RLS
+    RPC1 & RPC2 & RPC3 & RPC4 --> T1 & T2 & T3 & T4 & T5 & T6
+```
+
+**Trust boundaries:**
+
+1. **Perangkat → Supabase**: semua input tidak dipercaya. Token QR, koordinat GPS, dan identitas hanya diverifikasi di server; klaim klien (jarak hitung `calculateDistance`, countdown expiry di payload QR) adalah UX saja, bukan kontrol keamanan — dibuktikan SEC05/SEC06.
+2. **Anon/authenticated → domain tables**: RLS menolak tulis langsung; satu-satunya jalur tulis adalah RPC `security definer` (dibuktikan test "ordinary user cannot write domain tables").
+3. **Klien → `attempt_logs`/`session_qr_tokens`/`used_tokens`**: tidak ada policy SELECT/INSERT → token mentah dan telemetri tidak pernah keluar dari server.
+4. **Server → Postgres**: service-role hanya untuk provisioning/observer test; operasional harian memakai JWT aktor biasa.
+
+## 10. Template detail deployment (P0-01) — untuk diisi pemilik
+
+| Field | Nilai | Status |
+|---|---|---|
+| Tanggal mulai deployment operasional | _(isi: tanggal pertama sesi nyata lewat sistem)_ | ⬜ kosong |
+| Tanggal akhir periode observasi | _(isi)_ | ⬜ kosong |
+| Definisi "attempt" | Satu panggilan `open_session_with_expected_v2` / `check_in_v2` yang mencapai dan **commit** (termasuk penolakan terstruktur; tidak termasuk gagal jaringan/timeout/dekode QR lokal) | ✅ terdefinisi (docs/attempt-telemetry.md) |
+| Definisi "failure" | Baris `attempt_logs` dengan `accepted = false` (outcome per kode: `OUTSIDE_RADIUS`, `QR_INVALID_OR_EXPIRED`, dst.) | ✅ terdefinisi |
+| Definisi "peak 12" | 12 klien terautentikasi bersamaan dari satu proses host mengirim RPC sesi secara serentak (lihat §2b) — bukan 12 perangkat fisik | ✅ terdefinisi |
+| Metode penghitungan peak | `max(count per menit)` pada `attempt_logs` dalam window observasi, atau angka dari probe VU | ⬜ pilih salah satu |
+
+**Reported estimate dari admin (R1):** minta pengurus menjawab: *"Berapa lama waktu yang biasanya dibutuhkan untuk menyusun rekap bulanan sebelum memakai sistem, dan berapa setelah memakai sistem?"* — tulis jawabannya sebagai *reported estimate* (pernyataan pengguna, bukan pengukuran sistem), dengan tanggal wawancara.
+
+## 11. Limitations yang harus ditulis di evaluasi (belum diukur)
+
+- **Reliabilitas**: tidak ada pengukuran uptime/error-rate produksi jangka panjang.
+- **Respons QR**: latensi rotasi end-to-end di perangkat nyata tidak diukur (probe mengukur RPC saja: ~100 ms p50 server-side).
+- **Akurasi GPS**: emulasi geolocation browser ≠ akurasi GNSS perangkat nyata; tidak ada pengukuran akurasi di lapangan.
+- **Durabilitas bukti**: laporan berlaku untuk versi, target, dan tanggal uji ini saja.
